@@ -47,7 +47,7 @@ setup(
     license='MIT',
     keywords='Raspberry Pi',
     url='http://www.pimoroni.com',
-    project_urls={ 'GitHub': 'https://www.github.com/pimoroni/{{LIBNAME}}-python' },
+    project_urls={'GitHub': 'https://www.github.com/pimoroni/{{LIBNAME}}-python'},
     classifiers=classifiers,
     packages=['{{LIBNAME}}'],
     install_requires=[]
