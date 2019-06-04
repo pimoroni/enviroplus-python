@@ -1,6 +1,9 @@
 #!/bin/bash
 
-printf "{{LIBNAME:UC}} Python Library: Installer\n\n"
+LIBRARY_VERSION=`cat library/setup.py | grep version | awk -F"'" '{print $2}'`
+LIBRARY_NAME=`cat library/setup.py | grep name | awk -F"'" '{print $2}'`
+
+printf "$LIBRARY_NAME $LIBRARY_VERSION Python Library: Installer\n\n"
 
 if [ $(id -u) -ne 0 ]; then
 	printf "Script must be run as root. Try 'sudo ./install.sh'\n"
