@@ -38,17 +38,17 @@ classifiers = ['Development Status :: 4 - Beta',
                'Topic :: System :: Hardware']
 
 setup(
-    name='{{LIBNAME}}',
+    name='envirophatplus',
     version='0.0.1',
     author='Philip Howard',
     author_email='phil@pimoroni.com',
-    description="""{{DESCRIPTION}}""",
+    description="""Enviro pHAT Plus environmental monitoring add-on for Raspberry Pi""",
     long_description=open('README.rst').read() + '\n' + open('CHANGELOG.txt').read(),
     license='MIT',
     keywords='Raspberry Pi',
     url='http://www.pimoroni.com',
-    project_urls={'GitHub': 'https://www.github.com/pimoroni/{{LIBNAME}}-python'},
+    project_urls={'GitHub': 'https://www.github.com/pimoroni/envirophatplus-python'},
     classifiers=classifiers,
-    packages=['{{LIBNAME}}'],
-    install_requires=[]
+    packages=['envirophatplus'],
+    install_requires=['pms5003', 'ltr559', 'st7735']
 )
