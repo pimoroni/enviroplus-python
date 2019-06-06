@@ -50,5 +50,5 @@ setup(
     project_urls={'GitHub': 'https://www.github.com/pimoroni/envirophatplus-python'},
     classifiers=classifiers,
     packages=['envirophatplus'],
-    install_requires=['pms5003', 'ltr559', 'st7735']
+    install_requires=['pimoroni-bme280', 'pms5003', 'ltr559', 'st7735', 'ads1015']
 )
