@@ -1,9 +1,10 @@
 """Read the MICS6812 via an ads1015 ADC"""
 
+import atexit
 import ads1015
 import RPi.GPIO as GPIO
 
-MICS6812_EN_PIN = 24
+MICS6812_HEATER_PIN = 24
 
 
 ads1015.I2C_ADDRESS_DEFAULT = ads1015.I2C_ADDRESS_ALTERNATE
@@ -40,11 +41,18 @@ def setup():
 
     GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BCM)
-    GPIO.setup(MICS6812_EN_PIN, GPIO.OUT)
-    GPIO.output(MICS6812_EN_PIN, 1)
+    GPIO.setup(MICS6812_HEATER_PIN, GPIO.OUT)
+    GPIO.output(MICS6812_HEATER_PIN, 1)
+    atexit.register(cleanup)
+
+
+def cleanup():
+    GPIO.output(MICS6812_HEATER_PIN, 0)
 
 
 def read_all():
+    """Return gas resistence for oxidising, reducing and NH3"""
+    setup()
     ox = adc.get_voltage('in0/gnd')
     red = adc.get_voltage('in1/gnd')
     nh3 = adc.get_voltage('in2/gnd')
