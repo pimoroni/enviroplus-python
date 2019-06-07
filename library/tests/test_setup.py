@@ -15,7 +15,7 @@ def test_gas_setup():
     smbus = mock.Mock()
     smbus.SMBus = SMBusFakeDevice
     sys.modules['smbus'] = smbus
-    from envirophatplus import gas
+    from enviroplus import gas
     gas.setup()
     gas.setup()
 
@@ -26,7 +26,7 @@ def test_gas_read_all():
     smbus = mock.Mock()
     smbus.SMBus = SMBusFakeDevice
     sys.modules['smbus'] = smbus
-    from envirophatplus import gas
+    from enviroplus import gas
     result = gas.read_all()
 
     assert type(result.oxidising) == float
@@ -47,7 +47,7 @@ def test_gas_read_each():
     smbus = mock.Mock()
     smbus.SMBus = SMBusFakeDevice
     sys.modules['smbus'] = smbus
-    from envirophatplus import gas
+    from enviroplus import gas
 
     assert int(gas.read_oxidising()) == 16641
     assert int(gas.read_reducing()) == 16727

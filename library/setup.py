@@ -38,7 +38,7 @@ classifiers = ['Development Status :: 4 - Beta',
                'Topic :: System :: Hardware']
 
 setup(
-    name='envirophatplus',
+    name='enviroplus',
     version='0.0.1',
     author='Philip Howard',
     author_email='phil@pimoroni.com',
@@ -47,8 +47,8 @@ setup(
     license='MIT',
     keywords='Raspberry Pi',
     url='http://www.pimoroni.com',
-    project_urls={'GitHub': 'https://www.github.com/pimoroni/envirophatplus-python'},
+    project_urls={'GitHub': 'https://www.github.com/pimoroni/enviroplus-python'},
     classifiers=classifiers,
-    packages=['envirophatplus'],
+    packages=['enviroplus'],
     install_requires=['pimoroni-bme280', 'pms5003', 'ltr559', 'st7735', 'ads1015']
 )

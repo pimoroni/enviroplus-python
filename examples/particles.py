@@ -7,7 +7,7 @@ from pms5003 import PMS5003
 print("""particles.py - Print readings from the PM5003 Particle sensor.
 
 Press Ctrl+C to exit!
-        
+
 """)
 
 pms5003 = PMS5003()
