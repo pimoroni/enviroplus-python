@@ -1,5 +1,5 @@
-Enviro pHAT Plus
-================
+Enviro+ pHAT
+============
 
 |Build Status| |Coverage Status| |PyPi Package| |Python Versions|
 
