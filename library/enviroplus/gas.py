@@ -20,9 +20,9 @@ class Mics6812Reading(object):
         self.nh3 = nh3
 
     def __repr__(self):
-        return """Oxidising: {:05.02f}
-Reducing: {:05.02f}
-NH3: {:05.02f}
+        return """Oxidising: {:05.02f} Ohms
+Reducing: {:05.02f} Ohms
+NH3: {:05.02f} Ohms
 """.format(self.oxidising, self.reducing, self.nh3)
 
     __str__ = __repr__

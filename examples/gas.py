@@ -3,7 +3,6 @@
 import time
 from enviroplus import gas
 
-
 print("""gas.py - Print readings from the MICS6812 Gas sensor.
 
 Press Ctrl+C to exit!
