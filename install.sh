@@ -27,6 +27,10 @@ cd ..
 printf "Backing up $CONFIG\n"
 cp $CONFIG "config.preinstall-$DATESTAMP.txt"
 
+printf "Setting up i2c and SPI..\n"
+raspi-config nonint do_spi 0
+raspi-config nonint do_i2c 0
+
 printf "Setting up serial for PMS5003..\n"
 # Disable serial terminal over /dev/ttyAMA0
 raspi-config nonint do_serial 1
