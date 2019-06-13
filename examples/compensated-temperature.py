@@ -25,7 +25,7 @@ def get_cpu_temperature():
     output, _error = process.communicate()
     return float(output[output.index('=') + 1:output.rindex("'")])
 
-factor = 0.6
+factor = 0.8
 
 while True:
     cpu_temp = get_cpu_temperature()
