@@ -1,17 +1,17 @@
-"""Read the MICS6812 via an ads1015 ADC"""
+"""Read the MICS6814 via an ads1015 ADC"""
 
 import atexit
 import ads1015
 import RPi.GPIO as GPIO
 
-MICS6812_HEATER_PIN = 24
+MICS6814_HEATER_PIN = 24
 
 
 ads1015.I2C_ADDRESS_DEFAULT = ads1015.I2C_ADDRESS_ALTERNATE
 _is_setup = False
 
 
-class Mics6812Reading(object):
+class Mics6814Reading(object):
     __slots__ = 'oxidising', 'reducing', 'nh3'
 
     def __init__(self, ox, red, nh3):
@@ -20,9 +20,9 @@ class Mics6812Reading(object):
         self.nh3 = nh3
 
     def __repr__(self):
-        return """Oxidising: {:05.02f}
-Reducing: {:05.02f}
-NH3: {:05.02f}
+        return """Oxidising: {:05.02f} Ohms
+Reducing: {:05.02f} Ohms
+NH3: {:05.02f} Ohms
 """.format(self.oxidising, self.reducing, self.nh3)
 
     __str__ = __repr__
@@ -41,13 +41,13 @@ def setup():
 
     GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BCM)
-    GPIO.setup(MICS6812_HEATER_PIN, GPIO.OUT)
-    GPIO.output(MICS6812_HEATER_PIN, 1)
+    GPIO.setup(MICS6814_HEATER_PIN, GPIO.OUT)
+    GPIO.output(MICS6814_HEATER_PIN, 1)
     atexit.register(cleanup)
 
 
 def cleanup():
-    GPIO.output(MICS6812_HEATER_PIN, 0)
+    GPIO.output(MICS6814_HEATER_PIN, 0)
 
 
 def read_all():
@@ -61,7 +61,7 @@ def read_all():
     red = (red * 56000) / (3.3 - red)
     nh3 = (nh3 * 56000) / (3.3 - nh3)
 
-    return Mics6812Reading(ox, red, nh3)
+    return Mics6814Reading(ox, red, nh3)
 
 
 def read_oxidising():

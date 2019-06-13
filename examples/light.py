@@ -3,7 +3,6 @@
 import time
 import ltr559
 
-
 print("""light.py - Print readings from the LTR559 Light & Proximity sensor.
 
 Press Ctrl+C to exit!
