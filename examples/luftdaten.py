@@ -5,7 +5,7 @@ import json
 import requests
 import ST7735
 from bme280 import BME280
-from pms5003 import PMS5003
+from pms5003 import PMS5003, ReadTimeoutError
 from subprocess import PIPE, Popen, check_output
 from PIL import Image, ImageDraw, ImageFont
 
@@ -55,9 +55,15 @@ def read_values():
     values["temperature"] = "{:.2f}".format(comp_temp)
     values["pressure"] = "{:.2f}".format(bme280.get_pressure() * 100)
     values["humidity"] = "{:.2f}".format(bme280.get_humidity())
-    pm_values = pms5003.read()
-    values["P2"] = str(pm_values.pm_ug_per_m3(2.5))
-    values["P1"] = str(pm_values.pm_ug_per_m3(10))
+    try:
+        pm_values = pms5003.read()
+        values["P2"] = str(pm_values.pm_ug_per_m3(2.5))
+        values["P1"] = str(pm_values.pm_ug_per_m3(10))
+    except ReadTimeoutError:
+        pms5003 = PMS5003()
+        pm_values = pms5003.read()
+        values["P2"] = str(pm_values.pm_ug_per_m3(2.5))
+        values["P1"] = str(pm_values.pm_ug_per_m3(10))
     return values
 
 # Get CPU temperature to use for compensation
