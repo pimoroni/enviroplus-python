@@ -11,6 +11,8 @@ Stable library from PyPi:
 
 * Just run `sudo pip install enviroplus`
 
+(**Note** that you're best using the git clone / install.sh method below if you want all of the UART serial configuration for the PMS5003 particulate matter sensor to run automatically)
+
 Latest/development library from GitHub:
 
 * `git clone https://github.com/pimoroni/enviroplus-python`
