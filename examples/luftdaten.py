@@ -50,6 +50,7 @@ pms5003 = PMS5003()
 
 # Read values from BME280 and PMS5003 and return as dict
 def read_values():
+    global pms5003
     values = {}
     cpu_temp = get_cpu_temperature()
     raw_temp = bme280.get_temperature()
