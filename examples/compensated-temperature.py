@@ -9,9 +9,10 @@ try:
 except ImportError:
     from smbus import SMBus
 
-print("""compensated-temperature.py - Use the CPU temperature to compensate temperature
-readings from the BME280 sensor. Method adapted from Initial State's Enviro pHAT
-review: https://medium.com/@InitialState/tutorial-review-enviro-phat-for-raspberry-pi-4cd6d8c63441
+print("""compensated-temperature.py - Use the CPU temperature
+to compensate temperature readings from the BME280 sensor.
+Method adapted from Initial State's Enviro pHAT review:
+https://medium.com/@InitialState/tutorial-review-enviro-phat-for-raspberry-pi-4cd6d8c63441
 
 Press Ctrl+C to exit!
 
@@ -20,11 +21,13 @@ Press Ctrl+C to exit!
 bus = SMBus(1)
 bme280 = BME280(i2c_dev=bus)
 
+
 # Get the temperature of the CPU for compensation
 def get_cpu_temperature():
     process = Popen(['vcgencmd', 'measure_temp'], stdout=PIPE)
     output, _error = process.communicate()
     return float(output[output.index('=') + 1:output.rindex("'")])
+
 
 # Tuning factor for compensation. Decrease this number to adjust the
 # temperature down, and increase to adjust up
