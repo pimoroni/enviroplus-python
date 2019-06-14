@@ -10,6 +10,7 @@ import ltr559
 from bme280 import BME280
 from pms5003 import PMS5003
 from enviroplus import gas
+from subprocess import PIPE, Popen
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
@@ -76,6 +77,18 @@ def display_text(variable, data, unit):
     draw.text((0, 0), message, font=font, fill=(0, 0, 0))
     st7735.display(img)
 
+# Get the temperature of the CPU for compensation
+def get_cpu_temperature():
+    process = Popen(['vcgencmd', 'measure_temp'], stdout=PIPE)
+    output, _error = process.communicate()
+    return float(output[output.index('=') + 1:output.rindex("'")])
+
+# Tuning factor for compensation. Decrease this number to adjust the
+# temperature down, and increase to adjust up
+factor = 0.8
+
+cpu_temps = [0] * 5
+
 delay = 0.5  # Debounce the proximity tap
 mode = 0  # The starting mode
 last_page = 0
@@ -113,7 +126,12 @@ try:
         if mode == 0:
             variable = "temperature"
             unit = "C"
-            data = bme280.get_temperature()
+            cpu_temp = get_cpu_temperature()
+            # Smooth out with some averaging to decrease jitter
+            cpu_temps = cpu_temps[1:] + [cpu_temp]
+            avg_cpu_temp = sum(cpu_temps) / float(len(cpu_temps))
+            raw_temp = bme280.get_temperature()
+            data = raw_temp - ((avg_cpu_temp - raw_temp) / factor)
             display_text(variable, data, unit)
 
         if mode == 1:
