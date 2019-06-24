@@ -198,7 +198,7 @@ try:
 
         if mode == 9:
             variable = "pm10"
-            unit = "g/m3"
+            unit = "ug/m3"
             data = pms5003.read()
             data = data.pm_ug_per_m3(10)
             display_text(variable, data, unit)
