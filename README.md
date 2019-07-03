@@ -7,15 +7,41 @@
 
 # Installing
 
-Stable library from PyPi:
+You're best using the git clone / install.sh method if you want all of the UART serial configuration for the PMS5003 particulate matter sensor to run automatically.
 
-* Just run `sudo pip install enviroplus`
+## One-line (Installs from GitHub)
 
-(**Note** that you're best using the git clone / install.sh method below if you want all of the UART serial configuration for the PMS5003 particulate matter sensor to run automatically)
+```
+curl -sSL https://get.pimoroni.com/enviroplus | bash
+```
 
-Latest/development library from GitHub:
+**Note** report issues with one-line installer here: https://github.com/pimoroni/get
+
+## Or... Install and configure dependencies from GitHub:
 
 * `git clone https://github.com/pimoroni/enviroplus-python`
 * `cd enviroplus-python`
 * `sudo ./install.sh`
 
+**Note** Raspbian Lite users may first need to install git: `sudo apt install git`
+
+## Or... Install from PyPi and configure manually:
+
+* Run `sudo pip install enviroplus`
+
+**Note** this wont perform any of the required configuration changes on your Pi, you may additionally need to:
+
+* Enable i2c: `raspi-config nonint do_i2c 0`
+* Enable SPI: `raspi-config nonint do_spi 0`
+
+And if you're using a PMS5003 sensor you will need to:
+
+* Enable serial: `raspi-config nonint set_config_var enable_uart 1 /boot/config.txt`
+* Disable serial terminal: `sudo raspi-config nonint do_serial 1`
+* Add `dtoverlay=pi3-miniuart-bt` to your `/boot/config.txt`
+
+And install additional dependencies:
+
+```
+sudo apt install python-numpy python-smbus
+```
