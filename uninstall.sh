@@ -1,7 +1,7 @@
 #!/bin/bash
 
-LIBRARY_VERSION=`cat library/setup.py | grep version | awk -F"'" '{print $2}'`
-LIBRARY_NAME=`cat library/setup.py | grep name | awk -F"'" '{print $2}'`
+LIBRARY_VERSION=`cat library/setup.cfg | grep version | awk -F" = " '{print $2}'`
+LIBRARY_NAME=`cat library/setup.cfg | grep name | awk -F" = " '{print $2}'`
 
 printf "$LIBRARY_NAME $LIBRARY_VERSION Python Library: Uninstaller\n\n"
 
@@ -28,6 +28,6 @@ raspi-config nonint do_serial 0
 # Disable serial port
 raspi-config nonint set_config_var enable_uart 0 /boot/config.txt
 # Switch serial port back to miniUART
-sed -i 's/^dtoverlay=pi3-miniuart-bt/#dtoverlay=pi3-miniuart-bt/' /boot/config.txt
+sed -i 's/^dtoverlay=pi3-miniuart-bt # for Enviro+/#dtoverlay=pi3-miniuart-bt # for Enviro+/' /boot/config.txt
 
 printf "Done!\n"
