@@ -9,7 +9,7 @@ Designed for environmental monitoring, Enviro+ lets you measure air quality (pol
 
 # Installing
 
-You're best using the git clone / install.sh method if you want all of the UART serial configuration for the PMS5003 particulate matter sensor to run automatically.
+You're best using the "One-line" install method if you want all of the UART serial configuration for the PMS5003 particulate matter sensor to run automatically.
 
 ## One-line (Installs from GitHub)
 
