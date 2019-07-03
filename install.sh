@@ -36,7 +36,7 @@ fi
 function do_config_backup {
 	if [ ! $CONFIG_BACKUP == true ]; then
 		CONFIG_BACKUP=true
-		FILENAME="config.preinstall-$LIBRARY_NAME-$DATESTAMP.txt"
+		FILENAME="/boot/config.preinstall-$LIBRARY_NAME-$DATESTAMP.txt"
 		printf "Backing up $CONFIG to $FILENAME\n"
 		cp $CONFIG $FILENAME
 	fi
