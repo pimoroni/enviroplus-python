@@ -1,4 +1,6 @@
-# Enviro+ pHAT
+# Enviro+
+
+Designed for environmental monitoring, Enviro+ lets you measure air quality (pollutant gases and particulates), temperature, pressure, humidity, light, and noise level. Learn more - https://shop.pimoroni.com/products/enviro-plus
 
 [![Build Status](https://travis-ci.com/pimoroni/enviroplus-python.svg?branch=master)](https://travis-ci.com/pimoroni/enviroplus-python)
 [![Coverage Status](https://coveralls.io/repos/github/pimoroni/enviroplus-python/badge.svg?branch=master)](https://coveralls.io/github/pimoroni/enviroplus-python?branch=master)
@@ -45,3 +47,9 @@ And install additional dependencies:
 ```
 sudo apt install python-numpy python-smbus
 ```
+
+## Help & Support
+
+* GPIO Pinout - https://pinout.xyz/pinout/enviro_plus
+* Support forums - http://forums.pimoroni.com/c/support
+* Discord - https://discord.gg/hr93ByC
