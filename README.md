@@ -45,7 +45,7 @@ And if you're using a PMS5003 sensor you will need to:
 And install additional dependencies:
 
 ```
-sudo apt install python-numpy python-smbus
+sudo apt install python-numpy python-smbus python-pil python-setuptools
 ```
 
 ## Help & Support
