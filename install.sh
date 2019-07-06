@@ -3,6 +3,45 @@
 CONFIG=/boot/config.txt
 DATESTAMP=`date "+%Y-%M-%d-%H-%M-%S"`
 CONFIG_BACKUP=false
+APT_HAS_UPDATED=false
+
+if [ $(id -u) -ne 0 ]; then
+	printf "Script must be run as root. Try 'sudo ./install.sh'\n"
+	exit 1
+fi
+
+function do_config_backup {
+	if [ ! $CONFIG_BACKUP == true ]; then
+		CONFIG_BACKUP=true
+		FILENAME="/boot/config.preinstall-$LIBRARY_NAME-$DATESTAMP.txt"
+		printf "Backing up $CONFIG to $FILENAME\n"
+		cp $CONFIG $FILENAME
+	fi
+}
+
+function apt_pkg_install {
+	PACKAGES=()
+	PACKAGES_IN=("$@")
+	for ((i = 0; i < ${#PACKAGES_IN[@]}; i++)); do
+		PACKAGE="${PACKAGES_IN[$i]}"
+		printf "Checking for $PACKAGE\n"
+		dpkg -L $PACKAGE > /dev/null 2>&1
+		if [ "$?" == "1" ]; then
+			PACKAGES+=("$PACKAGE")
+		fi
+	done
+	PACKAGES="${PACKAGES[@]}"
+	if ! [ "$PACKAGES" == "" ]; then
+		echo "Installing missing packages: $PACKAGES"
+        if [ ! $APT_HAS_UPDATED ]; then
+		    apt update
+            APT_HAS_UPDATED=true
+        fi
+		apt install -y $PACKAGES
+	fi
+}
+
+apt_pkg_install python-configparser
 
 CONFIG_VARS=`python - <<EOF
 from configparser import ConfigParser
@@ -33,42 +72,9 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
-function do_config_backup {
-	if [ ! $CONFIG_BACKUP == true ]; then
-		CONFIG_BACKUP=true
-		FILENAME="/boot/config.preinstall-$LIBRARY_NAME-$DATESTAMP.txt"
-		printf "Backing up $CONFIG to $FILENAME\n"
-		cp $CONFIG $FILENAME
-	fi
-}
-
-function apt_pkg_install {
-	PACKAGES=()
-	PACKAGES_IN=("$@")
-	for ((i = 0; i < ${#PACKAGES_IN[@]}; i++)); do
-		PACKAGE="${PACKAGES_IN[$i]}"
-		printf "Checking for $PACKAGE\n"
-		dpkg -L $PACKAGE > /dev/null 2>&1
-		if [ "$?" == "1" ]; then
-			PACKAGES+=("$PACKAGE")
-		fi
-	done
-	PACKAGES="${PACKAGES[@]}"
-	if ! [ "$PACKAGES" == "" ]; then
-		echo "Installing missing packages: $PACKAGES"
-		sudo apt update
-		sudo apt install -y $PACKAGES
-	fi
-}
-
 eval $CONFIG_VARS
 
 printf "$LIBRARY_NAME $LIBRARY_VERSION Python Library: Installer\n\n"
-
-if [ $(id -u) -ne 0 ]; then
-	printf "Script must be run as root. Try 'sudo ./install.sh'\n"
-	exit 1
-fi
 
 cd library
 
