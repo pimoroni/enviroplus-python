@@ -126,6 +126,8 @@ eval $CONFIG_VARS
 RESOURCES_DIR=$RESOURCES_TOP_DIR/$LIBRARY_NAME
 UNINSTALLER=$RESOURCES_DIR/uninstall.sh
 
+mkdir -p $RESOURCES_DIR
+
 cat << EOF > $UNINSTALLER
 printf "It's recommended you run these steps manually.\n"
 printf "If you want to run the full script, open it in\n"
@@ -181,7 +183,6 @@ done
 if [ -d "examples" ]; then
 	if confirm "Would you like to copy examples to $RESOURCES_DIR?"; then
 		inform "Copying examples to $RESOURCES_DIR"
-		mkdir -p $RESOURCES_DIR
 		cp -r examples/ $RESOURCES_DIR
 		echo "rm -r $RESOURCES_DIR" >> $UNINSTALLER
 	fi
