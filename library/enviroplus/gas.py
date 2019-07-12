@@ -1,29 +1,41 @@
 """Read the MICS6814 via an ads1015 ADC"""
 
+import time
 import atexit
 import ads1015
 import RPi.GPIO as GPIO
 
 MICS6814_HEATER_PIN = 24
-
+MICS6814_GAIN = 6.148
 
 ads1015.I2C_ADDRESS_DEFAULT = ads1015.I2C_ADDRESS_ALTERNATE
 _is_setup = False
+_adc_enabled = False
+_adc_gain = 6.148
 
 
 class Mics6814Reading(object):
-    __slots__ = 'oxidising', 'reducing', 'nh3'
+    __slots__ = 'oxidising', 'reducing', 'nh3', 'adc'
 
-    def __init__(self, ox, red, nh3):
+    def __init__(self, ox, red, nh3, adc=None):
         self.oxidising = ox
         self.reducing = red
         self.nh3 = nh3
+        self.adc = adc
 
     def __repr__(self):
-        return """Oxidising: {:05.02f} Ohms
-Reducing: {:05.02f} Ohms
-NH3: {:05.02f} Ohms
-""".format(self.oxidising, self.reducing, self.nh3)
+        fmt = """Oxidising: {ox:05.02f} Ohms
+Reducing: {red:05.02f} Ohms
+NH3: {nh3:05.02f} Ohms"""
+        if self.adc is not None:
+            fmt += """
+ADC: {adc:05.02f} Volts
+"""
+        return fmt.format(
+            ox=self.oxidising,
+            red=self.reducing,
+            nh3=self.nh3,
+            adc=self.adc)
 
     __str__ = __repr__
 
@@ -36,7 +48,7 @@ def setup():
 
     adc = ads1015.ADS1015(i2c_addr=0x49)
     adc.set_mode('single')
-    adc.set_programmable_gain(6.148)
+    adc.set_programmable_gain(MICS6814_GAIN)
     adc.set_sample_rate(1600)
 
     GPIO.setwarnings(False)
@@ -44,6 +56,18 @@ def setup():
     GPIO.setup(MICS6814_HEATER_PIN, GPIO.OUT)
     GPIO.output(MICS6814_HEATER_PIN, 1)
     atexit.register(cleanup)
+
+
+def enable_adc(value=True):
+    """Enable reading from the additional ADC pin."""
+    global _adc_enabled
+    _adc_enabled = value
+
+
+def set_adc_gain(value):
+    """Set gain value for the additional ADC pin."""
+    global _adc_gain
+    _adc_gain = value
 
 
 def cleanup():
@@ -57,11 +81,33 @@ def read_all():
     red = adc.get_voltage('in1/gnd')
     nh3 = adc.get_voltage('in2/gnd')
 
-    ox = (ox * 56000) / (3.3 - ox)
-    red = (red * 56000) / (3.3 - red)
-    nh3 = (nh3 * 56000) / (3.3 - nh3)
+    try:
+        ox = (ox * 56000) / (3.3 - ox)
+    except ZeroDivisionError:
+        ox = 0
 
-    return Mics6814Reading(ox, red, nh3)
+    try:
+        red = (red * 56000) / (3.3 - red)
+    except ZeroDivisionError:
+        red = 0
+
+    try:
+        nh3 = (nh3 * 56000) / (3.3 - nh3)
+    except ZeroDivisionError:
+        nh3 = 0
+
+    analog = None
+
+    if _adc_enabled:
+        if _adc_gain == MICS6814_GAIN:
+            analog = adc.get_voltage('ref/gnd')
+        else:
+            adc.set_programmable_gain(_adc_gain)
+            time.sleep(0.05)
+            analog = adc.get_voltage('ref/gnd')
+            adc.set_programmable_gain(MICS6814_GAIN)
+
+    return Mics6814Reading(ox, red, nh3, analog)
 
 
 def read_oxidising():
