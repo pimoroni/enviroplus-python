@@ -6,7 +6,7 @@ import ads1015
 import RPi.GPIO as GPIO
 
 MICS6814_HEATER_PIN = 24
-MICS6814_GAIN = 6.148
+MICS6814_GAIN = 6.144
 
 ads1015.I2C_ADDRESS_DEFAULT = ads1015.I2C_ADDRESS_ALTERNATE
 _is_setup = False
@@ -132,3 +132,9 @@ def read_nh3():
     """Return gas resistance for nh3/ammonia"""
     setup()
     return read_all().nh3
+
+
+def read_adc():
+    """Return spare ADC channel value"""
+    setup()
+    return read_all().adc
