@@ -33,7 +33,7 @@ def get_cpu_temperature():
 # temperature down, and increase to adjust up
 factor = 0.8
 
-cpu_temps = [0] * 5
+cpu_temps = [get_cpu_temperature()] * 5
 
 while True:
     cpu_temp = get_cpu_temperature()

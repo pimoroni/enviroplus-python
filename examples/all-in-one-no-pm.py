@@ -87,7 +87,7 @@ def get_cpu_temperature():
 # temperature down, and increase to adjust up
 factor = 0.8
 
-cpu_temps = [0] * 5
+cpu_temps = [get_cpu_temperature()] * 5
 
 delay = 0.5  # Debounce the proximity tap
 mode = 0  # The starting mode
