@@ -183,7 +183,7 @@ try:
             display_text(variables[mode], data, unit)
 
         if mode == 7:
-            #variable = "pm1"
+            # variable = "pm1"
             unit = "ug/m3"
             try:
                 data = pms5003.read()
