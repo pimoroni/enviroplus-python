@@ -2,8 +2,14 @@
 
 import time
 from pms5003 import PMS5003, ReadTimeoutError
+import logging
 
-print("""particulates.py - Print readings from the PMS5003 particulate sensor.
+logging.basicConfig(
+    format='%(asctime)s.%(msecs)03d %(levelname)-8s %(message)s',
+    level=logging.INFO,
+    datefmt='%Y-%m-%d %H:%M:%S')
+
+logging.info("""particulates.py - Print readings from the PMS5003 particulate sensor.
 
 Press Ctrl+C to exit!
 
@@ -16,7 +22,7 @@ try:
     while True:
         try:
             readings = pms5003.read()
-            print(readings)
+            logging.info(readings)
             time.sleep(1.0)
         except ReadTimeoutError:
             pms5003 = PMS5003()

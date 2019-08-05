@@ -12,7 +12,14 @@ try:
 except ImportError:
     from smbus import SMBus
 
-print("""luftdaten.py - Reads temperature, pressure, humidity,
+import logging
+
+logging.basicConfig(
+    format='%(asctime)s.%(msecs)03d %(levelname)-8s %(message)s',
+    level=logging.INFO,
+    datefmt='%Y-%m-%d %H:%M:%S')
+
+logging.info("""luftdaten.py - Reads temperature, pressure, humidity,
 PM2.5, and PM10 from Enviro plus and sends data to Luftdaten,
 the citizen science air quality project.
 
@@ -162,16 +169,16 @@ font_size = 16
 font = ImageFont.truetype("fonts/Asap/Asap-Bold.ttf", font_size)
 
 # Display Raspberry Pi serial and Wi-Fi status
-print("Raspberry Pi serial: {}".format(get_serial_number()))
-print("Wi-Fi: {}\n".format("connected" if check_wifi() else "disconnected"))
+logging.info("Raspberry Pi serial: {}".format(get_serial_number()))
+logging.info("Wi-Fi: {}\n".format("connected" if check_wifi() else "disconnected"))
 
 # Main loop to read data, display, and send to Luftdaten
 while True:
     try:
         values = read_values()
-        print(values)
+        logging.info(values)
         resp = send_to_luftdaten(values, id)
-        print("Response: {}\n".format("ok" if resp else "failed"))
+        logging.info("Response: {}\n".format("ok" if resp else "failed"))
         display_status()
     except Exception as e:
-        print(e)
+        logging.info(e)

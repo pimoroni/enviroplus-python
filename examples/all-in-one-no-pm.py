@@ -13,8 +13,14 @@ from subprocess import PIPE, Popen
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
+import logging
 
-print("""all-in-one.py - Displays readings from all of Enviro plus' sensors
+logging.basicConfig(
+    format='%(asctime)s.%(msecs)03d %(levelname)-8s %(message)s',
+    level=logging.INFO,
+    datefmt='%Y-%m-%d %H:%M:%S')
+
+logging.info("""all-in-one.py - Displays readings from all of Enviro plus' sensors
 Press Ctrl+C to exit!
 """)
 
@@ -58,7 +64,7 @@ def display_text(variable, data, unit):
                - min(values[variable]) + 1) for v in values[variable]]
     # Format the variable name and value
     message = "{}: {:.1f} {}".format(variable[:4], data, unit)
-    print(message)
+    logging.info(message)
     draw.rectangle((0, 0, WIDTH, HEIGHT), (255, 255, 255))
     for i in range(len(colours)):
         # Convert the values to colours from red to blue
