@@ -2,6 +2,7 @@
 
 import requests
 import ST7735
+import time
 from bme280 import BME280
 from pms5003 import PMS5003, ReadTimeoutError
 from subprocess import PIPE, Popen, check_output
@@ -165,13 +166,19 @@ font = ImageFont.truetype("fonts/Asap/Asap-Bold.ttf", font_size)
 print("Raspberry Pi serial: {}".format(get_serial_number()))
 print("Wi-Fi: {}\n".format("connected" if check_wifi() else "disconnected"))
 
+time_since_update = 0
+update_time = time.time()
+
 # Main loop to read data, display, and send to Luftdaten
 while True:
     try:
+        time_since_update = time.time() - update_time
         values = read_values()
         print(values)
-        resp = send_to_luftdaten(values, id)
-        print("Response: {}\n".format("ok" if resp else "failed"))
+        if time_since_update > 145:
+            resp = send_to_luftdaten(values, id)
+            update_time = time.time()
+            print("Response: {}\n".format("ok" if resp else "failed"))
         display_status()
     except Exception as e:
         print(e)
