@@ -8,7 +8,7 @@ import ST7735
 import ltr559
 
 from bme280 import BME280
-from pms5003 import PMS5003
+from pms5003 import PMS5003, ReadTimeoutError as pmsReadTimeoutError
 from enviroplus import gas
 from subprocess import PIPE, Popen
 from PIL import Image
@@ -187,7 +187,7 @@ try:
             unit = "ug/m3"
             try:
                 data = pms5003.read()
-            except pms5003.ReadTimeoutError:
+            except pmsReadTimeoutError:
                 pass
             else:
                 data = data.pm_ug_per_m3(1.0)
@@ -196,16 +196,24 @@ try:
         if mode == 8:
             # variable = "pm25"
             unit = "ug/m3"
-            data = pms5003.read()
-            data = data.pm_ug_per_m3(2.5)
-            display_text(variables[mode], data, unit)
+            try:
+                data = pms5003.read()
+            except pmsReadTimeoutError:
+                pass
+            else:
+                data = data.pm_ug_per_m3(2.5)
+                display_text(variables[mode], data, unit)
 
         if mode == 9:
             # variable = "pm10"
             unit = "ug/m3"
-            data = pms5003.read()
-            data = data.pm_ug_per_m3(10)
-            display_text(variables[mode], data, unit)
+            try:
+                data = pms5003.read()
+            except pmsReadTimeoutError:
+                pass
+            else:
+                data = data.pm_ug_per_m3(10)
+                display_text(variables[mode], data, unit)
 
 # Exit cleanly
 except KeyboardInterrupt:
