@@ -2,7 +2,6 @@
 
 import time
 from bme280 import BME280
-from subprocess import PIPE, Popen
 
 try:
     from smbus2 import SMBus
@@ -24,10 +23,10 @@ bme280 = BME280(i2c_dev=bus)
 
 # Get the temperature of the CPU for compensation
 def get_cpu_temperature():
-    process = Popen(['vcgencmd', 'measure_temp'], stdout=PIPE)
-    output, _error = process.communicate()
-    output = output.decode()
-    return float(output[output.index('=') + 1:output.rindex("'")])
+    with open("/sys/class/thermal/thermal_zone0/temp", "r") as f:
+        temp = f.read()
+        temp = int(temp) / 1000.0
+    return temp
 
 
 # Tuning factor for compensation. Decrease this number to adjust the
