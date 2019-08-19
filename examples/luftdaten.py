@@ -71,11 +71,12 @@ def read_values():
     return values
 
 
-# Get CPU temperature to use for compensation
+# Get the temperature of the CPU for compensation
 def get_cpu_temperature():
-    process = Popen(['vcgencmd', 'measure_temp'], stdout=PIPE, universal_newlines=True)
-    output, _error = process.communicate()
-    return float(output[output.index('=') + 1:output.rindex("'")])
+    with open("/sys/class/thermal/thermal_zone0/temp", "r") as f:
+        temp = f.read()
+        temp = int(temp) / 1000.0
+    return temp
 
 
 # Get Raspberry Pi serial number to use as ID

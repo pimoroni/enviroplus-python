@@ -14,7 +14,6 @@ except ImportError:
 
 from bme280 import BME280
 from enviroplus import gas
-from subprocess import PIPE, Popen
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
@@ -91,9 +90,10 @@ def display_text(variable, data, unit):
 
 # Get the temperature of the CPU for compensation
 def get_cpu_temperature():
-    process = Popen(['vcgencmd', 'measure_temp'], stdout=PIPE, universal_newlines=True)
-    output, _error = process.communicate()
-    return float(output[output.index('=') + 1:output.rindex("'")])
+    with open("/sys/class/thermal/thermal_zone0/temp", "r") as f:
+        temp = f.read()
+        temp = int(temp) / 1000.0
+    return temp
 
 
 # Tuning factor for compensation. Decrease this number to adjust the
