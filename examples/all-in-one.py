@@ -102,7 +102,7 @@ factor = 0.8
 cpu_temps = [get_cpu_temperature()] * 5
 
 delay = 0.5  # Debounce the proximity tap
-mode = 0  # The starting mode
+mode = 0     # The starting mode
 last_page = 0
 light = 1
 
@@ -194,7 +194,7 @@ try:
             try:
                 data = pms5003.read()
             except pmsReadTimeoutError:
-                pass
+                logging.warn("Failed to read PMS5003")
             else:
                 data = data.pm_ug_per_m3(1.0)
                 display_text(variables[mode], data, unit)
@@ -205,7 +205,7 @@ try:
             try:
                 data = pms5003.read()
             except pmsReadTimeoutError:
-                pass
+                logging.warn("Failed to read PMS5003")
             else:
                 data = data.pm_ug_per_m3(2.5)
                 display_text(variables[mode], data, unit)
@@ -216,7 +216,7 @@ try:
             try:
                 data = pms5003.read()
             except pmsReadTimeoutError:
-                pass
+                logging.warn("Failed to read PMS5003")
             else:
                 data = data.pm_ug_per_m3(10)
                 display_text(variables[mode], data, unit)
