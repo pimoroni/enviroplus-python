@@ -74,6 +74,7 @@ def read_values():
 def get_cpu_temperature():
     process = Popen(['vcgencmd', 'measure_temp'], stdout=PIPE)
     output, _error = process.communicate()
+    output = output.decode()
     return float(output[output.index('=') + 1:output.rindex("'")])
 
 
