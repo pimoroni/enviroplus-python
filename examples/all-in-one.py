@@ -14,8 +14,14 @@ from subprocess import PIPE, Popen
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
+import logging
 
-print("""all-in-one.py - Displays readings from all of Enviro plus' sensors
+logging.basicConfig(
+    format='%(asctime)s.%(msecs)03d %(levelname)-8s %(message)s',
+    level=logging.INFO,
+    datefmt='%Y-%m-%d %H:%M:%S')
+
+logging.info("""all-in-one.py - Displays readings from all of Enviro plus' sensors
 
 Press Ctrl+C to exit!
 
@@ -64,7 +70,7 @@ def display_text(variable, data, unit):
                - min(values[variable]) + 1) for v in values[variable]]
     # Format the variable name and value
     message = "{}: {:.1f} {}".format(variable[:4], data, unit)
-    print(message)
+    logging.info(message)
     draw.rectangle((0, 0, WIDTH, HEIGHT), (255, 255, 255))
     for i in range(len(colours)):
         # Convert the values to colours from red to blue
@@ -93,7 +99,7 @@ def get_cpu_temperature():
 # temperature down, and increase to adjust up
 factor = 0.8
 
-cpu_temps = [0] * 5
+cpu_temps = [get_cpu_temperature()] * 5
 
 delay = 0.5  # Debounce the proximity tap
 mode = 0  # The starting mode
@@ -130,7 +136,7 @@ try:
 
         # One mode for each variable
         if mode == 0:
-            variable = "temperature"
+            # variable = "temperature"
             unit = "C"
             cpu_temp = get_cpu_temperature()
             # Smooth out with some averaging to decrease jitter
@@ -138,70 +144,74 @@ try:
             avg_cpu_temp = sum(cpu_temps) / float(len(cpu_temps))
             raw_temp = bme280.get_temperature()
             data = raw_temp - ((avg_cpu_temp - raw_temp) / factor)
-            display_text(variable, data, unit)
+            display_text(variables[mode], data, unit)
 
         if mode == 1:
-            variable = "pressure"
+            # variable = "pressure"
             unit = "hPa"
             data = bme280.get_pressure()
-            display_text(variable, data, unit)
+            display_text(variables[mode], data, unit)
 
         if mode == 2:
-            variable = "humidity"
+            # variable = "humidity"
             unit = "%"
             data = bme280.get_humidity()
-            display_text(variable, data, unit)
+            display_text(variables[mode], data, unit)
 
         if mode == 3:
-            variable = "light"
+            # variable = "light"
             unit = "Lux"
             if proximity < 10:
                 data = ltr559.get_lux()
             else:
                 data = 1
-            display_text(variable, data, unit)
+            display_text(variables[mode], data, unit)
 
         if mode == 4:
-            variable = "oxidised"
+            # variable = "oxidised"
             unit = "kO"
             data = gas.read_all()
             data = data.oxidising / 1000
-            display_text(variable, data, unit)
+            display_text(variables[mode], data, unit)
 
         if mode == 5:
-            variable = "reduced"
+            # variable = "reduced"
             unit = "kO"
             data = gas.read_all()
             data = data.reducing / 1000
-            display_text(variable, data, unit)
+            display_text(variables[mode], data, unit)
 
         if mode == 6:
-            variable = "nh3"
+            # variable = "nh3"
             unit = "kO"
             data = gas.read_all()
             data = data.nh3 / 1000
-            display_text(variable, data, unit)
+            display_text(variables[mode], data, unit)
 
         if mode == 7:
-            variable = "pm1"
+            # variable = "pm1"
             unit = "ug/m3"
-            data = pms5003.read()
-            data = data.pm_ug_per_m3(1.0)
-            display_text(variable, data, unit)
+            try:
+                data = pms5003.read()
+            except pms5003.ReadTimeoutError:
+                pass
+            else:
+                data = data.pm_ug_per_m3(1.0)
+                display_text(variables[mode], data, unit)
 
         if mode == 8:
-            variable = "pm25"
+            # variable = "pm25"
             unit = "ug/m3"
             data = pms5003.read()
             data = data.pm_ug_per_m3(2.5)
-            display_text(variable, data, unit)
+            display_text(variables[mode], data, unit)
 
         if mode == 9:
-            variable = "pm10"
+            # variable = "pm10"
             unit = "ug/m3"
             data = pms5003.read()
             data = data.pm_ug_per_m3(10)
-            display_text(variable, data, unit)
+            display_text(variables[mode], data, unit)
 
 # Exit cleanly
 except KeyboardInterrupt:

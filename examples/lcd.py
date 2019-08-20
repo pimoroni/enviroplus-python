@@ -2,8 +2,14 @@
 
 import ST7735
 from PIL import Image, ImageDraw, ImageFont
+import logging
 
-print("""lcd.py - Hello, World! example on the 0.96" LCD.
+logging.basicConfig(
+    format='%(asctime)s.%(msecs)03d %(levelname)-8s %(message)s',
+    level=logging.INFO,
+    datefmt='%Y-%m-%d %H:%M:%S')
+
+logging.info("""lcd.py - Hello, World! example on the 0.96" LCD.
 
 Press Ctrl+C to exit!
 
