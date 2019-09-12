@@ -5,7 +5,12 @@ import colorsys
 import os
 import sys
 import ST7735
-import ltr559
+try:
+    # Transitional fix for breaking change in LTR559
+    from ltr559 import LTR559
+    ltr559 = LTR559()
+except ImportError:
+    import ltr559
 
 from bme280 import BME280
 from pms5003 import PMS5003, ReadTimeoutError as pmsReadTimeoutError
