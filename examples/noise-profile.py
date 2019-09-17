@@ -2,11 +2,13 @@ import ST7735
 from PIL import Image, ImageDraw
 from enviroplus.noise import Noise
 
-SAMPLERATE = 16000
+print("""noise-profile.py - Get a simple noise profile.
 
-FREQ_LOW = 100.0
-FREQ_HIGH = 2000.0
-WIDTH = 100
+This example grabs a basic 3-bin noise profile of low, medium and high frequency noise, plotting the noise characteristics as coloured bars.
+
+Press Ctrl+C to exit!
+
+""")
 
 noise = Noise()
 
@@ -36,4 +38,3 @@ while True:
     draw.line((0, 0, 0, amp), fill=(int(low), int(mid), int(high)))
 
     disp.display(img)
-

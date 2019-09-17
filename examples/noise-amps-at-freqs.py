@@ -2,11 +2,15 @@ import ST7735
 from PIL import Image, ImageDraw
 from enviroplus.noise import Noise
 
-SAMPLERATE = 16000
+print("""noise-amps-at-freqs.py - Measure amplitude from specific frequency bins
 
-FREQ_LOW = 100.0
-FREQ_HIGH = 2000.0
-WIDTH = 100
+This example retrieves the median amplitude from 3 user-specified frequency ranges and plots them in Blue, Green and Red on the Enviro+ display.
+
+As you play a continuous rising tone on your phone, you should notice peaks that correspond to the frequency entering each range.
+
+Press Ctrl+C to exit!
+
+""")
 
 noise = Noise()
 
@@ -25,9 +29,9 @@ draw = ImageDraw.Draw(img)
 
 while True:
     amps = noise.get_amplitudes_at_frequency_ranges([
-        (100,200),
-        (500,600),
-        (1000,1200)
+        (100, 200),
+        (500, 600),
+        (1000, 1200)
     ])
     amps = [n * 32 for n in amps]
     img2 = img.copy()
@@ -38,4 +42,3 @@ while True:
     draw.line((0, 0, 0, amps[2]), fill=(255, 0, 0))
 
     disp.display(img)
-
