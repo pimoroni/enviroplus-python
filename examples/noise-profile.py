@@ -26,7 +26,7 @@ draw = ImageDraw.Draw(img)
 
 
 while True:
-    low, mid, high, amp = noise.measure()
+    low, mid, high, amp = noise.get_noise_profile()
     low *= 128
     mid *= 128
     high *= 128
