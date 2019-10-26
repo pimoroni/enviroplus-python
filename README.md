@@ -41,6 +41,8 @@ And if you're using a PMS5003 sensor you will need to:
 * Enable serial: `raspi-config nonint set_config_var enable_uart 1 /boot/config.txt`
 * Disable serial terminal: `sudo raspi-config nonint do_serial 1`
 * Add `dtoverlay=pi3-miniuart-bt` to your `/boot/config.txt`
+* Add `core_freq=250` to your `/boot/config.txt`
+* Add `core_freq_min=250` to your `/boot/config.txt`
 
 And install additional dependencies:
 
