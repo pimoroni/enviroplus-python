@@ -23,7 +23,6 @@ try:
         try:
             readings = pms5003.read()
             logging.info(readings)
-            time.sleep(1.0)
         except ReadTimeoutError:
             pms5003 = PMS5003()
 except KeyboardInterrupt:
