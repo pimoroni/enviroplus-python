@@ -37,6 +37,7 @@ bme280 = BME280()
 
 # PMS5003 particulate sensor
 pms5003 = PMS5003()
+time.sleep(1.0)
 
 # Create ST7735 LCD display class
 st7735 = ST7735.ST7735(
