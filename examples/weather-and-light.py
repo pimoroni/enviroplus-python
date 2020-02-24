@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import os
 import time
 import numpy
 import colorsys
@@ -11,7 +12,8 @@ from bme280 import BME280
 from ltr559 import LTR559
 
 import pytz
-from astral import Astral
+from astral.geocoder import database, lookup
+from astral.sun import sun
 from datetime import datetime, timedelta
 
 try:
@@ -81,8 +83,7 @@ def sun_moon_time(dt, city_name, time_zone):
     """Calculate the progress through the current sun/moon period (i.e day or
        night) from the last sunrise or sunset, given a datetime object 't'."""
 
-    a = Astral()
-    city = a[city_name]
+    city = lookup(city_name, database())
 
     # Datetime objects for yesterday, today, tomorrow
     today = dt.date()
@@ -91,14 +92,14 @@ def sun_moon_time(dt, city_name, time_zone):
     tomorrow = today + timedelta(1)
 
     # Sun objects for yesterfay, today, tomorrow
-    sun_yesterday = city.sun(date=yesterday, local=True)
-    sun = city.sun(date=today, local=True)
-    sun_tomorrow = city.sun(date=tomorrow, local=True)
+    sun_yesterday = sun(city.observer, date=yesterday)
+    sun_today = sun(city.observer, date=today)
+    sun_tomorrow = sun(city.observer, date=tomorrow)
 
     # Work out sunset yesterday, sunrise/sunset today, and sunrise tomorrow
     sunset_yesterday = sun_yesterday["sunset"]
-    sunrise_today = sun["sunrise"]
-    sunset_today = sun["sunset"]
+    sunrise_today = sun_today["sunrise"]
+    sunset_today = sun_today["sunset"]
     sunrise_tomorrow = sun_tomorrow["sunrise"]
 
     # Work out lengths of day or night period and progress through period
@@ -324,8 +325,8 @@ dt = datetime.now()
 bus = SMBus(1)
 bme280 = BME280(i2c_dev=bus)
 
-min_temp = bme280.get_temperature()
-max_temp = bme280.get_temperature()
+min_temp = None
+max_temp = None
 
 factor = 2.25
 cpu_temps = [get_cpu_temperature()] * 5
@@ -340,13 +341,17 @@ num_vals = 1000
 interval = 1
 trend = "-"
 
+# Keep track of time elapsed
+start_time = time.time()
+
 while True:
+    path = os.path.dirname(os.path.realpath(__file__))
     dt = datetime.now()
-#    dt += timedelta(minutes=5)
     progress, period, day = sun_moon_time(dt, city_name, time_zone)
     background = draw_background(progress, period, day)
 
     # Time.
+    time_elapsed = time.time() - start_time
     date_string = dt.strftime("%d %b %y").lstrip('0')
     time_string = dt.strftime("%H:%M")
     img = overlay_text(background, (0 + margin, 0 + margin), time_string, font_lg)
@@ -361,17 +366,25 @@ while True:
     avg_cpu_temp = sum(cpu_temps) / float(len(cpu_temps))
     corr_temperature = temperature - ((avg_cpu_temp - temperature) / factor)
 
-    if corr_temperature < min_temp:
-        min_temp = corr_temperature
-    elif corr_temperature > max_temp:
-        max_temp = corr_temperature
+    if time_elapsed > 30:
+        if min_temp is not None and max_temp is not None:
+            if corr_temperature < min_temp:
+                min_temp = corr_temperature
+            elif corr_temperature > max_temp:
+                max_temp = corr_temperature
+        else:
+            min_temp = corr_temperature
+            max_temp = corr_temperature
 
     temp_string = f"{corr_temperature:.0f}°C"
     img = overlay_text(img, (68, 18), temp_string, font_lg, align_right=True)
     spacing = font_lg.getsize(temp_string)[1] + 1
-    range_string = f"{min_temp:.0f}-{max_temp:.0f}"
+    if min_temp is not None and max_temp is not None:
+        range_string = f"{min_temp:.0f}-{max_temp:.0f}"
+    else:
+        range_string = "------"
     img = overlay_text(img, (68, 18 + spacing), range_string, font_sm, align_right=True, rectangle=True)
-    temp_icon = Image.open("icons/temperature.png")
+    temp_icon = Image.open(path + "/icons/temperature.png")
     img.paste(temp_icon, (margin, 18), mask=temp_icon)
 
     # Humidity
@@ -382,7 +395,7 @@ while True:
     spacing = font_lg.getsize(humidity_string)[1] + 1
     humidity_desc = describe_humidity(corr_humidity).upper()
     img = overlay_text(img, (68, 48 + spacing), humidity_desc, font_sm, align_right=True, rectangle=True)
-    humidity_icon = Image.open("icons/humidity-" + humidity_desc.lower() + ".png")
+    humidity_icon = Image.open(path + "/icons/humidity-" + humidity_desc.lower() + ".png")
     img.paste(humidity_icon, (margin, 48), mask=humidity_icon)
 
     # Light
@@ -392,7 +405,7 @@ while True:
     spacing = font_lg.getsize(light_string.replace(",", ""))[1] + 1
     light_desc = describe_light(light).upper()
     img = overlay_text(img, (WIDTH - margin - 1, 18 + spacing), light_desc, font_sm, align_right=True, rectangle=True)
-    light_icon = Image.open("icons/bulb-" + light_desc.lower() +  ".png")
+    light_icon = Image.open(path + "/icons/bulb-" + light_desc.lower() +  ".png")
     img.paste(humidity_icon, (80, 18), mask=light_icon)
 
     # Pressure
@@ -404,7 +417,7 @@ while True:
     pressure_desc = describe_pressure(mean_pressure).upper()
     spacing = font_lg.getsize(pressure_string.replace(",", ""))[1] + 1
     img = overlay_text(img, (WIDTH - margin - 1, 48 + spacing), pressure_desc, font_sm, align_right=True, rectangle=True)
-    pressure_icon = Image.open("icons/weather-" + pressure_desc.lower() +  ".png")
+    pressure_icon = Image.open(path + "/icons/weather-" + pressure_desc.lower() +  ".png")
     img.paste(pressure_icon, (80, 48), mask=pressure_icon)
 
     # Display image

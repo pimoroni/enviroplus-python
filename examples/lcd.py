@@ -1,7 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import ST7735
 from PIL import Image, ImageDraw, ImageFont
+from fonts.ttf import RobotoMedium as UserFont
 import logging
 
 logging.basicConfig(
@@ -38,7 +39,7 @@ draw = ImageDraw.Draw(img)
 
 # Text settings.
 font_size = 25
-font = ImageFont.truetype("fonts/Asap/Asap-Bold.ttf", font_size)
+font = ImageFont.truetype(UserFont, font_size)
 text_colour = (255, 255, 255)
 back_colour = (0, 170, 170)
 

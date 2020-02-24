@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import time
 from bme280 import BME280
@@ -38,7 +38,7 @@ def get_cpu_temperature():
 
 # Tuning factor for compensation. Decrease this number to adjust the
 # temperature down, and increase to adjust up
-factor = 0.8
+factor = 2.25
 
 cpu_temps = [get_cpu_temperature()] * 5
 
