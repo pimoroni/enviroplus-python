@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import time
 import colorsys
@@ -19,6 +19,7 @@ from subprocess import PIPE, Popen
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
+from fonts.ttf import RobotoMedium as UserFont
 import logging
 
 logging.basicConfig(
@@ -57,8 +58,8 @@ HEIGHT = st7735.height
 # Set up canvas and font
 img = Image.new('RGB', (WIDTH, HEIGHT), color=(0, 0, 0))
 draw = ImageDraw.Draw(img)
-path = os.path.dirname(os.path.realpath(__file__))
-font = ImageFont.truetype(path + "/fonts/Asap/Asap-Bold.ttf", 20)
+font_size = 20
+font = ImageFont.truetype(UserFont, font_size)
 
 message = ""
 
@@ -102,7 +103,7 @@ def get_cpu_temperature():
 
 # Tuning factor for compensation. Decrease this number to adjust the
 # temperature down, and increase to adjust up
-factor = 0.8
+factor = 2.25
 
 cpu_temps = [get_cpu_temperature()] * 5
 

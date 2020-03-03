@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import requests
 import ST7735
@@ -7,6 +7,7 @@ from bme280 import BME280
 from pms5003 import PMS5003, ReadTimeoutError
 from subprocess import PIPE, Popen, check_output
 from PIL import Image, ImageDraw, ImageFont
+from fonts.ttf import RobotoMedium as UserFont
 
 try:
     from smbus2 import SMBus
@@ -74,7 +75,6 @@ def read_values():
 def get_cpu_temperature():
     process = Popen(['vcgencmd', 'measure_temp'], stdout=PIPE, universal_newlines=True)
     output, _error = process.communicate()
-    output = output.decode()
     return float(output[output.index('=') + 1:output.rindex("'")])
 
 
@@ -150,7 +150,7 @@ def send_to_luftdaten(values, id):
 
 
 # Compensation factor for temperature
-comp_factor = 1.2
+comp_factor = 2.25
 
 # Raspberry Pi ID to send to Luftdaten
 id = "raspi-" + get_serial_number()
@@ -161,7 +161,7 @@ HEIGHT = disp.height
 
 # Text settings
 font_size = 16
-font = ImageFont.truetype("fonts/Asap/Asap-Bold.ttf", font_size)
+font = ImageFont.truetype(UserFont, font_size)
 
 # Display Raspberry Pi serial and Wi-Fi status
 print("Raspberry Pi serial: {}".format(get_serial_number()))
