@@ -54,7 +54,7 @@ img = Image.new('RGB', (WIDTH, HEIGHT), color=(0, 0, 0))
 draw = ImageDraw.Draw(img)
 path = os.path.dirname(os.path.realpath(__file__))
 font_size = 20
-font = ImageFont.truetype(UserFont, FontSize)
+font = ImageFont.truetype(UserFont, font_size)
 
 message = ""
 
