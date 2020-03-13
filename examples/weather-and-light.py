@@ -12,6 +12,7 @@ from bme280 import BME280
 from ltr559 import LTR559
 
 import pytz
+from pytz import timezone
 from astral.geocoder import database, lookup
 from astral.sun import sun
 from datetime import datetime, timedelta
@@ -79,19 +80,21 @@ def x_from_sun_moon_time(progress, period, x_range):
     return x
 
 
-def sun_moon_time(dt, city_name, time_zone):
+def sun_moon_time(city_name, time_zone):
     """Calculate the progress through the current sun/moon period (i.e day or
        night) from the last sunrise or sunset, given a datetime object 't'."""
 
     city = lookup(city_name, database())
 
     # Datetime objects for yesterday, today, tomorrow
-    today = dt.date()
-    dt = pytz.timezone(time_zone).localize(dt)
+    utc = pytz.utc
+    utc_dt = datetime.now(tz=utc)
+    local_dt = utc_dt.astimezone(pytz.timezone(time_zone))
+    today = local_dt.date()
     yesterday = today - timedelta(1)
     tomorrow = today + timedelta(1)
 
-    # Sun objects for yesterfay, today, tomorrow
+    # Sun objects for yesterday, today, tomorrow
     sun_yesterday = sun(city.observer, date=yesterday)
     sun_today = sun(city.observer, date=today)
     sun_tomorrow = sun(city.observer, date=tomorrow)
@@ -103,29 +106,29 @@ def sun_moon_time(dt, city_name, time_zone):
     sunrise_tomorrow = sun_tomorrow["sunrise"]
 
     # Work out lengths of day or night period and progress through period
-    if sunrise_today < dt < sunset_today:
+    if sunrise_today < local_dt < sunset_today:
         day = True
         period = sunset_today - sunrise_today
         mid = sunrise_today + (period / 2)
-        progress = dt - sunrise_today
+        progress = local_dt - sunrise_today
 
-    elif dt > sunset_today:
+    elif local_dt > sunset_today:
         day = False
         period = sunrise_tomorrow - sunset_today
         mid = sunset_today + (period / 2)
-        progress = dt - sunset_today
+        progress = local_dt - sunset_today
 
     else:
         day = False
         period = sunrise_today - sunset_yesterday
         mid = sunset_yesterday + (period / 2)
-        progress = dt - sunset_yesterday
+        progress = local_dt - sunset_yesterday
 
     # Convert time deltas to seconds
     progress = progress.total_seconds()
     period = period.total_seconds()
 
-    return (progress, period, day)
+    return (progress, period, day, local_dt)
 
 
 def draw_background(progress, period, day):
@@ -139,7 +142,7 @@ def draw_background(progress, period, day):
     if day:
         x = WIDTH - x
 
-    # Calculate position on sun/moon's curve
+    # Calculate position on sun/moon's curve
     centre = WIDTH / 2
     y = calculate_y_pos(x, centre)
 
@@ -319,7 +322,6 @@ font_lg = ImageFont.truetype(UserFont, 14)
 # Margins
 margin = 3
 
-dt = datetime.now()
 
 # Set up BME280 weather sensor
 bus = SMBus(1)
@@ -346,14 +348,13 @@ start_time = time.time()
 
 while True:
     path = os.path.dirname(os.path.realpath(__file__))
-    dt = datetime.now()
-    progress, period, day = sun_moon_time(dt, city_name, time_zone)
+    progress, period, day, local_dt = sun_moon_time(city_name, time_zone)
     background = draw_background(progress, period, day)
 
     # Time.
     time_elapsed = time.time() - start_time
-    date_string = dt.strftime("%d %b %y").lstrip('0')
-    time_string = dt.strftime("%H:%M")
+    date_string = local_dt.strftime("%d %b %y").lstrip('0')
+    time_string = local_dt.strftime("%H:%M")
     img = overlay_text(background, (0 + margin, 0 + margin), time_string, font_lg)
     img = overlay_text(img, (WIDTH - margin, 0 + margin), date_string, font_lg, align_right=True)
 
