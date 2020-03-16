@@ -75,6 +75,11 @@ Help & Support
 .. |Python Versions| image:: https://img.shields.io/pypi/pyversions/enviroplus.svg
    :target: https://pypi.python.org/pypi/enviroplus
 
+0.0.3
+-----
+
+* Fix "self.noise_floor" bug in get_noise_profile
+
 0.0.2
 -----
 
