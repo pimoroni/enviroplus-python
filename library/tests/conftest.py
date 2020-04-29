@@ -14,6 +14,23 @@ class SMBusFakeDevice(MockSMBus):
         self.regs[0x00:0x01] = 0x0f, 0x00
 
 
+@pytest.fixture(scope='function', autouse=True)
+def cleanup():
+    yield None
+    try:
+        del sys.modules['enviroplus']
+    except KeyError:
+        pass
+    try:
+        del sys.modules['enviroplus.noise']
+    except KeyError:
+        pass
+    try:
+        del sys.modules['enviroplus.gas']
+    except KeyError:
+        pass
+
+
 @pytest.fixture(scope='function', autouse=False)
 def GPIO():
     """Mock RPi.GPIO module."""

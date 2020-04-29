@@ -76,7 +76,7 @@ class Noise():
         amp_low = numpy.mean(magnitude[noise_floor:mid_start])
         amp_mid = numpy.mean(magnitude[mid_start:high_start])
         amp_high = numpy.mean(magnitude[high_start:noise_ceiling])
-        amp_total = (low + mid + high) / 3.0
+        amp_total = (amp_low + amp_mid + amp_high) / 3.0
 
         return amp_low, amp_mid, amp_high, amp_total
 
