@@ -1,5 +1,7 @@
 """
 Run mqtt broker on localhost: sudo apt-get install mosquitto mosquitto-clients
+
+Example run: python3 mqtt-all.py --broker 192.168.1.164 --topic enviro
 """
 #!/usr/bin/env python3
 
