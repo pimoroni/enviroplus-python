@@ -130,56 +130,12 @@ def display_status():
     disp.display(img)
 
 
-def send_to_mqtt(values, id):
-    pm_values = dict(i for i in values.items() if i[0].startswith("P"))
-    temp_values = dict(i for i in values.items() if not i[0].startswith("P"))
-
-    pm_values_json = [
-        {"value_type": key, "value": val} for key, val in pm_values.items()
-    ]
-    temp_values_json = [
-        {"value_type": key, "value": val} for key, val in temp_values.items()
-    ]
-
-    resp_1 = requests.post(
-        "https://api.luftdaten.info/v1/push-sensor-data/",
-        json={
-            "software_version": "enviro-plus 0.0.1",
-            "sensordatavalues": pm_values_json,
-        },
-        headers={
-            "X-PIN": "1",
-            "X-Sensor": id,
-            "Content-Type": "application/json",
-            "cache-control": "no-cache",
-        },
-    )
-
-    resp_2 = requests.post(
-        "https://api.luftdaten.info/v1/push-sensor-data/",
-        json={
-            "software_version": "enviro-plus 0.0.1",
-            "sensordatavalues": temp_values_json,
-        },
-        headers={
-            "X-PIN": "11",
-            "X-Sensor": id,
-            "Content-Type": "application/json",
-            "cache-control": "no-cache",
-        },
-    )
-
-    if resp_1.ok and resp_2.ok:
-        return True
-    else:
-        return False
-
-
 # Compensation factor for temperature
 comp_factor = 2.25
 
 # Raspberry Pi ID to send to Luftdaten
-id = "raspi-" + get_serial_number()
+device_serial_number = get_serial_number()
+id = "raspi-" + device_serial_number
 
 # Width and height to calculate text position
 WIDTH = disp.width
@@ -199,17 +155,13 @@ update_time = time.time()
 
 # Main loop to read data, display, and send over mqtt
 mqtt_client.loop_start()
-mqtt_client.publish(mqtt_topic, "test message from {}".format(mqtt_topic))
 while True:
     try:
         time_since_update = time.time() - update_time
         values = read_values()
         print(values)
-        mqtt_client.publish(mqtt_topic, values["temperature"])
-        mqtt_client.publish(mqtt_topic, "test")
+        mqtt_client.publish(mqtt_topic, json.dumps(values))
         if time_since_update > 145:
-            # mqtt_client.publish(mqtt_topic, json.dumps(values))
-            # resp = send_to_mqtt(values, id)
             update_time = time.time()
         display_status()
     except Exception as e:
