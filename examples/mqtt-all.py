@@ -37,6 +37,9 @@ def on_publish(client, userdata, mid):
 
 # Read values from BME280 and PMS5003 and return as dict
 def read_values(bme280, pms5003):
+    # Compensation factor for temperature
+    comp_factor = 2.25
+
     values = {}
     cpu_temp = get_cpu_temperature()
     raw_temp = bme280.get_temperature()
@@ -133,10 +136,7 @@ def main():
     # Create PMS5003 instance
     pms5003 = PMS5003()
 
-    # Compensation factor for temperature
-    comp_factor = 2.25
-
-    # Raspberry Pi ID to send to Luftdaten
+    # Raspberry Pi ID
     device_serial_number = get_serial_number()
     id = "raspi-" + device_serial_number
 
