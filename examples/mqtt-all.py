@@ -206,7 +206,9 @@ while True:
         values = read_values()
         print(values)
         if time_since_update > 145:
-            mqtt_client.publish(mqtt_topic, json.dumps(values))
+            # mqtt_client.publish(mqtt_topic, json.dumps(values))
+            mqtt_client.publish(mqtt_topic, values["temperature"])
+            mqtt_client.publish(mqtt_topic, "test")
             # resp = send_to_mqtt(values, id)
             update_time = time.time()
         display_status()
