@@ -22,6 +22,11 @@ try:
 except ImportError:
     from smbus import SMBus
 
+
+DEFAULT_MQTT_BROKER_IP = "localhost"
+DEFAULT_MQTT_BROKER_PORT = 1883
+DEFAULT_MQTT_TOPIC = "enviroplus"
+
 # mqtt callbacks
 def on_connect(client, userdata, flags, rc):
     print(f"CONNACK received with code {rc}")
@@ -107,7 +112,23 @@ def display_status(disp, mqtt_broker):
 
 
 def main():
-    """Main."""
+    parser = argparse.ArgumentParser(description="Publish enviroplus values over mqtt")
+    parser.add_argument(
+        "--mqtt-broker-ip",
+        default=DEFAULT_MQTT_BROKER_IP,
+        type=str,
+        help="mqtt broker IP",
+    )
+    parser.add_argument(
+        "--mqtt-broker-port",
+        default=DEFAULT_MQTT_BROKER_PORT,
+        type=int,
+        help="mqtt broker port",
+    )
+    parser.add_argument(
+        "--mqtt-topic", default=DEFAULT_MQTT_TOPIC, type=str, help="mqtt topic"
+    )
+    args = parser.parse_args()
 
     print(
         """mqtt-all.py - Reads temperature, pressure, humidity,
@@ -118,14 +139,10 @@ def main():
     """
     )
 
-    mqtt_broker = "localhost"
-    mqtt_port = 1883
-    mqtt_topic = "enviroplus"
-
     mqtt_client = mqtt.Client()
     mqtt_client.on_connect = on_connect
     mqtt_client.on_publish = on_publish
-    mqtt_client.connect(mqtt_broker, port=mqtt_port)
+    mqtt_client.connect(args.mqtt-broker-ip, port=port=args.mqtt-broker-port)
 
     bus = SMBus(1)
 
@@ -150,7 +167,7 @@ def main():
     # Display Raspberry Pi serial and Wi-Fi status
     print("Raspberry Pi serial: {}".format(get_serial_number()))
     print("Wi-Fi: {}\n".format("connected" if check_wifi() else "disconnected"))
-    print("MQTT broker IP: {}".format(mqtt_broker))
+    print("MQTT broker IP: {}".format(args.mqtt-broker-ip))
 
     time_since_update = 0
     update_time = time.time()
@@ -162,10 +179,10 @@ def main():
             time_since_update = time.time() - update_time
             values = read_values(bme280, pms5003)
             print(values)
-            mqtt_client.publish(mqtt_topic, json.dumps(values))
+            mqtt_client.publish(args.mqtt-topic, json.dumps(values))
             if time_since_update > 145:
                 update_time = time.time()
-            display_status(disp, mqtt_broker)
+            display_status(disp, args.mqtt-broker-ip)
         except Exception as e:
             print(e)
 
