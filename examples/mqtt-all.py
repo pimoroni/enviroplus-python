@@ -83,7 +83,11 @@ def check_wifi():
 
 
 # Display Raspberry Pi serial and Wi-Fi status on LCD
-def display_status():
+def display_status(disp):
+    # Width and height to calculate text position
+    WIDTH = disp.width
+    HEIGHT = disp.height
+
     wifi_status = "connected" if check_wifi() else "disconnected"
     text_colour = (255, 255, 255)
     back_colour = (0, 170, 170) if check_wifi() else (85, 15, 15)
@@ -140,10 +144,6 @@ def main():
     device_serial_number = get_serial_number()
     id = "raspi-" + device_serial_number
 
-    # Width and height to calculate text position
-    WIDTH = disp.width
-    HEIGHT = disp.height
-
     # Text settings
     font_size = 16
     font = ImageFont.truetype(UserFont, font_size)
@@ -166,7 +166,7 @@ def main():
             mqtt_client.publish(mqtt_topic, json.dumps(values))
             if time_since_update > 145:
                 update_time = time.time()
-            display_status()
+            display_status(disp)
         except Exception as e:
             print(e)
 
