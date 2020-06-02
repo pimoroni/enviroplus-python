@@ -87,6 +87,9 @@ def display_status(disp):
     # Width and height to calculate text position
     WIDTH = disp.width
     HEIGHT = disp.height
+    # Text settings
+    font_size = 16
+    font = ImageFont.truetype(UserFont, font_size)
 
     wifi_status = "connected" if check_wifi() else "disconnected"
     text_colour = (255, 255, 255)
@@ -143,10 +146,6 @@ def main():
     # Raspberry Pi ID
     device_serial_number = get_serial_number()
     id = "raspi-" + device_serial_number
-
-    # Text settings
-    font_size = 16
-    font = ImageFont.truetype(UserFont, font_size)
 
     # Display Raspberry Pi serial and Wi-Fi status
     print("Raspberry Pi serial: {}".format(get_serial_number()))
