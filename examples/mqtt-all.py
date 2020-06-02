@@ -3,6 +3,7 @@ Run mqtt broker on localhost: sudo apt-get install mosquitto mosquitto-clients
 """
 #!/usr/bin/env python3
 
+import argparse
 import requests
 import ST7735
 import time
@@ -21,19 +22,6 @@ try:
 except ImportError:
     from smbus import SMBus
 
-print(
-    """mqtt-all.py - Reads temperature, pressure, humidity,
-PM2.5, and PM10 from Enviro plus and sends data over mqtt.
-
-Press Ctrl+C to exit!
-
-"""
-)
-
-mqtt_broker = "localhost"
-mqtt_port = 1883
-mqtt_topic = "enviroplus"
-
 # mqtt callbacks
 def on_connect(client, userdata, flags, rc):
     print(f"CONNACK received with code {rc}")
@@ -45,28 +33,6 @@ def on_connect(client, userdata, flags, rc):
 
 def on_publish(client, userdata, mid):
     print("mid: " + str(mid))
-
-
-mqtt_client = mqtt.Client()
-mqtt_client.on_connect = on_connect
-mqtt_client.on_publish = on_publish
-mqtt_client.connect(mqtt_broker, port=mqtt_port)
-
-bus = SMBus(1)
-
-# Create BME280 instance
-bme280 = BME280(i2c_dev=bus)
-
-# Create LCD instance
-disp = ST7735.ST7735(
-    port=0, cs=1, dc=9, backlight=12, rotation=270, spi_speed_hz=10000000
-)
-
-# Initialize display
-disp.begin()
-
-# Create PMS5003 instance
-pms5003 = PMS5003()
 
 
 # Read values from BME280 and PMS5003 and return as dict
@@ -130,39 +96,80 @@ def display_status():
     disp.display(img)
 
 
-# Compensation factor for temperature
-comp_factor = 2.25
+def main():
+    """Main."""
 
-# Raspberry Pi ID to send to Luftdaten
-device_serial_number = get_serial_number()
-id = "raspi-" + device_serial_number
+    print(
+        """mqtt-all.py - Reads temperature, pressure, humidity,
+    PM2.5, and PM10 from Enviro plus and sends data over mqtt.
 
-# Width and height to calculate text position
-WIDTH = disp.width
-HEIGHT = disp.height
+    Press Ctrl+C to exit!
 
-# Text settings
-font_size = 16
-font = ImageFont.truetype(UserFont, font_size)
+    """
+    )
 
-# Display Raspberry Pi serial and Wi-Fi status
-print("Raspberry Pi serial: {}".format(get_serial_number()))
-print("Wi-Fi: {}\n".format("connected" if check_wifi() else "disconnected"))
-print("MQTT broker IP: {}".format(mqtt_broker))
+    mqtt_broker = "localhost"
+    mqtt_port = 1883
+    mqtt_topic = "enviroplus"
 
-time_since_update = 0
-update_time = time.time()
+    mqtt_client = mqtt.Client()
+    mqtt_client.on_connect = on_connect
+    mqtt_client.on_publish = on_publish
+    mqtt_client.connect(mqtt_broker, port=mqtt_port)
 
-# Main loop to read data, display, and send over mqtt
-mqtt_client.loop_start()
-while True:
-    try:
-        time_since_update = time.time() - update_time
-        values = read_values()
-        print(values)
-        mqtt_client.publish(mqtt_topic, json.dumps(values))
-        if time_since_update > 145:
-            update_time = time.time()
-        display_status()
-    except Exception as e:
-        print(e)
+    bus = SMBus(1)
+
+    # Create BME280 instance
+    bme280 = BME280(i2c_dev=bus)
+
+    # Create LCD instance
+    disp = ST7735.ST7735(
+        port=0, cs=1, dc=9, backlight=12, rotation=270, spi_speed_hz=10000000
+    )
+
+    # Initialize display
+    disp.begin()
+
+    # Create PMS5003 instance
+    pms5003 = PMS5003()
+
+    # Compensation factor for temperature
+    comp_factor = 2.25
+
+    # Raspberry Pi ID to send to Luftdaten
+    device_serial_number = get_serial_number()
+    id = "raspi-" + device_serial_number
+
+    # Width and height to calculate text position
+    WIDTH = disp.width
+    HEIGHT = disp.height
+
+    # Text settings
+    font_size = 16
+    font = ImageFont.truetype(UserFont, font_size)
+
+    # Display Raspberry Pi serial and Wi-Fi status
+    print("Raspberry Pi serial: {}".format(get_serial_number()))
+    print("Wi-Fi: {}\n".format("connected" if check_wifi() else "disconnected"))
+    print("MQTT broker IP: {}".format(mqtt_broker))
+
+    time_since_update = 0
+    update_time = time.time()
+
+    # Main loop to read data, display, and send over mqtt
+    mqtt_client.loop_start()
+    while True:
+        try:
+            time_since_update = time.time() - update_time
+            values = read_values()
+            print(values)
+            mqtt_client.publish(mqtt_topic, json.dumps(values))
+            if time_since_update > 145:
+                update_time = time.time()
+            display_status()
+        except Exception as e:
+            print(e)
+
+
+if __name__ == "__main__":
+    main()
