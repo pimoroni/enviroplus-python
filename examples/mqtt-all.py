@@ -198,13 +198,14 @@ update_time = time.time()
 
 # Main loop to read data, display, and send over mqtt
 mqtt_client.loop_start()
+mqtt_client.publish(mqtt_topic, "publishing from enviroplus")
 while True:
     try:
         time_since_update = time.time() - update_time
         values = read_values()
         print(values)
         if time_since_update > 145:
-            mqtt_client.publish(mqtt_topic, values)
+            mqtt_client.publish(mqtt_topic, str(values))
             # resp = send_to_mqtt(values, id)
             update_time = time.time()
         display_status()
