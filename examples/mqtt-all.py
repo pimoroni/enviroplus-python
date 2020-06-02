@@ -114,19 +114,13 @@ def display_status(disp, mqtt_broker):
 def main():
     parser = argparse.ArgumentParser(description="Publish enviroplus values over mqtt")
     parser.add_argument(
-        "--mqtt-broker-ip",
-        default=DEFAULT_MQTT_BROKER_IP,
-        type=str,
-        help="mqtt broker IP",
+        "--broker", default=DEFAULT_MQTT_BROKER_IP, type=str, help="mqtt broker IP",
     )
     parser.add_argument(
-        "--mqtt-broker-port",
-        default=DEFAULT_MQTT_BROKER_PORT,
-        type=int,
-        help="mqtt broker port",
+        "--port", default=DEFAULT_MQTT_BROKER_PORT, type=int, help="mqtt broker port",
     )
     parser.add_argument(
-        "--mqtt-topic", default=DEFAULT_MQTT_TOPIC, type=str, help="mqtt topic"
+        "--topic", default=DEFAULT_MQTT_TOPIC, type=str, help="mqtt topic"
     )
     args = parser.parse_args()
 
@@ -134,15 +128,21 @@ def main():
         """mqtt-all.py - Reads temperature, pressure, humidity,
     PM2.5, and PM10 from Enviro plus and sends data over mqtt.
 
+    broker: {}
+    port: {}
+    topic: {}
+
     Press Ctrl+C to exit!
 
-    """
+    """.format(
+            args.broker, args.port, args.topic
+        )
     )
 
     mqtt_client = mqtt.Client()
     mqtt_client.on_connect = on_connect
     mqtt_client.on_publish = on_publish
-    mqtt_client.connect(args.mqtt-broker-ip, port=port=args.mqtt-broker-port)
+    mqtt_client.connect(args.broker, port=args.port)
 
     bus = SMBus(1)
 
@@ -167,7 +167,7 @@ def main():
     # Display Raspberry Pi serial and Wi-Fi status
     print("Raspberry Pi serial: {}".format(get_serial_number()))
     print("Wi-Fi: {}\n".format("connected" if check_wifi() else "disconnected"))
-    print("MQTT broker IP: {}".format(args.mqtt-broker-ip))
+    print("MQTT broker IP: {}".format(args.broker))
 
     time_since_update = 0
     update_time = time.time()
@@ -178,11 +178,12 @@ def main():
         try:
             time_since_update = time.time() - update_time
             values = read_values(bme280, pms5003)
+            values["serial"] = device_serial_number
             print(values)
-            mqtt_client.publish(args.mqtt-topic, json.dumps(values))
+            mqtt_client.publish(args.topic, json.dumps(values))
             if time_since_update > 145:
                 update_time = time.time()
-            display_status(disp, args.mqtt-broker-ip)
+            display_status(disp, args.broker)
         except Exception as e:
             print(e)
 
