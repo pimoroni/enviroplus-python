@@ -75,18 +75,18 @@ def read_values():
     cpu_temp = get_cpu_temperature()
     raw_temp = bme280.get_temperature()
     comp_temp = raw_temp - ((cpu_temp - raw_temp) / comp_factor)
-    values["temperature"] = "{:.2f}".format(comp_temp)
-    values["pressure"] = "{:.2f}".format(bme280.get_pressure() * 100)
-    values["humidity"] = "{:.2f}".format(bme280.get_humidity())
+    values["temperature"] = float("{:.2f}".format(comp_temp))
+    values["pressure"] = float("{:.2f}".format(bme280.get_pressure() * 100))
+    values["humidity"] = float("{:.2f}".format(bme280.get_humidity()))
     try:
         pm_values = pms5003.read()
-        values["P2"] = str(pm_values.pm_ug_per_m3(2.5))
-        values["P1"] = str(pm_values.pm_ug_per_m3(10))
+        values["P2"] = pm_values.pm_ug_per_m3(2.5)
+        values["P1"] = pm_values.pm_ug_per_m3(10)
     except ReadTimeoutError:
         pms5003.reset()
         pm_values = pms5003.read()
-        values["P2"] = str(pm_values.pm_ug_per_m3(2.5))
-        values["P1"] = str(pm_values.pm_ug_per_m3(10))
+        values["P2"] = pm_values.pm_ug_per_m3(2.5)
+        values["P1"] = pm_values.pm_ug_per_m3(10)
     return values
 
 
