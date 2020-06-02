@@ -36,7 +36,7 @@ def on_publish(client, userdata, mid):
 
 
 # Read values from BME280 and PMS5003 and return as dict
-def read_values():
+def read_values(bme280, pms5003):
     values = {}
     cpu_temp = get_cpu_temperature()
     raw_temp = bme280.get_temperature()
@@ -161,7 +161,7 @@ def main():
     while True:
         try:
             time_since_update = time.time() - update_time
-            values = read_values()
+            values = read_values(bme280, pms5003)
             print(values)
             mqtt_client.publish(mqtt_topic, json.dumps(values))
             if time_since_update > 145:
