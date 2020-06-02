@@ -11,6 +11,7 @@ from pms5003 import PMS5003, ReadTimeoutError
 from subprocess import PIPE, Popen, check_output
 from PIL import Image, ImageDraw, ImageFont
 from fonts.ttf import RobotoMedium as UserFont
+import json
 
 import paho.mqtt.client as mqtt
 import paho.mqtt.publish as publish
@@ -198,14 +199,14 @@ update_time = time.time()
 
 # Main loop to read data, display, and send over mqtt
 mqtt_client.loop_start()
-mqtt_client.publish(mqtt_topic, "publishing from enviroplus")
+mqtt_client.publish(mqtt_topic, "test message from {}".format(mqtt_topic))
 while True:
     try:
         time_since_update = time.time() - update_time
         values = read_values()
         print(values)
         if time_since_update > 145:
-            mqtt_client.publish(mqtt_topic, str(values))
+            mqtt_client.publish(mqtt_topic, json.dumps(values))
             # resp = send_to_mqtt(values, id)
             update_time = time.time()
         display_status()
