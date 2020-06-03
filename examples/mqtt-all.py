@@ -6,7 +6,6 @@ Example run: python3 mqtt-all.py --broker 192.168.1.164 --topic enviro
 #!/usr/bin/env python3
 
 import argparse
-import requests
 import ST7735
 import time
 from bme280 import BME280
