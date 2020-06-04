@@ -10,6 +10,16 @@ import ST7735
 import time
 from bme280 import BME280
 from pms5003 import PMS5003, ReadTimeoutError
+from enviroplus import gas
+
+try:
+    # Transitional fix for breaking change in LTR559
+    from ltr559 import LTR559
+
+    ltr559 = LTR559()
+except ImportError:
+    import ltr559
+
 from subprocess import PIPE, Popen, check_output
 from PIL import Image, ImageDraw, ImageFont
 from fonts.ttf import RobotoMedium as UserFont
@@ -48,20 +58,29 @@ def read_values(bme280, pms5003):
 
     values = {}
     cpu_temp = get_cpu_temperature()
-    raw_temp = bme280.get_temperature()
+    raw_temp = bme280.get_temperature()  # float
     comp_temp = raw_temp - ((cpu_temp - raw_temp) / comp_factor)
-    values["temperature"] = float("{:.2f}".format(comp_temp))
-    values["pressure"] = float("{:.2f}".format(bme280.get_pressure() * 100))
-    values["humidity"] = float("{:.2f}".format(bme280.get_humidity()))
+    values["temperature"] = int(comp_temp)
+    values["pressure"] = round(
+        int(bme280.get_pressure() * 100), -1
+    )  # round to nearest 10
+    values["humidity"] = int(bme280.get_humidity())
     try:
-        pm_values = pms5003.read()
-        values["P2"] = pm_values.pm_ug_per_m3(2.5)
-        values["P1"] = pm_values.pm_ug_per_m3(10)
+        pm_values = pms5003.read()  # int
+        values["pm1"] = pm_values.pm_ug_per_m3(1)
+        values["pm25"] = pm_values.pm_ug_per_m3(2.5)
+        values["pm10"] = pm_values.pm_ug_per_m3(10)
     except ReadTimeoutError:
         pms5003.reset()
         pm_values = pms5003.read()
-        values["P2"] = pm_values.pm_ug_per_m3(2.5)
-        values["P1"] = pm_values.pm_ug_per_m3(10)
+        values["pm1"] = pm_values.pm_ug_per_m3(1)
+        values["pm25"] = pm_values.pm_ug_per_m3(2.5)
+        values["pm10"] = pm_values.pm_ug_per_m3(10)
+    data = gas.read_all()
+    values["oxidised"] = int(data.oxidising / 1000)
+    values["reduced"] = int(data.reducing / 1000)
+    values["nh3"] = int(data.nh3 / 1000)
+    values["lux"] = int(ltr559.get_lux())
     return values
 
 
