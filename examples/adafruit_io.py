@@ -46,10 +46,6 @@ import time
 # import Adafruit Blinka
 import board
 import busio
-
-# import sensor libraries
-import adafruit_sgp30
-import adafruit_veml6070
 import adafruit_bme280
 
 # import Adafruit IO REST client
@@ -82,10 +78,10 @@ except RequestError: # if we don't, create and assign them.
     altitude_feed = aio.create_feed(Feed(name='altitude'))
 
 # Create busio I2C
-i2c = busio.I2C(board.SCL, board.SDA, frequency=100000)
+i2c = busio.I2C(board.SCL, board.SDA)
 
 # Create BME280 object.
-bme280 = adafruit_bme280.Adafruit_BME280_I2C(i2c)
+bme280 = adafruit_bme280.Adafruit_BME280_I2C(i2c, address=0x76)
 bme280.sea_level_pressure = 1013.25
 
 
