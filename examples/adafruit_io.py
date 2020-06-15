@@ -5,8 +5,9 @@ to regularly send enviro-data using my Pimoroni Enviro+ Pi-HAT to my AIO dashboa
 python program provided by Pimoroni to display all the values nicely on it's OLED display.
 
 I kept having conflicts every time I tried to incorporate AIO into their code, so I decided to use this base code
-along side it to resolve the conflicts. Just add both the 'weather-and-light.py' and this file to your /etc/rc.local
-boot file, and you will be able to see the values both locally as well as your Adafruit IO dashboard!
+along side it to resolve the conflicts. Just add both this file to your /etc/rc.local
+boot file, along with whatever oled display code from the examples folder (I prefer the temperature-and-light), and
+you will be able to see the values both locally as well as your Adafruit IO dashboard!
 
                                                                                           ~dedSyn4ps3
 
@@ -63,14 +64,14 @@ ADAFRUIT_IO_USERNAME = 'YOUR_AIO_USERNAME'
 # Create an instance of the REST client
 aio = Client(ADAFRUIT_IO_USERNAME, ADAFRUIT_IO_KEY)
 
-try: # if we already have the feeds, assign them.
+try: # Assign feeds if they already exist
 
     temperature_feed = aio.feeds('temperature')
     humidity_feed = aio.feeds('humidity')
     pressure_feed = aio.feeds('pressure')
     altitude_feed = aio.feeds('altitude')
 
-except RequestError: # if we don't, create and assign them.
+except RequestError: # In case they don't exist
 
     temperature_feed = aio.create_feed(Feed(name='temperature'))
     humidity_feed = aio.create_feed(Feed(name='humidity'))
@@ -78,11 +79,11 @@ except RequestError: # if we don't, create and assign them.
     altitude_feed = aio.create_feed(Feed(name='altitude'))
 
 # Create busio I2C
-i2c = busio.I2C(board.SCL, board.SDA)
+i2c = busio.I2C(board.SCL, board.SDA) # Removed baudrate declaration, if needed, assign rate appropriate for your device(s)
 
-# Create BME280 object.
-bme280 = adafruit_bme280.Adafruit_BME280_I2C(i2c, address=0x76)
-bme280.sea_level_pressure = 1013.25
+# Create BME280 object
+bme280 = adafruit_bme280.Adafruit_BME280_I2C(i2c, address=0x76) # Original Adafruit example did not explicitly state the address of the sensor, which is needed to properly function
+bme280.sea_level_pressure = 1023.50 # Sea level pressure here in Ohio
 
 
 while True:
