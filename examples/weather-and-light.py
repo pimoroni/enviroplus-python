@@ -371,12 +371,12 @@ while True:
     if time_elapsed > 30:
         if min_temp is not None and max_temp is not None:
             if corr_temperature < min_temp:
-                min_temp = corr_temperature
+                min_temp = corr_temperature_f
             elif corr_temperature > max_temp:
-                max_temp = corr_temperature
+                max_temp = corr_temperature_f
         else:
-            min_temp = corr_temperature
-            max_temp = corr_temperature
+            min_temp = corr_temperature_f
+            max_temp = corr_temperature_f
 
     temp_string = f"{corr_temperature_f:.0f}°F"
     img = overlay_text(img, (68, 18), temp_string, font_lg, align_right=True)
