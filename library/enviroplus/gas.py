@@ -10,6 +10,7 @@ MICS6814_GAIN = 6.144
 
 ads1015.I2C_ADDRESS_DEFAULT = ads1015.I2C_ADDRESS_ALTERNATE
 _is_setup = False
+_is_available = False
 _adc_enabled = False
 _adc_gain = 6.148
 
@@ -41,13 +42,19 @@ ADC: {adc:05.02f} Volts
 
 
 def setup():
-    global adc, adc_type, _is_setup
+    global adc, adc_type, _is_setup, _is_available
     if _is_setup:
         return
     _is_setup = True
 
-    adc = ads1015.ADS1015(i2c_addr=0x49)
-    adc_type = adc.detect_chip_type()
+    try:
+        adc = ads1015.ADS1015(i2c_addr=0x49)
+        adc_type = adc.detect_chip_type()
+        _is_available = True
+    except IOError:
+        _is_available = False
+        return
+
     adc.set_mode('single')
     adc.set_programmable_gain(MICS6814_GAIN)
     if adc_type == 'ADS1115':
@@ -60,6 +67,11 @@ def setup():
     GPIO.setup(MICS6814_HEATER_PIN, GPIO.OUT)
     GPIO.output(MICS6814_HEATER_PIN, 1)
     atexit.register(cleanup)
+
+
+def available():
+    setup()
+    return _is_available
 
 
 def enable_adc(value=True):
@@ -81,6 +93,10 @@ def cleanup():
 def read_all():
     """Return gas resistence for oxidising, reducing and NH3"""
     setup()
+
+    if not _is_available:
+        raise RuntimeError("Gas sensor not connected.")
+
     ox = adc.get_voltage('in0/gnd')
     red = adc.get_voltage('in1/gnd')
     nh3 = adc.get_voltage('in2/gnd')
@@ -119,7 +135,6 @@ def read_oxidising():
 
     Eg chlorine, nitrous oxide
     """
-    setup()
     return read_all().oxidising
 
 
@@ -128,17 +143,14 @@ def read_reducing():
 
     Eg hydrogen, carbon monoxide
     """
-    setup()
     return read_all().reducing
 
 
 def read_nh3():
     """Return gas resistance for nh3/ammonia"""
-    setup()
     return read_all().nh3
 
 
 def read_adc():
     """Return spare ADC channel value"""
-    setup()
     return read_all().adc

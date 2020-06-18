@@ -64,6 +64,15 @@ def smbus():
 
 
 @pytest.fixture(scope='function', autouse=False)
+def mocksmbus():
+    """Mock smbus module."""
+    smbus = mock.MagicMock()
+    sys.modules['smbus'] = smbus
+    yield smbus
+    del sys.modules['smbus']
+
+
+@pytest.fixture(scope='function', autouse=False)
 def atexit():
     """Mock atexit module."""
     atexit = mock.MagicMock()
