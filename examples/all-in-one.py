@@ -198,7 +198,7 @@ try:
             try:
                 data = pms5003.read()
             except pmsReadTimeoutError:
-                logging.warn("Failed to read PMS5003")
+                logging.warning("Failed to read PMS5003")
             else:
                 data = float(data.pm_ug_per_m3(1.0))
                 display_text(variables[mode], data, unit)
@@ -209,7 +209,7 @@ try:
             try:
                 data = pms5003.read()
             except pmsReadTimeoutError:
-                logging.warn("Failed to read PMS5003")
+                logging.warning("Failed to read PMS5003")
             else:
                 data = float(data.pm_ug_per_m3(2.5))
                 display_text(variables[mode], data, unit)
@@ -220,7 +220,7 @@ try:
             try:
                 data = pms5003.read()
             except pmsReadTimeoutError:
-                logging.warn("Failed to read PMS5003")
+                logging.warning("Failed to read PMS5003")
             else:
                 data = float(data.pm_ug_per_m3(10))
                 display_text(variables[mode], data, unit)
