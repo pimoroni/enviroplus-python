@@ -26,7 +26,7 @@ logging.basicConfig(
     level=logging.INFO,
     datefmt='%Y-%m-%d %H:%M:%S')
 
-logging.info("""all-in-one.py - Displays readings from all of Enviro plus' sensors
+logging.info("""combined.py - Displays readings from all of Enviro plus' sensors
 
 Press Ctrl+C to exit!
 
@@ -172,7 +172,7 @@ def display_everything():
         variable = variables[i]
         data_value = values[variable][-1]
         unit = units[i]
-        x = x_offset + ((WIDTH / column_count) * (i / row_count))
+        x = x_offset + ((WIDTH // column_count) * (i // row_count))
         y = y_offset + ((HEIGHT / row_count) * (i % row_count))
         message = "{}: {:.1f} {}".format(variable[:4], data_value, unit)
         lim = limits[i]
