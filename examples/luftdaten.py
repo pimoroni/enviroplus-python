@@ -4,7 +4,7 @@ import requests
 import ST7735
 import time
 from bme280 import BME280
-from pms5003 import PMS5003, ReadTimeoutError
+from pms5003 import PMS5003, ReadTimeoutError, ChecksumMismatchError
 from subprocess import PIPE, Popen, check_output
 from PIL import Image, ImageDraw, ImageFont
 from fonts.ttf import RobotoMedium as UserFont
@@ -13,20 +13,26 @@ try:
     from smbus2 import SMBus
 except ImportError:
     from smbus import SMBus
+import logging
 
-print("""luftdaten.py - Reads temperature, pressure, humidity,
-PM2.5, and PM10 from Enviro plus and sends data to Luftdaten,
-the citizen science air quality project.
+logging.basicConfig(
+    format='%(asctime)s.%(msecs)03d %(levelname)-8s %(message)s',
+    level=logging.INFO,
+    datefmt='%Y-%m-%d %H:%M:%S')
 
-Note: you'll need to register with Luftdaten at:
-https://meine.luftdaten.info/ and enter your Raspberry Pi
-serial number that's displayed on the Enviro plus LCD along
-with the other details before the data appears on the
-Luftdaten map.
+logging.info("""luftdaten.py - Reads temperature, pressure, humidity,
+#PM2.5, and PM10 from Enviro plus and sends data to Luftdaten,
+#the citizen science air quality project.
 
-Press Ctrl+C to exit!
+#Note: you'll need to register with Luftdaten at:
+#https://meine.luftdaten.info/ and enter your Raspberry Pi
+#serial number that's displayed on the Enviro plus LCD along
+#with the other details before the data appears on the
+#Luftdaten map.
 
-""")
+#Press Ctrl+C to exit!
+
+#""")
 
 bus = SMBus(1)
 
@@ -63,7 +69,8 @@ def read_values():
         pm_values = pms5003.read()
         values["P2"] = str(pm_values.pm_ug_per_m3(2.5))
         values["P1"] = str(pm_values.pm_ug_per_m3(10))
-    except ReadTimeoutError:
+    except(ReadTimeoutError, ChecksumMismatchError):
+        logging.info("Failed to read PMS5003. Reseting and retrying.")
         pms5003.reset()
         pm_values = pms5003.read()
         values["P2"] = str(pm_values.pm_ug_per_m3(2.5))
@@ -117,37 +124,63 @@ def send_to_luftdaten(values, id):
 
     pm_values_json = [{"value_type": key, "value": val} for key, val in pm_values.items()]
     temp_values_json = [{"value_type": key, "value": val} for key, val in temp_values.items()]
+    resp1_exception = False
+    resp2_exception = False
+    try:
+        resp_1 = requests.post(
+            "https://api.luftdaten.info/v1/push-sensor-data/",
+            json={
+                "software_version": "enviro-plus 0.0.1",
+                "sensordatavalues": pm_values_json
+            },
+            headers={
+                "X-PIN": "1",
+                "X-Sensor": id,
+                "Content-Type": "application/json",
+                "cache-control": "no-cache"
+            },
+            timeout=5
+        )
+    except requests.exceptions.ConnectionError as e:
+        resp1_exception = True
+        logging.info('Luftdaten PM Connection Error: ' + str(e))
+    except requests.exceptions.Timeout as e:
+        resp1_exception = True
+        logging.info('Luftdaten PM Timeout Error: ' + str(e))
+    except requests.exceptions.RequestException as e:
+        resp1_exception = True
+        logging.info('Luftdaten PM Request Error: ' + str(e))
 
-    resp_1 = requests.post(
-        "https://api.luftdaten.info/v1/push-sensor-data/",
-        json={
-            "software_version": "enviro-plus 0.0.1",
-            "sensordatavalues": pm_values_json
-        },
-        headers={
-            "X-PIN": "1",
-            "X-Sensor": id,
-            "Content-Type": "application/json",
-            "cache-control": "no-cache"
-        }
-    )
+    try:        
+        resp_2 = requests.post(
+            "https://api.luftdaten.info/v1/push-sensor-data/",
+            json={
+                "software_version": "enviro-plus 0.0.1",
+                "sensordatavalues": temp_values_json
+            },
+            headers={
+                "X-PIN": "11",
+                "X-Sensor": id,
+                "Content-Type": "application/json",
+                "cache-control": "no-cache"
+            },
+            timeout=5
+        )
+    except requests.exceptions.ConnectionError as e:
+        resp2_exception = True
+        logging.info('Luftdaten Climate Connection Error: ' + str(e))
+    except requests.exceptions.Timeout as e:
+        resp2_exception = True
+        logging.info('Luftdaten Climate Timeout Error: ' + str(e))
+    except requests.exceptions.RequestException as e:
+        resp2_exception = True
+        logging.info('Luftdaten Climate Request Error: ' + str(e))
 
-    resp_2 = requests.post(
-        "https://api.luftdaten.info/v1/push-sensor-data/",
-        json={
-            "software_version": "enviro-plus 0.0.1",
-            "sensordatavalues": temp_values_json
-        },
-        headers={
-            "X-PIN": "11",
-            "X-Sensor": id,
-            "Content-Type": "application/json",
-            "cache-control": "no-cache"
-        }
-    )
-
-    if resp_1.ok and resp_2.ok:
-        return True
+    if not resp1_exception and not resp2_exception:
+        if resp_1.ok and resp_2.ok:
+            return True
+        else:
+            return False
     else:
         return False
 
@@ -166,9 +199,9 @@ HEIGHT = disp.height
 font_size = 16
 font = ImageFont.truetype(UserFont, font_size)
 
-# Display Raspberry Pi serial and Wi-Fi status
-print("Raspberry Pi serial: {}".format(get_serial_number()))
-print("Wi-Fi: {}\n".format("connected" if check_wifi() else "disconnected"))
+# Log Raspberry Pi serial and Wi-Fi status
+logging.info("Raspberry Pi serial: {}".format(get_serial_number()))
+logging.info("Wi-Fi: {}\n".format("connected" if check_wifi() else "disconnected"))
 
 time_since_update = 0
 update_time = time.time()
@@ -176,13 +209,13 @@ update_time = time.time()
 # Main loop to read data, display, and send to Luftdaten
 while True:
     try:
-        time_since_update = time.time() - update_time
         values = read_values()
-        print(values)
+        logging.info(values)
+        time_since_update = time.time() - update_time
         if time_since_update > 145:
             resp = send_to_luftdaten(values, id)
             update_time = time.time()
-            print("Response: {}\n".format("ok" if resp else "failed"))
+            logging.info("Luftdaten Response: {}\n".format("ok" if resp else "failed"))
         display_status()
     except Exception as e:
-        print(e)
+        logging.info("Main Loop Exception: " + str(e))
