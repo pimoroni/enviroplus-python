@@ -1,7 +1,7 @@
 #!/bin/bash
 
 CONFIG=/boot/config.txt
-DATESTAMP=`date "+%Y-%M-%d-%H-%M-%S"`
+DATESTAMP=`date "+%Y-%m-%d-%H-%M-%S"`
 CONFIG_BACKUP=false
 APT_HAS_UPDATED=false
 USER_HOME=/home/$SUDO_USER

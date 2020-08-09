@@ -1,6 +1,7 @@
-# Enviro+
+# Enviro+ 
 
 Designed for environmental monitoring, Enviro+ lets you measure air quality (pollutant gases and particulates), temperature, pressure, humidity, light, and noise level. Learn more - https://shop.pimoroni.com/products/enviro-plus
+
 
 [![Build Status](https://travis-ci.com/pimoroni/enviroplus-python.svg?branch=master)](https://travis-ci.com/pimoroni/enviroplus-python)
 [![Coverage Status](https://coveralls.io/repos/github/pimoroni/enviroplus-python/badge.svg?branch=master)](https://coveralls.io/github/pimoroni/enviroplus-python?branch=master)
@@ -10,6 +11,11 @@ Designed for environmental monitoring, Enviro+ lets you measure air quality (pol
 # Installing
 
 You're best using the "One-line" install method if you want all of the UART serial configuration for the PMS5003 particulate matter sensor to run automatically.
+
+**Note** The code in this repository supports both the Enviro+ and Enviro Mini boards. _The Enviro Mini board does not have the Gas sensor or the breakout for the PM sensor._
+
+![Enviro Plus pHAT](./Enviro-Plus-pHAT.jpg)
+![Enviro Mini pHAT](./Enviro-mini-pHAT.jpg)
 
 ## One-line (Installs from GitHub)
 
@@ -47,6 +53,12 @@ And install additional dependencies:
 ```
 sudo apt install python-numpy python-smbus python-pil python-setuptools
 ```
+
+## Alternate Software & User Projects
+
+* enviro monitor - https://github.com/roscoe81/enviro-monitor
+* mqtt-all - https://github.com/robmarkcole/rpi-enviro-mqtt - now upstream: [see examples/mqtt-all.py](examples/mqtt-all.py)
+* adafruit_io.py - https://github.com/dedSyn4ps3/enviroplus-python/blob/master/examples/adafruit_io.py - uses Adafruit Blinka and BME280 libraries to publish to Adafruit IO
 
 ## Help & Support
 

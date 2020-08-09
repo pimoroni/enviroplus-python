@@ -1,3 +1,15 @@
+0.0.3
+-----
+
+* Fix "self.noise_floor" bug in get_noise_profile
+
+0.0.2
+-----
+
+* Add support for extra ADC channel in Gas
+* Handle breaking change in new ltr559 library
+* Add Noise functionality
+
 0.0.1
 -----
 

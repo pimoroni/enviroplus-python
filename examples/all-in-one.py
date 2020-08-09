@@ -2,7 +2,6 @@
 
 import time
 import colorsys
-import os
 import sys
 import ST7735
 try:
@@ -72,8 +71,9 @@ def display_text(variable, data, unit):
     # Maintain length of list
     values[variable] = values[variable][1:] + [data]
     # Scale the values for the variable between 0 and 1
-    colours = [(v - min(values[variable]) + 1) / (max(values[variable])
-               - min(values[variable]) + 1) for v in values[variable]]
+    vmin = min(values[variable])
+    vmax = max(values[variable])
+    colours = [(v - vmin + 1) / (vmax - vmin + 1) for v in values[variable]]
     # Format the variable name and value
     message = "{}: {:.1f} {}".format(variable[:4], data, unit)
     logging.info(message)
@@ -81,14 +81,12 @@ def display_text(variable, data, unit):
     for i in range(len(colours)):
         # Convert the values to colours from red to blue
         colour = (1.0 - colours[i]) * 0.6
-        r, g, b = [int(x * 255.0) for x in colorsys.hsv_to_rgb(colour,
-                   1.0, 1.0)]
+        r, g, b = [int(x * 255.0) for x in colorsys.hsv_to_rgb(colour, 1.0, 1.0)]
         # Draw a 1-pixel wide rectangle of colour
-        draw.rectangle((i, top_pos, i+1, HEIGHT), (r, g, b))
+        draw.rectangle((i, top_pos, i + 1, HEIGHT), (r, g, b))
         # Draw a line graph in black
-        line_y = HEIGHT - (top_pos + (colours[i] * (HEIGHT - top_pos)))\
-                 + top_pos
-        draw.rectangle((i, line_y, i+1, line_y+1), (0, 0, 0))
+        line_y = HEIGHT - (top_pos + (colours[i] * (HEIGHT - top_pos))) + top_pos
+        draw.rectangle((i, line_y, i + 1, line_y + 1), (0, 0, 0))
     # Write the text at the top in black
     draw.text((0, 0), message, font=font, fill=(0, 0, 0))
     st7735.display(img)
@@ -200,7 +198,7 @@ try:
             try:
                 data = pms5003.read()
             except pmsReadTimeoutError:
-                logging.warn("Failed to read PMS5003")
+                logging.warning("Failed to read PMS5003")
             else:
                 data = float(data.pm_ug_per_m3(1.0))
                 display_text(variables[mode], data, unit)
@@ -211,7 +209,7 @@ try:
             try:
                 data = pms5003.read()
             except pmsReadTimeoutError:
-                logging.warn("Failed to read PMS5003")
+                logging.warning("Failed to read PMS5003")
             else:
                 data = float(data.pm_ug_per_m3(2.5))
                 display_text(variables[mode], data, unit)
@@ -222,7 +220,7 @@ try:
             try:
                 data = pms5003.read()
             except pmsReadTimeoutError:
-                logging.warn("Failed to read PMS5003")
+                logging.warning("Failed to read PMS5003")
             else:
                 data = float(data.pm_ug_per_m3(10))
                 display_text(variables[mode], data, unit)

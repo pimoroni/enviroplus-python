@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+f"Sorry! This program requires Python >= 3.6 😅"
 
 import os
 import time
@@ -109,19 +112,19 @@ def sun_moon_time(city_name, time_zone):
     if sunrise_today < local_dt < sunset_today:
         day = True
         period = sunset_today - sunrise_today
-        mid = sunrise_today + (period / 2)
+        # mid = sunrise_today + (period / 2)
         progress = local_dt - sunrise_today
 
     elif local_dt > sunset_today:
         day = False
         period = sunrise_tomorrow - sunset_today
-        mid = sunset_today + (period / 2)
+        # mid = sunset_today + (period / 2)
         progress = local_dt - sunset_today
 
     else:
         day = False
         period = sunrise_today - sunset_yesterday
-        mid = sunset_yesterday + (period / 2)
+        # mid = sunset_yesterday + (period / 2)
         progress = local_dt - sunset_yesterday
 
     # Convert time deltas to seconds
@@ -151,7 +154,7 @@ def draw_background(progress, period, day):
 
     # New image for background colour
     img = Image.new('RGBA', (WIDTH, HEIGHT), color=background)
-    draw = ImageDraw.Draw(img)
+    # draw = ImageDraw.Draw(img)
 
     # New image for sun/moon overlay
     overlay = Image.new('RGBA', (WIDTH, HEIGHT), color=(0, 0, 0, 0))
@@ -216,12 +219,12 @@ def analyse_pressure(pressure, t):
         slope = line[0][0]
         intercept = line[0][1]
         variance = numpy.var(pressure_vals)
-        residuals = numpy.var([(slope * x + intercept - y)  for x, y in zip(time_vals, pressure_vals)])
+        residuals = numpy.var([(slope * x + intercept - y) for x, y in zip(time_vals, pressure_vals)])
         r_squared = 1 - residuals / variance
 
         # Calculate change in pressure per hour
         change_per_hour = slope * 60 * 60
-        variance_per_hour = variance * 60 * 60
+        # variance_per_hour = variance * 60 * 60
 
         mean_pressure = numpy.mean(pressure_vals)
 
@@ -244,9 +247,9 @@ def analyse_pressure(pressure, t):
         change_per_hour = 0
         trend = "-"
 
-#    time.sleep(interval)
-
+    # time.sleep(interval)
     return (mean_pressure, change_per_hour, trend)
+
 
 def describe_pressure(pressure):
     """Convert pressure into barometer-type description."""
@@ -385,7 +388,7 @@ while True:
     else:
         range_string = "------"
     img = overlay_text(img, (68, 18 + spacing), range_string, font_sm, align_right=True, rectangle=True)
-    temp_icon = Image.open(path + "/icons/temperature.png")
+    temp_icon = Image.open(f"{path}/icons/temperature.png")
     img.paste(temp_icon, (margin, 18), mask=temp_icon)
 
     # Humidity
@@ -396,7 +399,7 @@ while True:
     spacing = font_lg.getsize(humidity_string)[1] + 1
     humidity_desc = describe_humidity(corr_humidity).upper()
     img = overlay_text(img, (68, 48 + spacing), humidity_desc, font_sm, align_right=True, rectangle=True)
-    humidity_icon = Image.open(path + "/icons/humidity-" + humidity_desc.lower() + ".png")
+    humidity_icon = Image.open(f"{path}/icons/humidity-{humidity_desc.lower()}.png")
     img.paste(humidity_icon, (margin, 48), mask=humidity_icon)
 
     # Light
@@ -406,7 +409,7 @@ while True:
     spacing = font_lg.getsize(light_string.replace(",", ""))[1] + 1
     light_desc = describe_light(light).upper()
     img = overlay_text(img, (WIDTH - margin - 1, 18 + spacing), light_desc, font_sm, align_right=True, rectangle=True)
-    light_icon = Image.open(path + "/icons/bulb-" + light_desc.lower() +  ".png")
+    light_icon = Image.open(f"{path}/icons/bulb-{light_desc.lower()}.png")
     img.paste(humidity_icon, (80, 18), mask=light_icon)
 
     # Pressure
@@ -418,7 +421,7 @@ while True:
     pressure_desc = describe_pressure(mean_pressure).upper()
     spacing = font_lg.getsize(pressure_string.replace(",", ""))[1] + 1
     img = overlay_text(img, (WIDTH - margin - 1, 48 + spacing), pressure_desc, font_sm, align_right=True, rectangle=True)
-    pressure_icon = Image.open(path + "/icons/weather-" + pressure_desc.lower() +  ".png")
+    pressure_icon = Image.open(f"{path}/icons/weather-{pressure_desc.lower()}.png")
     img.paste(pressure_icon, (80, 48), mask=pressure_icon)
 
     # Display image

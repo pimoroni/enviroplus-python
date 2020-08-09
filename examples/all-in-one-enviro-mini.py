@@ -110,10 +110,7 @@ light = 1
 variables = ["temperature",
              "pressure",
              "humidity",
-             "light",
-             "oxidised",
-             "reduced",
-             "nh3"]
+             "light"]
 
 values = {}
 
@@ -162,27 +159,6 @@ try:
                 data = ltr559.get_lux()
             else:
                 data = 1
-            display_text(variables[mode], data, unit)
-
-        if mode == 4:
-            # variable = "oxidised"
-            unit = "kO"
-            data = gas.read_all()
-            data = data.oxidising / 1000
-            display_text(variables[mode], data, unit)
-
-        if mode == 5:
-            # variable = "reduced"
-            unit = "kO"
-            data = gas.read_all()
-            data = data.reducing / 1000
-            display_text(variables[mode], data, unit)
-
-        if mode == 6:
-            # variable = "nh3"
-            unit = "kO"
-            data = gas.read_all()
-            data = data.nh3 / 1000
             display_text(variables[mode], data, unit)
 
 # Exit cleanly

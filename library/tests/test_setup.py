@@ -1,32 +1,11 @@
-import sys
-import mock
-from i2cdevice import MockSMBus
-
-
-class SMBusFakeDevice(MockSMBus):
-    def __init__(self, i2c_bus):
-        MockSMBus.__init__(self, i2c_bus)
-        self.regs[0x00:0x01] = 0x0f, 0x00
-
-
-def test_gas_setup():
-    sys.modules['RPi'] = mock.Mock()
-    sys.modules['RPi.GPIO'] = mock.Mock()
-    smbus = mock.Mock()
-    smbus.SMBus = SMBusFakeDevice
-    sys.modules['smbus'] = smbus
+def test_gas_setup(GPIO, smbus):
     from enviroplus import gas
     gas._is_setup = False
     gas.setup()
     gas.setup()
 
 
-def test_gas_read_all():
-    sys.modules['RPi'] = mock.Mock()
-    sys.modules['RPi.GPIO'] = mock.Mock()
-    smbus = mock.Mock()
-    smbus.SMBus = SMBusFakeDevice
-    sys.modules['smbus'] = smbus
+def test_gas_read_all(GPIO, smbus):
     from enviroplus import gas
     gas._is_setup = False
     result = gas.read_all()
@@ -43,12 +22,7 @@ def test_gas_read_all():
     assert "Oxidising" in str(result)
 
 
-def test_gas_read_each():
-    sys.modules['RPi'] = mock.Mock()
-    sys.modules['RPi.GPIO'] = mock.Mock()
-    smbus = mock.Mock()
-    smbus.SMBus = SMBusFakeDevice
-    sys.modules['smbus'] = smbus
+def test_gas_read_each(GPIO, smbus):
     from enviroplus import gas
     gas._is_setup = False
 
@@ -57,12 +31,7 @@ def test_gas_read_each():
     assert int(gas.read_nh3()) == 16813
 
 
-def test_gas_read_adc():
-    sys.modules['RPi'] = mock.Mock()
-    sys.modules['RPi.GPIO'] = mock.Mock()
-    smbus = mock.Mock()
-    smbus.SMBus = SMBusFakeDevice
-    sys.modules['smbus'] = smbus
+def test_gas_read_adc(GPIO, smbus):
     from enviroplus import gas
     gas._is_setup = False
 
@@ -71,28 +40,27 @@ def test_gas_read_adc():
     assert gas.read_adc() == 0.255
 
 
-def test_gas_read_adc_default_gain():
-    sys.modules['RPi'] = mock.Mock()
-    sys.modules['RPi.GPIO'] = mock.Mock()
-    smbus = mock.Mock()
-    smbus.SMBus = SMBusFakeDevice
-    sys.modules['smbus'] = smbus
+def test_gas_read_adc_default_gain(GPIO, smbus):
     from enviroplus import gas
     gas._is_setup = False
 
     gas.enable_adc(True)
-    assert gas.read_adc() == 0.255
+    gas.set_adc_gain(gas.MICS6814_GAIN)
+    assert gas.read_adc() == 0.765
 
 
-def test_gas_read_adc_str():
-    sys.modules['RPi'] = mock.Mock()
-    sys.modules['RPi.GPIO'] = mock.Mock()
-    smbus = mock.Mock()
-    smbus.SMBus = SMBusFakeDevice
-    sys.modules['smbus'] = smbus
+def test_gas_read_adc_str(GPIO, smbus):
     from enviroplus import gas
     gas._is_setup = False
 
     gas.enable_adc(True)
     gas.set_adc_gain(2.048)
     assert 'ADC' in str(gas.read_all())
+
+
+def test_gas_cleanup(GPIO, smbus):
+    from enviroplus import gas
+
+    gas.cleanup()
+
+    GPIO.output.assert_called_with(gas.MICS6814_HEATER_PIN, 0)
