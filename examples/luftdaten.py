@@ -124,10 +124,12 @@ def send_to_luftdaten(values, id):
 
     pm_values_json = [{"value_type": key, "value": val} for key, val in pm_values.items()]
     temp_values_json = [{"value_type": key, "value": val} for key, val in temp_values.items()]
-    resp1_exception = False
-    resp2_exception = False
+
+    resp_pm = None
+    resp_bmp = None
+    
     try:
-        resp_1 = requests.post(
+        resp_pm = requests.post(
             "https://api.luftdaten.info/v1/push-sensor-data/",
             json={
                 "software_version": "enviro-plus 0.0.1",
@@ -142,17 +144,14 @@ def send_to_luftdaten(values, id):
             timeout=5
         )
     except requests.exceptions.ConnectionError as e:
-        resp1_exception = True
-        logging.info('Luftdaten PM Connection Error: ' + str(e))
+        logging.warning('Luftdaten PM Connection Error: {}'.format(e))
     except requests.exceptions.Timeout as e:
-        resp1_exception = True
-        logging.info('Luftdaten PM Timeout Error: ' + str(e))
+        logging.warning('Luftdaten PM Timeout Error: {}'.format(e))
     except requests.exceptions.RequestException as e:
-        resp1_exception = True
-        logging.info('Luftdaten PM Request Error: ' + str(e))
+        logging.warning('Luftdaten PM Request Error: {}'.format(e))
 
     try:        
-        resp_2 = requests.post(
+        resp_bmp = requests.post(
             "https://api.luftdaten.info/v1/push-sensor-data/",
             json={
                 "software_version": "enviro-plus 0.0.1",
@@ -167,19 +166,17 @@ def send_to_luftdaten(values, id):
             timeout=5
         )
     except requests.exceptions.ConnectionError as e:
-        resp2_exception = True
-        logging.info('Luftdaten Climate Connection Error: ' + str(e))
+        logging.warning('Luftdaten Climate Connection Error: {}'.format(e))
     except requests.exceptions.Timeout as e:
-        resp2_exception = True
-        logging.info('Luftdaten Climate Timeout Error: ' + str(e))
+        logging.warning('Luftdaten Climate Timeout Error: {}'.format(e))
     except requests.exceptions.RequestException as e:
-        resp2_exception = True
-        logging.info('Luftdaten Climate Request Error: ' + str(e))
+        logging.warning('Luftdaten Climate Request Error: {}'.format(e))
 
-    if not resp1_exception and not resp2_exception:
-        if resp_1.ok and resp_2.ok:
+    if resp_pm is not None and resp_bmp is not None:
+        if resp_pm.ok and resp_bmp.ok:
             return True
         else:
+            logging.warning('Luftdaten Error. PM: {}, Climate: {}'.format(resp_pm.reason, resp_bmp.reason))
             return False
     else:
         return False
@@ -210,12 +207,14 @@ update_time = time.time()
 while True:
     try:
         values = read_values()
-        logging.info(values)
         time_since_update = time.time() - update_time
         if time_since_update > 145:
-            resp = send_to_luftdaten(values, id)
+            logging.info(values)
             update_time = time.time()
-            logging.info("Luftdaten Response: {}\n".format("ok" if resp else "failed"))
+            if send_to_luftdaten(values, id):
+                logging.info("Luftdaten Response: OK")
+            else:
+                logging.warning("Luftdaten Response: Failed")
         display_status()
     except Exception as e:
-        logging.info("Main Loop Exception: " + str(e))
+        logging.warning('Main Loop Exception: {}'.format(e))
