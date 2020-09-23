@@ -93,8 +93,8 @@ user_check
 apt_pkg_install python-configparser
 
 CONFIG_VARS=`python - <<EOF
-from configparser import ConfigParser
-c = ConfigParser()
+from backports import configparser
+c = configparser.ConfigParser()
 c.read('library/setup.cfg')
 p = dict(c['pimoroni'])
 # Convert multi-line config entries into bash arrays
