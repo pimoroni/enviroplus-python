@@ -1,3 +1,6 @@
+import pytest
+
+
 def test_gas_setup(GPIO, smbus):
     from enviroplus import gas
     gas._is_setup = False
@@ -10,6 +13,9 @@ def test_gas_unavailable(GPIO, mocksmbus):
     mocksmbus.SMBus(1).read_i2c_block_data.side_effect = IOError("Oh noes!")
     gas._is_setup = False
     assert gas.available() == False
+
+    with pytest.raises(RuntimeError):
+        gas.read_all()
 
 
 def test_gas_available(GPIO, mocksmbus):
