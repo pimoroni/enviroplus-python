@@ -59,16 +59,16 @@ def read_bme280(bme280):
     cpu_temp = get_cpu_temperature()
     raw_temp = bme280.get_temperature()  # float
     comp_temp = raw_temp - ((cpu_temp - raw_temp) / comp_factor)
-    values["temperature"] = int(comp_temp)
+    values["temperature"] = float(comp_temp)
     values["pressure"] = round(
-        int(bme280.get_pressure() * 100), -1
+        float(bme280.get_pressure() * 100), -1
     )  # round to nearest 10
-    values["humidity"] = int(bme280.get_humidity())
+    values["humidity"] = float(bme280.get_humidity())
     data = gas.read_all()
-    values["oxidised"] = int(data.oxidising / 1000)
-    values["reduced"] = int(data.reducing / 1000)
-    values["nh3"] = int(data.nh3 / 1000)
-    values["lux"] = int(ltr559.get_lux())
+    values["oxidised"] = float(data.oxidising / 1000)
+    values["reduced"] = float(data.reducing / 1000)
+    values["nh3"] = float(data.nh3 / 1000)
+    values["lux"] = float(ltr559.get_lux())
     return values
 
 
