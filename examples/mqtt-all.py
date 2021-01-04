@@ -200,7 +200,8 @@ def main():
     )
 
     mqtt_client = mqtt.Client(client_id=device_id)
-    mqtt_client.username_pw_set(args.username, args.password)
+    if username and password:
+        mqtt_client.username_pw_set(args.username, args.password)
     mqtt_client.on_connect = on_connect
     mqtt_client.on_publish = on_publish
     mqtt_client.connect(args.broker, port=args.port)
