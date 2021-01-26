@@ -32,6 +32,6 @@ jobs:
         working-directory: library
         run: |
           python -m pip install coveralls
-          coveralls --service=gihtub
+          coveralls --service=github
         if: ${{ matrix.python == '3.8' }}
 
