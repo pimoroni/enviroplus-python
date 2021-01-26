@@ -60,6 +60,8 @@ sudo apt install python-numpy python-smbus python-pil python-setuptools
 * mqtt-all - https://github.com/robmarkcole/rpi-enviro-mqtt - now upstream: [see examples/mqtt-all.py](examples/mqtt-all.py)
 * adafruit_io.py - https://github.com/dedSyn4ps3/enviroplus-python/blob/master/examples/adafruit_io.py - uses Adafruit Blinka and BME280 libraries to publish to Adafruit IO
 * enviroplus_exporter - https://github.com/tijmenvandenbrink/enviroplus_exporter - Prometheus exporter (with added support for Luftdaten and InfluxDB Cloud)
+* homekit-enviroplus - https://github.com/sighmon/homekit-enviroplus - An Apple HomeKit accessory for the Pimoroni Enviro+
+* go-enviroplus - https://github.com/rubiojr/go-enviroplus - Go modules to read Enviro+ sensors
 
 ## Help & Support
 
