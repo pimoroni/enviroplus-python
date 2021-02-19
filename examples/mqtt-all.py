@@ -8,6 +8,7 @@ Example run: python3 mqtt-all.py --broker 192.168.1.164 --topic enviro
 import argparse
 import ST7735
 import time
+import ssl
 from bme280 import BME280
 from pms5003 import PMS5003, ReadTimeoutError, SerialTimeoutError
 from enviroplus import gas
@@ -38,6 +39,9 @@ DEFAULT_MQTT_BROKER_IP = "localhost"
 DEFAULT_MQTT_BROKER_PORT = 1883
 DEFAULT_MQTT_TOPIC = "enviroplus"
 DEFAULT_READ_INTERVAL = 5
+DEFAULT_TLS_MODE = False
+DEFAULT_USERNAME = None
+DEFAULT_PASSWORD = None
 
 # mqtt callbacks
 def on_connect(client, userdata, flags, rc):
@@ -165,6 +169,24 @@ def main():
         type=int,
         help="the read interval in seconds",
     )
+    parser.add_argument(
+        "--tls",
+        default=DEFAULT_TLS_MODE,
+        type=bool,
+        help="enable TLS"
+    )
+    parser.add_argument(
+        "--username",
+        default=DEFAULT_USERNAME,
+        type=str,
+        help="mqtt username"
+    )
+    parser.add_argument(
+        "--password",
+        default=DEFAULT_PASSWORD,
+        type=str,
+        help="mqtt password"
+    )
     args = parser.parse_args()
 
     # Raspberry Pi ID
@@ -178,6 +200,9 @@ def main():
     client_id: {device_id}
     port: {args.port}
     topic: {args.topic}
+    tls: {args.tls}
+    username: {args.username}
+    password: {args.password}
 
     Press Ctrl+C to exit!
 
@@ -187,6 +212,13 @@ def main():
     mqtt_client = mqtt.Client(client_id=device_id)
     mqtt_client.on_connect = on_connect
     mqtt_client.on_publish = on_publish
+
+    if args.tls is True:
+        mqtt_client.tls_set(tls_version=ssl.PROTOCOL_TLSv1_2)
+
+    if args.username is not None:
+        mqtt_client.username_pw_set(args.username, password=args.password)
+
     mqtt_client.connect(args.broker, port=args.port)
 
     bus = SMBus(1)
