@@ -172,7 +172,7 @@ def main():
     parser.add_argument(
         "--tls",
         default=DEFAULT_TLS_MODE,
-        type=bool,
+        action='store_true',
         help="enable TLS"
     )
     parser.add_argument(
