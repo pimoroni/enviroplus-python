@@ -1,7 +1,7 @@
 """
 Run mqtt broker on localhost: sudo apt-get install mosquitto mosquitto-clients
 
-Example run: python3 mqtt-all.py --broker 192.168.1.164 --topic enviro
+Example run: python3 mqtt-all.py --broker 192.168.1.164 --topic enviro --username xxx --password xxxx
 """
 #!/usr/bin/env python3
 
@@ -165,6 +165,19 @@ def main():
         type=int,
         help="the read interval in seconds",
     )
+    parser.add_argument(
+        "--username",
+        default=None,
+        type=str,
+        help="mqtt username",
+    )
+    parser.add_argument(
+        "--password",
+        default=None,
+        type=str,
+        help="mqtt password",
+    )
+
     args = parser.parse_args()
 
     # Raspberry Pi ID
@@ -178,6 +191,8 @@ def main():
     client_id: {device_id}
     port: {args.port}
     topic: {args.topic}
+    username: {args.username}
+    password: {args.password}
 
     Press Ctrl+C to exit!
 
@@ -185,6 +200,8 @@ def main():
     )
 
     mqtt_client = mqtt.Client(client_id=device_id)
+    if args.username and args.password:
+        mqtt_client.username_pw_set(args.username, args.password)
     mqtt_client.on_connect = on_connect
     mqtt_client.on_publish = on_publish
     mqtt_client.connect(args.broker, port=args.port)
