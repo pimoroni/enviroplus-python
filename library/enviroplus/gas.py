@@ -41,15 +41,19 @@ ADC: {adc:05.02f} Volts
 
 
 def setup():
-    global adc, _is_setup
+    global adc, adc_type, _is_setup
     if _is_setup:
         return
     _is_setup = True
 
     adc = ads1015.ADS1015(i2c_addr=0x49)
+    adc_type = adc.detect_chip_type()
     adc.set_mode('single')
     adc.set_programmable_gain(MICS6814_GAIN)
-    adc.set_sample_rate(1600)
+    if adc_type == 'ADS1115':
+        adc.set_sample_rate(128)
+    else:
+        adc.set_sample_rate(1600)
 
     GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BCM)
