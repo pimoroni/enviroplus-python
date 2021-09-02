@@ -1,3 +1,9 @@
+0.0.4
+-----
+
+* Add support for ads1015 >= v0.0.7 (ADS1115 ADCs)
+* Packaging tweaks
+
 0.0.3
 -----
 
