@@ -35,7 +35,7 @@ curl -sSL https://get.pimoroni.com/enviroplus | bash
 
 ## Or... Install from PyPi and configure manually:
 
-* Run `sudo pip install enviroplus`
+* Run `sudo python3 -m pip install enviroplus`
 
 **Note** this wont perform any of the required configuration changes on your Pi, you may additionally need to:
 
@@ -70,6 +70,12 @@ sudo apt install python-numpy python-smbus python-pil python-setuptools
 * Discord - https://discord.gg/hr93ByC
 
 # Changelog
+
+0.0.5
+-----
+
+* Drop Python 2.x support
+
 0.0.4
 -----
 

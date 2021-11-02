@@ -139,14 +139,6 @@ printf "$LIBRARY_NAME $LIBRARY_VERSION Python Library: Installer\n\n"
 
 cd library
 
-printf "Installing for Python 2..\n"
-apt_pkg_install "${PY2_DEPS[@]}"
-python setup.py install > /dev/null
-if [ $? -eq 0 ]; then
-	success "Done!\n"
-	echo "pip uninstall $LIBRARY_NAME" >> $UNINSTALLER
-fi
-
 if [ -f "/usr/bin/python3" ]; then
 	printf "Installing for Python 3..\n"
 	apt_pkg_install "${PY3_DEPS[@]}"
@@ -155,6 +147,9 @@ if [ -f "/usr/bin/python3" ]; then
 		success "Done!\n"
 		echo "pip3 uninstall $LIBRARY_NAME" >> $UNINSTALLER
 	fi
+else
+	printf "/usr/bin/python3 not found. Unable to install!\n"
+	exit 1
 fi
 
 cd $WD
