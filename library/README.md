@@ -1,4 +1,4 @@
-# Enviro+ 
+# Enviro+
 
 Designed for environmental monitoring, Enviro+ lets you measure air quality (pollutant gases and particulates), temperature, pressure, humidity, light, and noise level. Learn more - https://shop.pimoroni.com/products/enviro-plus
 
@@ -70,7 +70,6 @@ sudo apt install python-numpy python-smbus python-pil python-setuptools
 * Discord - https://discord.gg/hr93ByC
 
 # Changelog
-
 0.0.5
 -----
 
