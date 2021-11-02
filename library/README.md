@@ -75,6 +75,7 @@ sudo apt install python-numpy python-smbus python-pil python-setuptools
 -----
 
 * Drop Python 2.x support
+* Add "available()" method for gas sensor
 
 0.0.4
 -----
