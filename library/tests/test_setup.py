@@ -18,7 +18,7 @@ def test_gas_unavailable(GPIO, mocksmbus):
         gas.read_all()
 
 
-def test_gas_available(GPIO, mocksmbus):
+def test_gas_available(GPIO, smbus_notimeout):
     from enviroplus import gas
     gas._is_setup = False
     assert gas.available() == True

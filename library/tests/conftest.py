@@ -14,6 +14,12 @@ class SMBusFakeDevice(MockSMBus):
         self.regs[0x00:0x01] = 0x0f, 0x00
 
 
+class SMBusFakeDeviceNoTimeout(MockSMBus):
+    def __init__(self, i2c_bus):
+        MockSMBus.__init__(self, i2c_bus)
+        self.regs[0x00:0x01] = 0x0f, 0x80
+
+
 @pytest.fixture(scope='function', autouse=True)
 def cleanup():
     yield None
@@ -58,6 +64,16 @@ def smbus():
     """Mock smbus module."""
     smbus = mock.MagicMock()
     smbus.SMBus = SMBusFakeDevice
+    sys.modules['smbus'] = smbus
+    yield smbus
+    del sys.modules['smbus']
+
+
+@pytest.fixture(scope='function', autouse=False)
+def smbus_notimeout():
+    """Mock smbus module."""
+    smbus = mock.MagicMock()
+    smbus.SMBus = SMBusFakeDeviceNoTimeout
     sys.modules['smbus'] = smbus
     yield smbus
     del sys.modules['smbus']
