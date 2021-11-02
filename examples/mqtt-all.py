@@ -1,9 +1,9 @@
+#!/usr/bin/env python3
 """
 Run mqtt broker on localhost: sudo apt-get install mosquitto mosquitto-clients
 
 Example run: python3 mqtt-all.py --broker 192.168.1.164 --topic enviro --username xxx --password xxxx
 """
-#!/usr/bin/env python3
 
 import argparse
 import ST7735
@@ -42,6 +42,7 @@ DEFAULT_READ_INTERVAL = 5
 DEFAULT_TLS_MODE = False
 DEFAULT_USERNAME = None
 DEFAULT_PASSWORD = None
+
 
 # mqtt callbacks
 def on_connect(client, userdata, flags, rc):
@@ -99,7 +100,7 @@ def get_cpu_temperature():
         ["vcgencmd", "measure_temp"], stdout=PIPE, universal_newlines=True
     )
     output, _error = process.communicate()
-    return float(output[output.index("=") + 1 : output.rindex("'")])
+    return float(output[output.index("=") + 1:output.rindex("'")])
 
 
 # Get Raspberry Pi serial number to use as ID
@@ -240,7 +241,7 @@ def main():
     HAS_PMS = False
     try:
         pms5003 = PMS5003()
-        pm_values = pms5003.read()
+        _ = pms5003.read()
         HAS_PMS = True
         print("PMS5003 sensor is connected")
     except SerialTimeoutError:

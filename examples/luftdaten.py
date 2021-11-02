@@ -127,7 +127,7 @@ def send_to_luftdaten(values, id):
 
     resp_pm = None
     resp_bmp = None
-    
+
     try:
         resp_pm = requests.post(
             "https://api.luftdaten.info/v1/push-sensor-data/",
@@ -150,7 +150,7 @@ def send_to_luftdaten(values, id):
     except requests.exceptions.RequestException as e:
         logging.warning('Luftdaten PM Request Error: {}'.format(e))
 
-    try:        
+    try:
         resp_bmp = requests.post(
             "https://api.luftdaten.info/v1/push-sensor-data/",
             json={
