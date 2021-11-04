@@ -184,5 +184,6 @@ if [ -d "examples" ]; then
 fi
 
 success "\nAll done!"
-inform "If this is your first time installing you should reboot for hardware changes to take effect.\n"
+warning "If this is your first time installing you should --reboot-- for hardware changes to take effect.\n"
+warning "This library is installed for Python 3 *only* make sure to use \"python3\" when running examples.\n"
 inform "Find uninstall steps in $UNINSTALLER\n"

@@ -17,6 +17,8 @@ You're best using the "One-line" install method if you want all of the UART seri
 ![Enviro Plus pHAT](./Enviro-Plus-pHAT.jpg)
 ![Enviro Mini pHAT](./Enviro-mini-pHAT.jpg)
 
+:warning: This library now supports Python 3 only, Python 2 is EOL - https://www.python.org/doc/sunset-python-2/
+
 ## One-line (Installs from GitHub)
 
 ```
