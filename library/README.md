@@ -17,8 +17,6 @@ You're best using the "One-line" install method if you want all of the UART seri
 ![Enviro Plus pHAT](./Enviro-Plus-pHAT.jpg)
 ![Enviro Mini pHAT](./Enviro-mini-pHAT.jpg)
 
-:warning: This library now supports Python 3 only, Python 2 is EOL - https://www.python.org/doc/sunset-python-2/
-
 ## One-line (Installs from GitHub)
 
 ```
@@ -53,7 +51,7 @@ And if you're using a PMS5003 sensor you will need to:
 And install additional dependencies:
 
 ```
-sudo apt install python3-numpy python3-smbus python3-pil python3-setuptools
+sudo apt install python-numpy python-smbus python-pil python-setuptools
 ```
 
 ## Alternate Software & User Projects
@@ -70,3 +68,33 @@ sudo apt install python3-numpy python3-smbus python3-pil python3-setuptools
 * GPIO Pinout - https://pinout.xyz/pinout/enviro_plus
 * Support forums - http://forums.pimoroni.com/c/support
 * Discord - https://discord.gg/hr93ByC
+
+# Changelog
+0.0.5
+-----
+
+* Drop Python 2.x support
+* Add "available()" method for gas sensor
+
+0.0.4
+-----
+
+* Add support for ads1015 >= v0.0.7 (ADS1115 ADCs)
+* Packaging tweaks
+
+0.0.3
+-----
+
+* Fix "self.noise_floor" bug in get_noise_profile
+
+0.0.2
+-----
+
+* Add support for extra ADC channel in Gas
+* Handle breaking change in new ltr559 library
+* Add Noise functionality
+
+0.0.1
+-----
+
+* Initial Release

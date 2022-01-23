@@ -12,7 +12,7 @@ except ImportError:
     import ltr559
 
 from bme280 import BME280
-from pms5003 import PMS5003, ReadTimeoutError as pmsReadTimeoutError
+from pms5003 import PMS5003, ReadTimeoutError as pmsReadTimeoutError, SerialTimeoutError
 from enviroplus import gas
 from subprocess import PIPE, Popen
 from PIL import Image
@@ -26,7 +26,7 @@ logging.basicConfig(
     level=logging.INFO,
     datefmt='%Y-%m-%d %H:%M:%S')
 
-logging.info("""all-in-one.py - Displays readings from all of Enviro plus' sensors
+logging.info("""combined.py - Displays readings from all of Enviro plus' sensors
 
 Press Ctrl+C to exit!
 
@@ -172,7 +172,7 @@ def display_everything():
         variable = variables[i]
         data_value = values[variable][-1]
         unit = units[i]
-        x = x_offset + ((WIDTH / column_count) * (i / row_count))
+        x = x_offset + ((WIDTH // column_count) * (i // row_count))
         y = y_offset + ((HEIGHT / row_count) * (i % row_count))
         message = "{}: {:.1f} {}".format(variable[:4], data_value, unit)
         lim = limits[i]
@@ -276,7 +276,7 @@ def main():
                 try:
                     data = pms5003.read()
                 except pmsReadTimeoutError:
-                    logging.warn("Failed to read PMS5003")
+                    logging.warning("Failed to read PMS5003")
                 else:
                     data = float(data.pm_ug_per_m3(1.0))
                     display_text(variables[mode], data, unit)
@@ -287,7 +287,7 @@ def main():
                 try:
                     data = pms5003.read()
                 except pmsReadTimeoutError:
-                    logging.warn("Failed to read PMS5003")
+                    logging.warning("Failed to read PMS5003")
                 else:
                     data = float(data.pm_ug_per_m3(2.5))
                     display_text(variables[mode], data, unit)
@@ -298,7 +298,7 @@ def main():
                 try:
                     data = pms5003.read()
                 except pmsReadTimeoutError:
-                    logging.warn("Failed to read PMS5003")
+                    logging.warning("Failed to read PMS5003")
                 else:
                     data = float(data.pm_ug_per_m3(10))
                     display_text(variables[mode], data, unit)
@@ -331,8 +331,8 @@ def main():
                 pms_data = None
                 try:
                     pms_data = pms5003.read()
-                except pmsReadTimeoutError:
-                    logging.warn("Failed to read PMS5003")
+                except (SerialTimeoutError, pmsReadTimeoutError):
+                    logging.warning("Failed to read PMS5003")
                 else:
                     save_data(7, float(pms_data.pm_ug_per_m3(1.0)))
                     save_data(8, float(pms_data.pm_ug_per_m3(2.5)))

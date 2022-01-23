@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+f"Sorry! This program requires Python >= 3.6 😅"
 
 import os
 import time
