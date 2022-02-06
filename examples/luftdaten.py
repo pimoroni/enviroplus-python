@@ -130,7 +130,7 @@ def send_to_luftdaten(values, id):
 
     try:
         resp_pm = requests.post(
-            "https://api.luftdaten.info/v1/push-sensor-data/",
+            "https://api.sensor.community/v1/push-sensor-data/",
             json={
                 "software_version": "enviro-plus 0.0.1",
                 "sensordatavalues": pm_values_json
@@ -144,15 +144,15 @@ def send_to_luftdaten(values, id):
             timeout=5
         )
     except requests.exceptions.ConnectionError as e:
-        logging.warning('Luftdaten PM Connection Error: {}'.format(e))
+        logging.warning('Sensor.Community (Luftdaten) PM Connection Error: {}'.format(e))
     except requests.exceptions.Timeout as e:
-        logging.warning('Luftdaten PM Timeout Error: {}'.format(e))
+        logging.warning('Sensor.Community (Luftdaten) PM Timeout Error: {}'.format(e))
     except requests.exceptions.RequestException as e:
-        logging.warning('Luftdaten PM Request Error: {}'.format(e))
+        logging.warning('Sensor.Community (Luftdaten) PM Request Error: {}'.format(e))
 
     try:
         resp_bmp = requests.post(
-            "https://api.luftdaten.info/v1/push-sensor-data/",
+            "https://api.sensor.community/v1/push-sensor-data/",
             json={
                 "software_version": "enviro-plus 0.0.1",
                 "sensordatavalues": temp_values_json
@@ -166,11 +166,11 @@ def send_to_luftdaten(values, id):
             timeout=5
         )
     except requests.exceptions.ConnectionError as e:
-        logging.warning('Luftdaten Climate Connection Error: {}'.format(e))
+        logging.warning('Sensor.Community (Luftdaten) Climate Connection Error: {}'.format(e))
     except requests.exceptions.Timeout as e:
-        logging.warning('Luftdaten Climate Timeout Error: {}'.format(e))
+        logging.warning('Sensor.Community (Luftdaten) Climate Timeout Error: {}'.format(e))
     except requests.exceptions.RequestException as e:
-        logging.warning('Luftdaten Climate Request Error: {}'.format(e))
+        logging.warning('Sensor.Community (Luftdaten) Climate Request Error: {}'.format(e))
 
     if resp_pm is not None and resp_bmp is not None:
         if resp_pm.ok and resp_bmp.ok:
