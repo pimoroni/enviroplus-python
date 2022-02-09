@@ -13,7 +13,7 @@ UNSTABLE=false
 CODENAME=`lsb_release -sc`
 
 if [[ $CODENAME == "bullseye" ]]; then
-	bash ./install-bullseye.sh
+	bash ./install-bullseye.sh $@
 	exit $?
 fi
 
