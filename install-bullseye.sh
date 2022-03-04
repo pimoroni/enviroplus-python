@@ -6,7 +6,7 @@ APT_HAS_UPDATED=false
 USER_HOME=/home/$SUDO_USER
 RESOURCES_TOP_DIR=$USER_HOME/Pimoroni
 WD=`pwd`
-USAGE="sudo ./install.sh (--unstable)"
+USAGE="sudo $0 (--unstable)"
 POSITIONAL_ARGS=()
 UNSTABLE=false
 PYTHON="/usr/bin/python3"
@@ -21,7 +21,7 @@ distro_check() {
 
 user_check() {
 	if [ $(id -u) -ne 0 ]; then
-		printf "Script must be run as root. Try 'sudo ./install.sh'\n"
+		printf "Script must be run as root. Try 'sudo $0'\n"
 		exit 1
 	fi
 }
