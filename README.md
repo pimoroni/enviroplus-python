@@ -2,7 +2,6 @@
 
 Designed for environmental monitoring, Enviro+ lets you measure air quality (pollutant gases and particulates), temperature, pressure, humidity, light, and noise level. Learn more - https://shop.pimoroni.com/products/enviro-plus
 
-
 [![Build Status](https://travis-ci.com/pimoroni/enviroplus-python.svg?branch=master)](https://travis-ci.com/pimoroni/enviroplus-python)
 [![Coverage Status](https://coveralls.io/repos/github/pimoroni/enviroplus-python/badge.svg?branch=master)](https://coveralls.io/github/pimoroni/enviroplus-python?branch=master)
 [![PyPi Package](https://img.shields.io/pypi/v/enviroplus.svg)](https://pypi.python.org/pypi/enviroplus)
@@ -10,7 +9,7 @@ Designed for environmental monitoring, Enviro+ lets you measure air quality (pol
 
 # Installing
 
-You're best using the "One-line" install method if you want all of the UART serial configuration for the PMS5003 particulate matter sensor to run automatically.
+You are best using the "One-line" install method if you want all of the UART serial configuration for the PMS5003 particulate matter sensor to run automatically.
 
 **Note** The code in this repository supports both the Enviro+ and Enviro Mini boards. _The Enviro Mini board does not have the Gas sensor or the breakout for the PM sensor._
 
@@ -21,7 +20,7 @@ You're best using the "One-line" install method if you want all of the UART seri
 
 ## One-line (Installs from GitHub)
 
-```
+```bash
 curl -sSL https://get.pimoroni.com/enviroplus | bash
 ```
 
@@ -33,13 +32,13 @@ curl -sSL https://get.pimoroni.com/enviroplus | bash
 * `cd enviroplus-python`
 * `sudo ./install.sh`
 
-**Note** Raspbian Lite users may first need to install git: `sudo apt install git`
+**Note** Raspbian/Raspberry Pi OS Lite users may first need to install git: `sudo apt install git`
 
 ## Or... Install from PyPi and configure manually:
 
 * Run `sudo python3 -m pip install enviroplus`
 
-**Note** this wont perform any of the required configuration changes on your Pi, you may additionally need to:
+**Note** this will not perform any of the required configuration changes on your Pi, you may additionally need to:
 
 * Enable i2c: `raspi-config nonint do_i2c 0`
 * Enable SPI: `raspi-config nonint do_spi 0`
@@ -52,7 +51,7 @@ And if you're using a PMS5003 sensor you will need to:
 
 And install additional dependencies:
 
-```
+```bash
 sudo apt install python3-numpy python3-smbus python3-pil python3-setuptools
 ```
 
@@ -64,9 +63,10 @@ sudo apt install python3-numpy python3-smbus python3-pil python3-setuptools
 * enviroplus_exporter - https://github.com/tijmenvandenbrink/enviroplus_exporter - Prometheus exporter (with added support for Luftdaten and InfluxDB Cloud)
 * homekit-enviroplus - https://github.com/sighmon/homekit-enviroplus - An Apple HomeKit accessory for the Pimoroni Enviro+
 * go-enviroplus - https://github.com/rubiojr/go-enviroplus - Go modules to read Enviro+ sensors
+* homebridge-enviroplus - https://github.com/mhawkshaw/homebridge-enviroplus - a Homebridge plugin to add the Enviro+ to HomeKit via Homebridge
 
 ## Help & Support
 
 * GPIO Pinout - https://pinout.xyz/pinout/enviro_plus
-* Support forums - http://forums.pimoroni.com/c/support
+* Support forums - https://forums.pimoroni.com/c/support
 * Discord - https://discord.gg/hr93ByC
