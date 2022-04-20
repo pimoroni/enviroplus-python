@@ -275,7 +275,7 @@ def main():
                 unit = "ug/m3"
                 try:
                     data = pms5003.read()
-                except pmsReadTimeoutError:
+                except (SerialTimeoutError, pmsReadTimeoutError):
                     logging.warning("Failed to read PMS5003")
                 else:
                     data = float(data.pm_ug_per_m3(1.0))
@@ -286,7 +286,7 @@ def main():
                 unit = "ug/m3"
                 try:
                     data = pms5003.read()
-                except pmsReadTimeoutError:
+                except (SerialTimeoutError, pmsReadTimeoutError):
                     logging.warning("Failed to read PMS5003")
                 else:
                     data = float(data.pm_ug_per_m3(2.5))
@@ -297,7 +297,7 @@ def main():
                 unit = "ug/m3"
                 try:
                     data = pms5003.read()
-                except pmsReadTimeoutError:
+                except (SerialTimeoutError, pmsReadTimeoutError):
                     logging.warning("Failed to read PMS5003")
                 else:
                     data = float(data.pm_ug_per_m3(10))

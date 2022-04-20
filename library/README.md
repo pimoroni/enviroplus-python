@@ -17,6 +17,8 @@ You're best using the "One-line" install method if you want all of the UART seri
 ![Enviro Plus pHAT](./Enviro-Plus-pHAT.jpg)
 ![Enviro Mini pHAT](./Enviro-mini-pHAT.jpg)
 
+:warning: This library now supports Python 3 only, Python 2 is EOL - https://www.python.org/doc/sunset-python-2/
+
 ## One-line (Installs from GitHub)
 
 ```
@@ -51,7 +53,7 @@ And if you're using a PMS5003 sensor you will need to:
 And install additional dependencies:
 
 ```
-sudo apt install python-numpy python-smbus python-pil python-setuptools
+sudo apt install python3-numpy python3-smbus python3-pil python3-setuptools
 ```
 
 ## Alternate Software & User Projects
@@ -70,6 +72,11 @@ sudo apt install python-numpy python-smbus python-pil python-setuptools
 * Discord - https://discord.gg/hr93ByC
 
 # Changelog
+0.0.6
+-----
+
+* Fix noise by specifying adau7002 device
+
 0.0.5
 -----
 
