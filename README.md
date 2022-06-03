@@ -64,6 +64,7 @@ sudo apt install python3-numpy python3-smbus python3-pil python3-setuptools
 * homekit-enviroplus - https://github.com/sighmon/homekit-enviroplus - An Apple HomeKit accessory for the Pimoroni Enviro+
 * go-enviroplus - https://github.com/rubiojr/go-enviroplus - Go modules to read Enviro+ sensors
 * homebridge-enviroplus - https://github.com/mhawkshaw/homebridge-enviroplus - a Homebridge plugin to add the Enviro+ to HomeKit via Homebridge
+* Enviro Plus Web - https://gitlab.com/idotj/enviroplusweb - Simple Flask application serves a web page with the current sensor readings and a graph over a specified time period
 
 ## Help & Support
 
