@@ -306,8 +306,8 @@ WIDTH = disp.width
 HEIGHT = disp.height
 
 # The city and timezone that you want to display.
-city_name = "Columbus"
-time_zone = "US/Eastern"
+city_name = "Sheffield"
+time_zone = "Europe/London"
 
 # Values that alter the look of the background
 blur = 50
@@ -369,19 +369,18 @@ while True:
     cpu_temps = cpu_temps[1:] + [cpu_temp]
     avg_cpu_temp = sum(cpu_temps) / float(len(cpu_temps))
     corr_temperature = temperature - ((avg_cpu_temp - temperature) / factor)
-    corr_temperature_f = corr_temperature * 1.8 + 32
 
     if time_elapsed > 30:
         if min_temp is not None and max_temp is not None:
             if corr_temperature < min_temp:
-                min_temp = corr_temperature_f
+                min_temp = corr_temperature
             elif corr_temperature > max_temp:
-                max_temp = corr_temperature_f
+                max_temp = corr_temperature
         else:
-            min_temp = corr_temperature_f
-            max_temp = corr_temperature_f
+            min_temp = corr_temperature
+            max_temp = corr_temperature
 
-    temp_string = f"{corr_temperature_f:.0f}°F"
+    temp_string = f"{corr_temperature:.0f}°C"
     img = overlay_text(img, (68, 18), temp_string, font_lg, align_right=True)
     spacing = font_lg.getsize(temp_string)[1] + 1
     if min_temp is not None and max_temp is not None:
