@@ -57,9 +57,10 @@ sudo apt install python3-numpy python3-smbus python3-pil python3-setuptools
 
 ## Alternate Software & User Projects
 
+* Enviro Plus Dashboard - https://gitlab.com/dedSyn4ps3/enviroplus-dashboard - A React-based web dashboard for viewing sensor data
+* Enviro+ Example Projects - https://gitlab.com/dedSyn4ps3/enviroplus-python-projects - Includes original examples plus code to stream to Adafruit IO (more projects coming soon)
 * enviro monitor - https://github.com/roscoe81/enviro-monitor
 * mqtt-all - https://github.com/robmarkcole/rpi-enviro-mqtt - now upstream: [see examples/mqtt-all.py](examples/mqtt-all.py)
-* adafruit_io.py - https://github.com/dedSyn4ps3/enviroplus-python/blob/master/examples/adafruit_io.py - uses Adafruit Blinka and BME280 libraries to publish to Adafruit IO
 * enviroplus_exporter - https://github.com/tijmenvandenbrink/enviroplus_exporter - Prometheus exporter (with added support for Luftdaten and InfluxDB Cloud)
 * homekit-enviroplus - https://github.com/sighmon/homekit-enviroplus - An Apple HomeKit accessory for the Pimoroni Enviro+
 * go-enviroplus - https://github.com/rubiojr/go-enviroplus - Go modules to read Enviro+ sensors
