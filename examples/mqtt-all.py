@@ -262,7 +262,7 @@ def main():
                 values.update(pms_values)
             values["serial"] = device_serial_number
             print(values)
-            mqtt_client.publish(args.topic, json.dumps(values))
+            mqtt_client.publish(args.topic, json.dumps(values), retain=True)
             display_status(disp, args.broker)
             time.sleep(args.interval)
         except Exception as e:
