@@ -203,8 +203,8 @@ def get_cpu_temperature():
 
 
 def correct_humidity(humidity, temperature, corr_temperature):
-    dewpoint = temperature - ((100 - humidity) / 5)
-    corr_humidity = 100 - (5 * (corr_temperature - dewpoint))
+    dew_point = temperature - ((100 - humidity) / 5)
+    corr_humidity = 100 - (5 * (corr_temperature - dew_point))
     return min(100, corr_humidity)
 
 
@@ -294,15 +294,63 @@ def describe_light(light):
     return description
 
 
+def convert_to_dli(lux):
+    """
+    Convert lux to daily light integral (DLI) value which describes the number of photosynthetically active photons delivered to a specific area.
+
+    By default assumes that grow lights with red + blue + white lights are used and that the light is on for 16 hours a day.
+
+    Conversion factors:
+    Sunlight                              0.019
+    LED, white                            0.013-0.019
+    LED, red + blue                       0.025
+    LED, blue only                        0.115
+    LED, red only                         0.077
+    Ceramic metal halide, 3100K           0.017
+    Ceramic metal halide, 4200K           0.015
+    Fluorescent, 6500K                    0.014
+    Single-Ended High Pressure Sodium     0.012
+    Double-Ended High Pressure Sodium     0.013
+    """
+
+    # Convert lux to ppfd (photosynthetic photon flux density) by multiplying lux by the conversion factor of the chosen light source to get umol/m2/s.
+    ppfd = lux * 0.025
+
+    # We assume that the light is on for 16 hours a day.
+    hours = 16
+    seconds = hours * 60 * 60
+
+    # Convert umol/m2/s to umol/m2/d by multiplying by the number of seconds.
+    dli = (ppfd * seconds) / 1000000
+    return dli
+
+
+def describe_dli(lux):
+    dli = convert_to_dli(lux)
+    """Convert dli to descriptive value."""
+    # Description must match the image file name.
+    if dli < 6:
+        description = "sprout"
+    elif 6 <= dli < 12:
+        description = "micro"
+    elif 12 <= dli < 32:
+        description = "leafy"
+    elif 17 <= dli < 45:
+        description = "flower"
+    elif dli >= 45:
+        description = "bright"
+    return description
+
+
 # Initialise the LCD
-disp = ST7735.ST7735(
+display = ST7735.ST7735(
     port=0, cs=1, dc=9, backlight=12, rotation=270, spi_speed_hz=10000000
 )
 
-disp.begin()
+display.begin()
 
-WIDTH = disp.width
-HEIGHT = disp.height
+WIDTH = display.width
+HEIGHT = display.height
 
 # The city and timezone that you want to display.
 city_name = "Helsinki"
@@ -413,13 +461,14 @@ while True:
     img.paste(humidity_icon, (margin, 48), mask=humidity_icon)
 
     # Light
-    light = ltr559.get_lux()
-    light_string = f"{int(light):,}"
+    light = convert_to_dli(ltr559.get_lux())
+    # F-string formatted to show only integer values.
+    light_string = f"{light:.0f}"
     img = overlay_text(
         img, (WIDTH - margin, 18), light_string, font_lg, align_right=True
     )
     spacing = font_lg.getsize(light_string.replace(",", ""))[1] + 1
-    light_desc = describe_light(light).upper()
+    light_desc = describe_dli(light).upper()
     img = overlay_text(
         img,
         (WIDTH - margin - 1, 18 + spacing),
@@ -428,7 +477,8 @@ while True:
         align_right=True,
         rectangle=True,
     )
-    light_icon = Image.open(f"{path}/icons/bulb-{light_desc.lower()}.png")
+    light_icon = Image.open(f"{path}/icons/crop-{light_desc.lower()}.png")
+    # Both icons need to be 25 x 25px otherwise they won't align and one gets the "images do not match" error.
     img.paste(humidity_icon, (80, 18), mask=light_icon)
 
     # Pressure
@@ -453,4 +503,4 @@ while True:
     img.paste(pressure_icon, (80, 48), mask=pressure_icon)
 
     # Display image
-    disp.display(img)
+    display.display(img)
