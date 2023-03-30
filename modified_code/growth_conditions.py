@@ -281,19 +281,6 @@ def describe_humidity(humidity):
     return description
 
 
-def describe_light(light):
-    """Convert light level in lux to descriptive value."""
-    if light < 50:
-        description = "dark"
-    elif 50 <= light < 100:
-        description = "dim"
-    elif 100 <= light < 500:
-        description = "light"
-    elif light >= 500:
-        description = "bright"
-    return description
-
-
 def convert_to_dli(lux):
     """
     Convert lux to daily light integral (DLI) value which describes the number of photosynthetically active photons delivered to a specific area.
@@ -321,12 +308,12 @@ def convert_to_dli(lux):
     seconds = hours * 60 * 60
 
     # Convert umol/m2/s to umol/m2/d by multiplying by the number of seconds.
-    dli = (ppfd * seconds) / 1000000
+    # Using int() constructor as the reading should always be a positive number.
+    dli = int((ppfd * seconds) / 1000000)
     return dli
 
 
-def describe_dli(lux):
-    dli = convert_to_dli(lux)
+def describe_dli(dli):
     """Convert dli to descriptive value."""
     # Description must match the image file name.
     if dli < 6:
@@ -462,12 +449,11 @@ while True:
 
     # Light
     light = convert_to_dli(ltr559.get_lux())
-    # F-string formatted to show only integer values.
-    light_string = f"{light:.0f}"
+    light_string = f"{light}"
     img = overlay_text(
         img, (WIDTH - margin, 18), light_string, font_lg, align_right=True
     )
-    spacing = font_lg.getsize(light_string.replace(",", ""))[1] + 1
+    spacing = font_lg.getsize(light_string)[1] + 1
     light_desc = describe_dli(light).upper()
     img = overlay_text(
         img,
