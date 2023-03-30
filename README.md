@@ -1,3 +1,10 @@
+# [Fork of Enviro+ Python library by Pimoroni](https://github.com/pimoroni/enviroplus-python)
+
+I've done changes by adding code relevant to plant growth monitoring, which is conveniently placed under [modified_code](https://github.com/argtus/enviroplus-python/tree/master/modified_code).
+
+
+<details>
+  <summary>Original README</summary>
 # Enviro+
 
 Designed for environmental monitoring, Enviro+ lets you measure air quality (pollutant gases and particulates), temperature, pressure, humidity, light, and noise level. Learn more - https://shop.pimoroni.com/products/enviro-plus
@@ -77,3 +84,5 @@ And if you're using a PMS5003 sensor you will need to:
 * GPIO Pinout - https://pinout.xyz/pinout/enviro_plus
 * Support forums - https://forums.pimoroni.com/c/support
 * Discord - https://discord.gg/hr93ByC
+
+</details>
