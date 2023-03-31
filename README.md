@@ -13,17 +13,22 @@ I've done changes by adding code relevant to plant growth monitoring, which is c
 
 ### Lux to DLI conversion
 
-The LTR559 sensor reports its readings as Lux, which is a unit of measurement for illuminance defined as one lumen per square meter (lm/m²). The Lux measurements take into account the sensitivity of the human eye to different wavelengths of light as not all are equal to the human eye. Two light sources with the same number of lumens may appear to have different brightness to the human eye if they emit different colors of light. It doesn't measure well how the amount of light impacts plants growth and development.
+The LTR559 sensor reports its readings as Lux, which is a unit of measurement for illuminance defined as one lumen per square meter (lm/m²). For horticulture Lux is not very useful though. What is more important is Daily Light Integral (DLI) which is a measure of total amount of photosynthetically active radiation (PAR) that a plant receives over the course of a day. 
 
-Daily Light Integral (DLI) on the other hand is a measure of the total amount of photosynthetically active radiation (PAR) that a plant receives over the course of a day. It is expressed as the number of moles of photons per square meter per day (mol/m²/d) and is commonly used in horticulture to quantify the amount of light that plants receive. The DLI required by a plant can vary depending on the species and growth stage, and it is important to provide the appropriate amount of light to optimize plant growth and productivity.
+It is important to provide the appropriate amount of light to optimize plant growth and productivity. The good news is that Lux can be converted to DLI, which I've done here.
 
-Lux can be converted to DLI though by first converting it to PPFD and then myliplying it with the amount of hours light is on ie. photoperiod and finally dividing the result by one million.
+<details>
+  <summary>More details</summary>
+The Lux measurements take into account the sensitivity of the human eye to different wavelengths of light, as not all are equal to the human eye. Two light sources with the same number of lumens may appear to have different brightness to the human eye if they emit different colors of light. As such it doesn't measure well how the amount of light impacts plants growth and development.
 
-For the PFFD conversion I've assumed that the light used is a commonly available LED strip meant for growing plants. Those have white, blue and red LEDs, which are are more efficient for photosynthesis. This kind of a light has a factor 0.025 when doing the Lux conversion.
+DLI which does measure the important thing is not usually readily available. It is expressed as the number of moles of photons per square meter per day (mol/m²/d) and is commonly used in horticulture to quantify the amount of light that plants receive. However, the DLI required by a plant can vary depending on the species, growth stage and to make things more tricky different wavelengths play a part, too. As said earlier, Lux can be converted to DLI by making some assumptions and the results gives a ballpark figure that can be used by at least an amateur gardener.
+
+For the PFFD conversion I've assumed that the light used is a commonly available LED strip meant for growing plants. Those have white, blue and red LEDs, which are are more efficient for photosynthesis, and come in anywhere between 10-15W - as said this is going to be a ballpark figure. This kind of a light has a factor 0.025 when doing the Lux conversion.
 $$lx * 0.025 = PPFD(μmol/m²/s)$$
 
 Then to PFFD can then be converted to DLI. I've assumed the photoperiod is 16 hours:
 $$(PPFD * 60s * 60m * 16h) / 1 000 000 = DLI (mol/m²/d)$$
+</details>
 
 ## Codebase Maintenance
 
