@@ -1,11 +1,4 @@
 version: 2
-name: Dependabot scan
-
-on:
-  push:
-    branches:
-    - main
-
 updates:
 
   # Maintain dependencies for GitHub Actions
