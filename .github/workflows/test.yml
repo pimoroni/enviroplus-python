@@ -1,4 +1,4 @@
-name: Tests
+name: Setup Python for tests
 
 on:
   push:
@@ -12,7 +12,6 @@ jobs:
     strategy:
       matrix:
         python: [3.x]
-        architecture: "ARM32"
 
     steps:
       - name: Checkout Code
