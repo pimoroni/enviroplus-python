@@ -9,6 +9,9 @@ on:
 jobs:
   security:
     runs-on: ubuntu-latest
+    permissions:
+      # To upload SARIF file to GitHub Code Scanning
+      security-events: write
     steps:
       - uses: actions/checkout@master
       - name: Run Snyk to check for vulnerabilities
@@ -22,3 +25,5 @@ jobs:
         uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: snyk.sarif
+          # To differentiate from CodeQL results
+          category: snyk
