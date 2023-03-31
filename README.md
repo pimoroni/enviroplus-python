@@ -2,7 +2,6 @@
 
 [![Python Tests](https://github.com/argtus/enviroplus-python/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/argtus/enviroplus-python/actions/workflows/test.yml)
 [![Snyk Security Scan](https://github.com/argtus/enviroplus-python/actions/workflows/snyk.yml/badge.svg?branch=main)](https://github.com/argtus/enviroplus-python/actions/workflows/snyk.yml)
-[![Dependabot Scan](https://github.com/argtus/enviroplus-python/actions/workflows/dependabot.yml/badge.svg)](https://github.com/argtus/enviroplus-python/actions/workflows/dependabot.yml)
 [![Secret Scan](https://github.com/argtus/enviroplus-python/actions/workflows/github-code-scanning/codeql/badge.svg?branch=main)](https://github.com/argtus/enviroplus-python/actions/workflows/github-code-scanning/codeql)
 [![Coverage Status](https://coveralls.io/repos/github/argtus/enviroplus-python/badge.svg?branch=master)](https://coveralls.io/github/pimoroni/enviroplus-python?branch=main)
 [![PyPi Package](https://img.shields.io/pypi/v/enviroplus.svg)](https://pypi.python.org/pypi/enviroplus)
