@@ -19,7 +19,8 @@ It is important to provide the appropriate amount of light to optimize plant gro
 
 <details>
   <summary>More details</summary>
-The Lux measurements take into account the sensitivity of the human eye to different wavelengths of light, as not all are equal to the human eye. Two light sources with the same number of lumens may appear to have different brightness to the human eye if they emit different colors of light. As such it doesn't measure well how the amount of light impacts plants growth and development.
+  
+The Lux measurements take into account the sensitivity of the human eye to different wavelengths of light, as not all are equal to the human eye. Two light sources with the same number of lumens may appear to have different brightness to the human eye if they emit different colors of light. As such it doesn't measure well how the amount of light impacts plant's growth and development.
 
 DLI which does measure the important thing is not usually readily available. It is expressed as the number of moles of photons per square meter per day (mol/m²/d) and is commonly used in horticulture to quantify the amount of light that plants receive. However, the DLI required by a plant can vary depending on the species, growth stage and to make things more tricky different wavelengths play a part, too. As said earlier, Lux can be converted to DLI by making some assumptions and the results gives a ballpark figure that can be used by at least an amateur gardener.
 
