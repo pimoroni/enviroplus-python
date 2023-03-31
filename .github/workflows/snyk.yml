@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@master
       - name: Install required packages
         run: |
-          apt-get update
+          sudo apt-get update
           python3 -m pip install -r requirements.txt
       - name: Run Snyk to check for vulnerabilities
         uses: snyk/actions/python@master
