@@ -1,5 +1,5 @@
 ads1015==0.0.8
-apt==0.7.8
+# apt==0.7.8 Let's see if this is actually needed
 astral==3.2
 bme280==0.6
 fonts==0.0.3
