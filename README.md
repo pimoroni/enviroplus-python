@@ -1,16 +1,23 @@
 # [Fork of Enviro+ Python library by Pimoroni](https://github.com/pimoroni/enviroplus-python)
 
-[![Python Tests](https://github.com/argtus/enviroplus-python/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/argtus/enviroplus-python/actions/workflows/test.yml)
+[![Enviro+ Python library tests](https://github.com/argtus/enviroplus-python/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/argtus/enviroplus-python/actions/workflows/test.yml)
 [![Snyk Security Scan](https://github.com/argtus/enviroplus-python/actions/workflows/snyk.yml/badge.svg?branch=main)](https://github.com/argtus/enviroplus-python/actions/workflows/snyk.yml)
 [![Secret Scan](https://github.com/argtus/enviroplus-python/actions/workflows/github-code-scanning/codeql/badge.svg?branch=main)](https://github.com/argtus/enviroplus-python/actions/workflows/github-code-scanning/codeql)
 [![Coveralls Test Status](https://coveralls.io/repos/github/argtus/enviroplus-python/badge.svg?branch=main)](https://coveralls.io/github/argtus/enviroplus-python?branch=main)
 [![PyPi Package](https://img.shields.io/pypi/v/enviroplus.svg)](https://pypi.python.org/pypi/enviroplus)
 [![Python Versions](https://img.shields.io/pypi/pyversions/enviroplus.svg)](https://pypi.python.org/pypi/enviroplus)
 
+## Functional Changes
+
 I've done changes by adding code relevant to plant growth monitoring, which is conveniently placed under [modified_code](https://github.com/argtus/enviroplus-python/tree/master/modified_code).
+
+## Codebase Maintenance
+
+I've also changed GitHub Actions and more specifically Enviro+ Python library tests to be compatible with Python `latest` and the latest versions of the dependencies. In addition, I've also added Dependabot to pump the GitHub Actions and `pip` dependencies as well as enabled CodeQL and Snyk security scans.
 
 <details>
   <summary>Original README</summary>
+
 # Enviro+
 
 Designed for environmental monitoring, Enviro+ lets you measure air quality (pollutant gases and particulates), temperature, pressure, humidity, light, and noise level. Learn more - https://shop.pimoroni.com/products/enviro-plus
