@@ -17,7 +17,13 @@ The LTR559 sensor reports its readings as Lux, which is a unit of measurement fo
 
 Daily Light Integral (DLI) on the other hand is a measure of the total amount of photosynthetically active radiation (PAR) that a plant receives over the course of a day. It is expressed as the number of moles of photons per square meter per day (mol/m²/d) and is commonly used in horticulture to quantify the amount of light that plants receive. The DLI required by a plant can vary depending on the species and growth stage, and it is important to provide the appropriate amount of light to optimize plant growth and productivity.
 
-Lux can be converted to DLI though. First convert Lux to PPFD $lx * 0.025 = PPFD(μmol/m²/s)$ and then to DLI $(PPFD * 60s * 60m * 16h) / 1 000 000 = DLI (mol/m²/d)$. I've assumed the photoperiod is 16 hours and the light used is a commonly available LED strip meant for growing plants which has white, blue and red LEDs, which would have a factor of 0.025.
+Lux can be converted to DLI though by first converting it to PPFD and then myliplying it with the amount of hours light is on ie. photoperiod and finally dividing the result by one million.
+
+For the PFFD conversion I've assumed that the light used is a commonly available LED strip meant for growing plants. Those have white, blue and red LEDs, which are are more efficient for photosynthesis. This kind of a light has a factor 0.025 when doing the Lux conversion.
+$$lx * 0.025 = PPFD(μmol/m²/s)$$
+
+Then to PFFD can then be converted to DLI. I've assumed the photoperiod is 16 hours:
+$$(PPFD * 60s * 60m * 16h) / 1 000 000 = DLI (mol/m²/d)$$
 
 ## Codebase Maintenance
 
