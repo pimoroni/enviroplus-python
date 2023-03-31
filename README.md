@@ -11,6 +11,14 @@
 
 I've done changes by adding code relevant to plant growth monitoring, which is conveniently placed under [modified_code](https://github.com/argtus/enviroplus-python/tree/master/modified_code).
 
+### Lux to DLI conversion
+
+The LTR559 sensor reports its readings as Lux, which is a unit of measurement for illuminance defined as one lumen per square meter (lm/m²). The Lux measurements take into account the sensitivity of the human eye to different wavelengths of light as not all are equal to the human eye. Two light sources with the same number of lumens may appear to have different brightness to the human eye if they emit different colors of light. It doesn't measure well how the amount of light impacts plants growth and development.
+
+Daily Light Integral (DLI) on the other hand is a measure of the total amount of photosynthetically active radiation (PAR) that a plant receives over the course of a day. It is expressed as the number of moles of photons per square meter per day (mol/m²/d) and is commonly used in horticulture to quantify the amount of light that plants receive. The DLI required by a plant can vary depending on the species and growth stage, and it is important to provide the appropriate amount of light to optimize plant growth and productivity.
+
+Lux can be converted to DLI though. First convert Lux to PPFD $lx * 0.025 = PPFD(μmol/m²/s)$ and then to DLI $(PPFD * 60s * 60m * 16h) / 1 000 000 = DLI (mol/m²/d)$. I've assumed the photoperiod is 16 hours and the light used is a commonly available LED strip meant for growing plants which has white, blue and red LEDs, which would have a factor of 0.025.
+
 ## Codebase Maintenance
 
 I've also changed GitHub Actions and more specifically Enviro+ Python library tests to be compatible with Python `latest` and the latest versions of the dependencies. In addition, I've also added Dependabot to pump the GitHub Actions and `pip` dependencies as well as enabled CodeQL and Snyk security scans.
