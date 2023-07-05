@@ -6,8 +6,6 @@ import time
 from bme280 import BME280
 from pms5003 import PMS5003, ReadTimeoutError, ChecksumMismatchError
 from subprocess import PIPE, Popen, check_output
-from PIL import Image, ImageDraw, ImageFont
-from fonts.ttf import RobotoMedium as UserFont
 
 try:
     from smbus2 import SMBus
@@ -20,9 +18,10 @@ logging.basicConfig(
     level=logging.INFO,
     datefmt='%Y-%m-%d %H:%M:%S')
 
-logging.info("""sensorcommunity.py - Reads temperature, pressure, humidity,
+logging.info("""sensorcommunity-nodisplay.py - Reads temperature, pressure, humidity,
 #PM2.5, and PM10 from Enviro plus and sends data to Sensor.Community,
 #a contributors driven sensor network that creates Open Environmental Data.
+#nodisplay version removes the display funcationality once desired setup is working.
 
 #Note: You'll need to register with Sensor.Community at:
 #https://devices.sensor.community/ and enter your Raspberry Pi
@@ -39,22 +38,8 @@ bus = SMBus(1)
 # Create BME280 instance
 bme280 = BME280(i2c_dev=bus)
 
-# Create LCD instance
-disp = ST7735.ST7735(
-    port=0,
-    cs=1,
-    dc=9,
-    backlight=12,
-    rotation=270,
-    spi_speed_hz=10000000
-)
-
-# Initialize display
-disp.begin()
-
 # Create PMS5003 instance
 pms5003 = PMS5003()
-
 
 # Read values from BME280 and PMS5003 and return as dict
 def read_values():
@@ -77,14 +62,12 @@ def read_values():
         values["P1"] = str(pm_values.pm_ug_per_m3(10))
     return values
 
-
 # Get the temperature of the CPU for compensation
 def get_cpu_temperature():
     with open("/sys/class/thermal/thermal_zone0/temp", "r") as f:
         temp = f.read()
         temp = int(temp) / 1000.0
     return temp
-
 
 # Get Raspberry Pi serial number to use as ID
 def get_serial_number():
@@ -93,31 +76,12 @@ def get_serial_number():
             if line[0:6] == 'Serial':
                 return line.split(":")[1].strip()
 
-
 # Check for Wi-Fi connection
 def check_wifi():
     if check_output(['hostname', '-I']):
         return True
     else:
         return False
-
-
-# Display Raspberry Pi serial and Wi-Fi status on LCD
-def display_status():
-    wifi_status = "connected" if check_wifi() else "disconnected"
-    text_colour = (255, 255, 255)
-    back_colour = (0, 170, 170) if check_wifi() else (85, 15, 15)
-    id = get_serial_number()
-    message = "{}\nWi-Fi: {}".format(id, wifi_status)
-    img = Image.new('RGB', (WIDTH, HEIGHT), color=(0, 0, 0))
-    draw = ImageDraw.Draw(img)
-    size_x, size_y = draw.textsize(message, font)
-    x = (WIDTH - size_x) / 2
-    y = (HEIGHT / 2) - (size_y / 2)
-    draw.rectangle((0, 0, 160, 80), back_colour)
-    draw.text((x, y), message, font=font, fill=text_colour)
-    disp.display(img)
-
 
 def send_to_sensorcommunity(values, id):
     pm_values = dict(i for i in values.items() if i[0].startswith("P"))
@@ -182,20 +146,11 @@ def send_to_sensorcommunity(values, id):
     else:
         return False
 
-
 # Compensation factor for temperature default 2.25
 comp_factor = 1.0
 
 # Raspberry Pi ID to send to Sensor.Community
 id = "raspi-" + get_serial_number()
-
-# Width and height to calculate text position
-WIDTH = disp.width
-HEIGHT = disp.height
-
-# Text settings
-font_size = 16
-font = ImageFont.truetype(UserFont, font_size)
 
 # Log Raspberry Pi serial and Wi-Fi status
 logging.info("Raspberry Pi serial: {}".format(get_serial_number()))
@@ -216,6 +171,6 @@ while True:
                 logging.info("Sensor.Community Response: OK")
             else:
                 logging.warning("Sensor.Community Response: Failed")
-        display_status()
+        # display_status()
     except Exception as e:
         logging.warning('Main Loop Exception: {}'.format(e))

@@ -22,20 +22,19 @@ try:
 except ImportError:
     import ltr559
 
-print("""luftdaten_combined.py - This combines the functionality of luftdaten.py and combined.py
+print("""sensorcommunity_combined.py - This combines the functionality of sensorcommunity.py and combined.py
 ================================================================================================
-Luftdaten INFO
-Reads temperature, pressure, humidity,
-PM2.5, and PM10 from Enviro plus and sends data to Luftdaten,
-the citizen science air quality project.
+sensorcommunity.py - Reads temperature, pressure, humidity,
+#PM2.5, and PM10 from Enviro plus and sends data to Sensor.Community,
+#a contributors driven sensor network that creates Open Environmental Data.
 
-Note: you'll need to register with Luftdaten at:
-https://meine.luftdaten.info/ and enter your Raspberry Pi
-serial number that's displayed on the Enviro plus LCD along
-with the other details before the data appears on the
-Luftdaten map.
+#Note: You'll need to register with Sensor.Community at:
+#https://devices.sensor.community/ and enter your Raspberry Pi
+#serial number that's displayed on the Enviro plus LCD along
+#with the other details before the data appears on the
+#Sensor.Community map.
 
-Press Ctrl+C to exit!
+#Press Ctrl+C to exit!
 
 ========================================================================
 
@@ -244,7 +243,7 @@ def display_everything():
     st7735.display(img)
 
 
-def send_to_luftdaten(values, id):
+def send_to_sensorcommunity(values, id):
     pm_values = dict(i for i in values.items() if i[0].startswith("P"))
     temp_values = dict(i for i in values.items() if not i[0].startswith("P"))
 
@@ -254,9 +253,9 @@ def send_to_luftdaten(values, id):
                         for key, val in temp_values.items()]
 
     resp_1 = requests.post(
-        "https://api.luftdaten.info/v1/push-sensor-data/",
+        "https://api.sensor.community/v1/push-sensor-data/",
         json={
-            "software_version": "enviro-plus 0.0.1",
+            "software_version": "enviro-plus 0.0.6",
             "sensordatavalues": pm_values_json
         },
         headers={
@@ -268,9 +267,9 @@ def send_to_luftdaten(values, id):
     )
 
     resp_2 = requests.post(
-        "https://api.luftdaten.info/v1/push-sensor-data/",
+        "https://api.sensor.community/v1/push-sensor-data/",
         json={
-            "software_version": "enviro-plus 0.0.1",
+            "software_version": "enviro-plus 0.0.6",
             "sensordatavalues": temp_values_json
         },
         headers={
@@ -290,7 +289,7 @@ def send_to_luftdaten(values, id):
 # Compensation factor for temperature
 comp_factor = 1
 
-# Raspberry Pi ID to send to Luftdaten
+# Raspberry Pi ID to send to Sensor.Community
 id = "raspi-" + get_serial_number()
 
 
@@ -318,7 +317,7 @@ time_since_update = 0
 update_time = time.time()
 cpu_temps_len = float(len(cpu_temps))
 
-# Main loop to read data, display, and send to Luftdaten
+# Main loop to read data, display, and send to Sensor.Community
 while True:
     try:
         curtime = time.time()
@@ -347,7 +346,7 @@ while True:
         if time_since_update > 145:
             values = read_values(comp_temp, raw_press*100,
                                  raw_humid, raw_pm25, raw_pm10)
-            resp = send_to_luftdaten(values, id)
+            resp = send_to_sensorcommunity(values, id)
             update_time = curtime
             print("Response: {}\n".format("ok" if resp else "failed"))
 
