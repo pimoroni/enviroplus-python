@@ -18,7 +18,7 @@ logging.basicConfig(
     level=logging.INFO,
     datefmt='%Y-%m-%d %H:%M:%S')
 
-logging.info("""sensorcommunity-nodisplay.py - Reads temperature, pressure, humidity,
+logging.info("""sensorcommunity_nodisplay.py - Reads temperature, pressure, humidity,
 #PM2.5, and PM10 from Enviro plus and sends data to Sensor.Community,
 #a contributors driven sensor network that creates Open Environmental Data.
 #nodisplay version removes the display funcationality once desired setup is working.
