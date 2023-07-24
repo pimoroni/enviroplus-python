@@ -252,6 +252,9 @@ def main():
     print("Wi-Fi: {}\n".format("connected" if check_wifi() else "disconnected"))
     print("MQTT broker IP: {}".format(args.broker))
 
+    # Set an initial update time
+    update_time = time.time()
+
     # Main loop to read data, display, and send over mqtt
     mqtt_client.loop_start()
     while True:
@@ -260,11 +263,13 @@ def main():
             if HAS_PMS:
                 pms_values = read_pms5003(pms5003)
                 values.update(pms_values)
-            values["serial"] = device_serial_number
-            print(values)
-            mqtt_client.publish(args.topic, json.dumps(values), retain=True)
-            display_status(disp, args.broker)
-            time.sleep(args.interval)
+            time_since_update = time.time() - update_time
+            if time_since_update >= args.interval:
+                update_time = time.time()
+                values["serial"] = device_serial_number
+                print(values)
+                mqtt_client.publish(args.topic, json.dumps(values), retain=True)
+                display_status(disp, args.broker)
         except Exception as e:
             print(e)
 
