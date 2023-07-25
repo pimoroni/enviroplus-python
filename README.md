@@ -1,7 +1,6 @@
 # [Fork of Enviro+ Python library by Pimoroni](https://github.com/pimoroni/enviroplus-python)
 
 [![Enviro+ Python library tests](https://github.com/argtus/enviroplus-python/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/argtus/enviroplus-python/actions/workflows/test.yml)
-[![Snyk Security Scan](https://github.com/argtus/enviroplus-python/actions/workflows/snyk.yml/badge.svg?branch=main)](https://github.com/argtus/enviroplus-python/actions/workflows/snyk.yml)
 [![Secret Scan](https://github.com/argtus/enviroplus-python/actions/workflows/github-code-scanning/codeql/badge.svg?branch=main)](https://github.com/argtus/enviroplus-python/actions/workflows/github-code-scanning/codeql)
 [![Coveralls Test Status](https://coveralls.io/repos/github/argtus/enviroplus-python/badge.svg?branch=main)](https://coveralls.io/github/argtus/enviroplus-python?branch=main)
 [![PyPi Package](https://img.shields.io/pypi/v/enviroplus.svg)](https://pypi.python.org/pypi/enviroplus)
