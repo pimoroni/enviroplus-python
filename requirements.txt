@@ -7,7 +7,7 @@ ltr559==0.1.1
 mock==5.0.1
 numpy==1.25.0
 paho_mqtt==1.6.1
-Pillow==9.4.0
+Pillow==9.5.0
 pms5003==0.0.5
 pytest==7.4.0
 pytz==2023.3
