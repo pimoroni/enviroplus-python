@@ -13,11 +13,13 @@ jobs:
       # To upload SARIF file to GitHub Code Scanning
       security-events: write
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v3
+
       - name: Install required packages
         run: |
           sudo apt-get update
           python3 -m pip install -r requirements.txt
+
       - name: Run Snyk to check for vulnerabilities
         uses: snyk/actions/python@master
         continue-on-error: true # To make sure that SARIF upload gets called
@@ -25,6 +27,7 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           args: --sarif-file-output=snyk.sarif
+
       - name: Upload result to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v2
         with:
