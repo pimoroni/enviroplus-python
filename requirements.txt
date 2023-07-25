@@ -4,7 +4,7 @@ bme280==0.6
 fonts==0.0.3
 i2cdevice==0.0.7
 ltr559==0.1.1
-mock==5.0.1
+mock==5.1.0
 numpy==1.25.0
 paho_mqtt==1.6.1
 Pillow==9.5.0
