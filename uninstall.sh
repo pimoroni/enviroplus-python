@@ -12,7 +12,7 @@ fi
 
 cd library
 
-printf "Unnstalling for Python 2..\n"
+printf "Uninstalling for Python 2..\n"
 pip uninstall $LIBRARY_NAME
 
 if [ -f "/usr/bin/pip3" ]; then
