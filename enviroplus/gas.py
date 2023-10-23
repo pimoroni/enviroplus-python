@@ -1,7 +1,8 @@
 """Read the MICS6814 via an ads1015 ADC"""
 
-import time
 import atexit
+import time
+
 import ads1015
 import RPi.GPIO as GPIO
 

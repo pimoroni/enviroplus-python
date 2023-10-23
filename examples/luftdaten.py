@@ -1,18 +1,20 @@
 #!/usr/bin/env python3
 
+import time
+from subprocess import PIPE, Popen, check_output
+
 import requests
 import ST7735
-import time
 from bme280 import BME280
-from pms5003 import PMS5003, ReadTimeoutError, ChecksumMismatchError
-from subprocess import PIPE, Popen, check_output
-from PIL import Image, ImageDraw, ImageFont
 from fonts.ttf import RobotoMedium as UserFont
+from PIL import Image, ImageDraw, ImageFont
+from pms5003 import PMS5003, ChecksumMismatchError, ReadTimeoutError
 
 try:
     from smbus2 import SMBus
 except ImportError:
     from smbus import SMBus
+
 import logging
 
 logging.basicConfig(

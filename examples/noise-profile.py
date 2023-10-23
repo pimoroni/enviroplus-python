@@ -1,5 +1,6 @@
 import ST7735
 from PIL import Image, ImageDraw
+
 from enviroplus.noise import Noise
 
 print("""noise-profile.py - Get a simple noise profile.

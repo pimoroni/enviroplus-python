@@ -3,22 +3,21 @@
 
 f"Sorry! This program requires Python >= 3.6 😅"
 
+import colorsys
 import os
 import time
+from datetime import datetime, timedelta
+
 import numpy
-import colorsys
-from PIL import Image, ImageDraw, ImageFont, ImageFilter
-from fonts.ttf import RobotoMedium as UserFont
-
-import ST7735
-from bme280 import BME280
-from ltr559 import LTR559
-
 import pytz
-from pytz import timezone
+import ST7735
 from astral.geocoder import database, lookup
 from astral.sun import sun
-from datetime import datetime, timedelta
+from bme280 import BME280
+from fonts.ttf import RobotoMedium as UserFont
+from ltr559 import LTR559
+from PIL import Image, ImageDraw, ImageFilter, ImageFont
+from pytz import timezone
 
 try:
     from smbus2 import SMBus

@@ -3,6 +3,7 @@ These allow the mocking of various Python modules
 that might otherwise have runtime side-effects.
 """
 import sys
+
 import mock
 import pytest
 from i2cdevice import MockSMBus

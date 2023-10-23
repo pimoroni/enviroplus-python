@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
-import time
-from enviroplus import gas
 import logging
+import time
+
+from enviroplus import gas
 
 logging.basicConfig(
     format='%(asctime)s.%(msecs)03d %(levelname)-8s %(message)s',

@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
-import time
-from pms5003 import PMS5003, ReadTimeoutError
 import logging
+import time
+
+from pms5003 import PMS5003, ReadTimeoutError
 
 logging.basicConfig(
     format='%(asctime)s.%(msecs)03d %(levelname)-8s %(message)s',

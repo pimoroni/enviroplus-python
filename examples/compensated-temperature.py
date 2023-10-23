@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import time
+
 from bme280 import BME280
 
 try:

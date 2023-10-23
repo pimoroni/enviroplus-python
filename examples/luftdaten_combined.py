@@ -1,14 +1,16 @@
+import colorsys
 import logging
 import sys
+import time
+from subprocess import PIPE, Popen, check_output
+
 import requests
 import ST7735
-import time
-import colorsys
 from bme280 import BME280
-from pms5003 import PMS5003, ReadTimeoutError
-from subprocess import PIPE, Popen, check_output
-from PIL import Image, ImageDraw, ImageFont
 from fonts.ttf import RobotoMedium as UserFont
+from PIL import Image, ImageDraw, ImageFont
+from pms5003 import PMS5003, ReadTimeoutError
+
 from enviroplus import gas
 
 try:

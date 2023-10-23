@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
-import time
 import logging
+import time
+
 try:
     # Transitional fix for breaking change in LTR559
     from ltr559 import LTR559

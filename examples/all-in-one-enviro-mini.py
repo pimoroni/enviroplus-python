@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 
-import time
 import colorsys
 import os
 import sys
+import time
+
 import ST7735
+
 try:
     # Transitional fix for breaking change in LTR559
     from ltr559 import LTR559
@@ -12,14 +14,14 @@ try:
 except ImportError:
     import ltr559
 
-from bme280 import BME280
-from enviroplus import gas
-from subprocess import PIPE, Popen
-from PIL import Image
-from PIL import ImageDraw
-from PIL import ImageFont
-from fonts.ttf import RobotoMedium as UserFont
 import logging
+from subprocess import PIPE, Popen
+
+from bme280 import BME280
+from fonts.ttf import RobotoMedium as UserFont
+from PIL import Image, ImageDraw, ImageFont
+
+from enviroplus import gas
 
 logging.basicConfig(
     format='%(asctime)s.%(msecs)03d %(levelname)-8s %(message)s',

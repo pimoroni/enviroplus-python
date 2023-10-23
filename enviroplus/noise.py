@@ -1,5 +1,5 @@
-import sounddevice
 import numpy
+import sounddevice
 
 
 class Noise():

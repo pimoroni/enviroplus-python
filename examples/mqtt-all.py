@@ -6,11 +6,13 @@ Example run: python3 mqtt-all.py --broker 192.168.1.164 --topic enviro --usernam
 """
 
 import argparse
-import ST7735
-import time
 import ssl
+import time
+
+import ST7735
 from bme280 import BME280
 from pms5003 import PMS5003, ReadTimeoutError, SerialTimeoutError
+
 from enviroplus import gas
 
 try:
@@ -21,13 +23,13 @@ try:
 except ImportError:
     import ltr559
 
-from subprocess import PIPE, Popen, check_output
-from PIL import Image, ImageDraw, ImageFont
-from fonts.ttf import RobotoMedium as UserFont
 import json
+from subprocess import PIPE, Popen, check_output
 
 import paho.mqtt.client as mqtt
 import paho.mqtt.publish as publish
+from fonts.ttf import RobotoMedium as UserFont
+from PIL import Image, ImageDraw, ImageFont
 
 try:
     from smbus2 import SMBus
