@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import time
-from subprocess import PIPE, Popen, check_output
+from subprocess import check_output
 
 import requests
 import ST7735

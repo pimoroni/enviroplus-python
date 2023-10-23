@@ -12,7 +12,7 @@ def test_gas_unavailable(GPIO, mocksmbus):
     from enviroplus import gas
     mocksmbus.SMBus(1).read_i2c_block_data.side_effect = IOError("Oh noes!")
     gas._is_setup = False
-    assert gas.available() == False
+    assert gas.available() is False
 
     with pytest.raises(RuntimeError):
         gas.read_all()
@@ -21,7 +21,7 @@ def test_gas_unavailable(GPIO, mocksmbus):
 def test_gas_available(GPIO, smbus_notimeout):
     from enviroplus import gas
     gas._is_setup = False
-    assert gas.available() == True
+    assert gas.available() is True
 
 
 def test_gas_read_all(GPIO, smbus):
@@ -29,13 +29,13 @@ def test_gas_read_all(GPIO, smbus):
     gas._is_setup = False
     result = gas.read_all()
 
-    assert type(result.oxidising) == float
+    assert isinstance(result.oxidising, float)
     assert int(result.oxidising) == 16641
 
-    assert type(result.reducing) == float
+    assert isinstance(result.reducing, float)
     assert int(result.reducing) == 16727
 
-    assert type(result.nh3) == float
+    assert isinstance(result.nh3, float)
     assert int(result.nh3) == 16813
 
     assert "Oxidising" in str(result)

@@ -27,7 +27,6 @@ import json
 from subprocess import PIPE, Popen, check_output
 
 import paho.mqtt.client as mqtt
-import paho.mqtt.publish as publish
 from fonts.ttf import RobotoMedium as UserFont
 from PIL import Image, ImageDraw, ImageFont
 

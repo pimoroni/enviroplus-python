@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-f"Sorry! This program requires Python >= 3.6 😅"
-
 import colorsys
 import os
 import time
@@ -17,7 +15,6 @@ from bme280 import BME280
 from fonts.ttf import RobotoMedium as UserFont
 from ltr559 import LTR559
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
-from pytz import timezone
 
 try:
     from smbus2 import SMBus

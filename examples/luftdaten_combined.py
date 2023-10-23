@@ -1,6 +1,5 @@
 import colorsys
 import logging
-import sys
 import time
 from subprocess import PIPE, Popen, check_output
 
