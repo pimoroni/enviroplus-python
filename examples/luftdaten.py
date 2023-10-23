@@ -72,7 +72,7 @@ def read_values():
         values["P2"] = str(pm_values.pm_ug_per_m3(2.5))
         values["P1"] = str(pm_values.pm_ug_per_m3(10))
     except(ReadTimeoutError, ChecksumMismatchError):
-        logging.info("Failed to read PMS5003. Reseting and retrying.")
+        logging.info("Failed to read PMS5003. Resetting and retrying.")
         pms5003.reset()
         pm_values = pms5003.read()
         values["P2"] = str(pm_values.pm_ug_per_m3(2.5))

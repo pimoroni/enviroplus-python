@@ -92,7 +92,7 @@ def cleanup():
 
 
 def read_all():
-    """Return gas resistence for oxidising, reducing and NH3"""
+    """Return gas resistance for oxidising, reducing and NH3"""
     setup()
 
     if not _is_available:

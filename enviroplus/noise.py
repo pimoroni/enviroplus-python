@@ -39,7 +39,7 @@ class Noise():
         """
         n = self.sample_rate // 2
         if start > n or end > n:
-            raise ValueError("Maxmimum frequency is {}".format(n))
+            raise ValueError("Maximum frequency is {}".format(n))
 
         recording = self._record()
         magnitude = numpy.abs(numpy.fft.rfft(recording[:, 0], n=self.sample_rate))
@@ -50,7 +50,7 @@ class Noise():
                           low=0.12,
                           mid=0.36,
                           high=None):
-        """Returns a noise charateristic profile.
+        """Returns a noise characteristic profile.
 
         Bins all frequencies into 3 weighted groups expressed as a percentage of the total frequency range.
 
