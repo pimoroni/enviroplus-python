@@ -1,40 +1,35 @@
 #!/usr/bin/env python3
 
+import logging
 import time
 from subprocess import check_output
 
 import requests
-import ST7735
+import st7735
 from bme280 import BME280
 from fonts.ttf import RobotoMedium as UserFont
 from PIL import Image, ImageDraw, ImageFont
 from pms5003 import PMS5003, ChecksumMismatchError, ReadTimeoutError
-
-try:
-    from smbus2 import SMBus
-except ImportError:
-    from smbus import SMBus
-
-import logging
+from smbus2 import SMBus
 
 logging.basicConfig(
-    format='%(asctime)s.%(msecs)03d %(levelname)-8s %(message)s',
+    format="%(asctime)s.%(msecs)03d %(levelname)-8s %(message)s",
     level=logging.INFO,
-    datefmt='%Y-%m-%d %H:%M:%S')
+    datefmt="%Y-%m-%d %H:%M:%S")
 
 logging.info("""luftdaten.py - Reads temperature, pressure, humidity,
-#PM2.5, and PM10 from Enviro plus and sends data to Luftdaten,
-#the citizen science air quality project.
+PM2.5, and PM10 from Enviro plus and sends data to Luftdaten,
+the citizen science air quality project.
 
-#Note: you'll need to register with Luftdaten at:
-#https://meine.luftdaten.info/ and enter your Raspberry Pi
-#serial number that's displayed on the Enviro plus LCD along
-#with the other details before the data appears on the
-#Luftdaten map.
+Note: you'll need to register with Luftdaten at:
+https://meine.luftdaten.info/ and enter your Raspberry Pi
+serial number that's displayed on the Enviro plus LCD along
+with the other details before the data appears on the
+Luftdaten map.
 
-#Press Ctrl+C to exit!
+Press Ctrl+C to exit!
 
-#""")
+""")
 
 bus = SMBus(1)
 
@@ -42,11 +37,11 @@ bus = SMBus(1)
 bme280 = BME280(i2c_dev=bus)
 
 # Create LCD instance
-disp = ST7735.ST7735(
+disp = st7735.ST7735(
     port=0,
     cs=1,
-    dc=9,
-    backlight=12,
+    dc="PIN21",         # "GPIO9" on a Raspberry Pi 4
+    backlight="PIN32",  # "GPIO12" on a Raspberry Pi 4
     rotation=270,
     spi_speed_hz=10000000
 )
@@ -64,9 +59,9 @@ def read_values():
     cpu_temp = get_cpu_temperature()
     raw_temp = bme280.get_temperature()
     comp_temp = raw_temp - ((cpu_temp - raw_temp) / comp_factor)
-    values["temperature"] = "{:.2f}".format(comp_temp)
-    values["pressure"] = "{:.2f}".format(bme280.get_pressure() * 100)
-    values["humidity"] = "{:.2f}".format(bme280.get_humidity())
+    values["temperature"] = f"{comp_temp:.2f}"
+    values["pressure"] = f"{bme280.get_pressure() * 100:.2f}"
+    values["humidity"] = f"{bme280.get_humidity():.2f}"
     try:
         pm_values = pms5003.read()
         values["P2"] = str(pm_values.pm_ug_per_m3(2.5))
@@ -90,15 +85,15 @@ def get_cpu_temperature():
 
 # Get Raspberry Pi serial number to use as ID
 def get_serial_number():
-    with open('/proc/cpuinfo', 'r') as f:
+    with open("/proc/cpuinfo", "r") as f:
         for line in f:
-            if line[0:6] == 'Serial':
+            if line.startswith("Serial"):
                 return line.split(":")[1].strip()
 
 
 # Check for Wi-Fi connection
 def check_wifi():
-    if check_output(['hostname', '-I']):
+    if check_output(["hostname", "-I"]):
         return True
     else:
         return False
@@ -110,10 +105,12 @@ def display_status():
     text_colour = (255, 255, 255)
     back_colour = (0, 170, 170) if check_wifi() else (85, 15, 15)
     id = get_serial_number()
-    message = "{}\nWi-Fi: {}".format(id, wifi_status)
-    img = Image.new('RGB', (WIDTH, HEIGHT), color=(0, 0, 0))
+    message = f"{id}\nWi-Fi: {wifi_status}"
+    img = Image.new("RGB", (WIDTH, HEIGHT), color=(0, 0, 0))
     draw = ImageDraw.Draw(img)
-    size_x, size_y = draw.textsize(message, font)
+    x1, y1, x2, y2 = font.getbbox(message)
+    size_x = x2 - x1
+    size_y = y2 - y1
     x = (WIDTH - size_x) / 2
     y = (HEIGHT / 2) - (size_y / 2)
     draw.rectangle((0, 0, 160, 80), back_colour)
@@ -147,11 +144,11 @@ def send_to_luftdaten(values, id):
             timeout=5
         )
     except requests.exceptions.ConnectionError as e:
-        logging.warning('Sensor.Community (Luftdaten) PM Connection Error: {}'.format(e))
+        logging.warning(f"Sensor.Community (Luftdaten) PM Connection Error: {e}")
     except requests.exceptions.Timeout as e:
-        logging.warning('Sensor.Community (Luftdaten) PM Timeout Error: {}'.format(e))
+        logging.warning(f"Sensor.Community (Luftdaten) PM Timeout Error: {e}")
     except requests.exceptions.RequestException as e:
-        logging.warning('Sensor.Community (Luftdaten) PM Request Error: {}'.format(e))
+        logging.warning(f"Sensor.Community (Luftdaten) PM Request Error: {e}")
 
     try:
         resp_bmp = requests.post(
@@ -169,17 +166,17 @@ def send_to_luftdaten(values, id):
             timeout=5
         )
     except requests.exceptions.ConnectionError as e:
-        logging.warning('Sensor.Community (Luftdaten) Climate Connection Error: {}'.format(e))
+        logging.warning(f"Sensor.Community (Luftdaten) Climate Connection Error: {e}")
     except requests.exceptions.Timeout as e:
-        logging.warning('Sensor.Community (Luftdaten) Climate Timeout Error: {}'.format(e))
+        logging.warning(f"Sensor.Community (Luftdaten) Climate Timeout Error: {e}")
     except requests.exceptions.RequestException as e:
-        logging.warning('Sensor.Community (Luftdaten) Climate Request Error: {}'.format(e))
+        logging.warning(f"Sensor.Community (Luftdaten) Climate Request Error: {e}")
 
     if resp_pm is not None and resp_bmp is not None:
         if resp_pm.ok and resp_bmp.ok:
             return True
         else:
-            logging.warning('Luftdaten Error. PM: {}, Climate: {}'.format(resp_pm.reason, resp_bmp.reason))
+            logging.warning(f"Luftdaten Error. PM: {resp_pm.reason}, Climate: {resp_bmp.reason}")
             return False
     else:
         return False
@@ -200,8 +197,9 @@ font_size = 16
 font = ImageFont.truetype(UserFont, font_size)
 
 # Log Raspberry Pi serial and Wi-Fi status
-logging.info("Raspberry Pi serial: {}".format(get_serial_number()))
-logging.info("Wi-Fi: {}\n".format("connected" if check_wifi() else "disconnected"))
+logging.info(f"Raspberry Pi serial: {get_serial_number()}")
+wifi_status = "connected" if check_wifi() else "disconnected"
+logging.info(f"Wi-Fi: {wifi_status}\n")
 
 time_since_update = 0
 update_time = time.time()
@@ -220,4 +218,4 @@ while True:
                 logging.warning("Luftdaten Response: Failed")
         display_status()
     except Exception as e:
-        logging.warning('Main Loop Exception: {}'.format(e))
+        logging.warning(f"Main Loop Exception: {e}")

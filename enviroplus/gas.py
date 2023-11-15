@@ -4,20 +4,29 @@ import atexit
 import time
 
 import ads1015
-import RPi.GPIO as GPIO
+import gpiod
+import gpiodevice
+from gpiod.line import Direction, Value
 
-MICS6814_HEATER_PIN = 24
 MICS6814_GAIN = 6.144
+
+OUTH = gpiod.LineSettings(direction=Direction.OUTPUT, output_value=Value.ACTIVE)
+PLATFORMS = {
+    "Radxa ROCK 5B": {"heater": ("PIN_18", OUTH)},
+    "Raspberry Pi 5": {"heater": ("PIN18", OUTH)},
+    "Raspberry Pi 4": {"heater": ("GPIO24", OUTH)}
+}
 
 ads1015.I2C_ADDRESS_DEFAULT = ads1015.I2C_ADDRESS_ALTERNATE
 _is_setup = False
 _is_available = False
 _adc_enabled = False
 _adc_gain = 6.148
+_heater = None
 
 
 class Mics6814Reading(object):
-    __slots__ = 'oxidising', 'reducing', 'nh3', 'adc'
+    __slots__ = "oxidising", "reducing", "nh3", "adc"
 
     def __init__(self, ox, red, nh3, adc=None):
         self.oxidising = ox
@@ -26,24 +35,20 @@ class Mics6814Reading(object):
         self.adc = adc
 
     def __repr__(self):
-        fmt = """Oxidising: {ox:05.02f} Ohms
-Reducing: {red:05.02f} Ohms
-NH3: {nh3:05.02f} Ohms"""
+        fmt = f"""Oxidising: {self.oxidising:05.02f} Ohms
+Reducing: {self.reducing:05.02f} Ohms
+NH3: {self.nh3:05.02f} Ohms"""
         if self.adc is not None:
-            fmt += """
-ADC: {adc:05.02f} Volts
+            fmt += f"""
+ADC: {self.adc:05.02f} Volts
 """
-        return fmt.format(
-            ox=self.oxidising,
-            red=self.reducing,
-            nh3=self.nh3,
-            adc=self.adc)
+        return fmt
 
     __str__ = __repr__
 
 
 def setup():
-    global adc, adc_type, _is_setup, _is_available
+    global adc, adc_type, _is_setup, _is_available, _heater
     if _is_setup:
         return
     _is_setup = True
@@ -56,17 +61,15 @@ def setup():
         _is_available = False
         return
 
-    adc.set_mode('single')
+    adc.set_mode("single")
     adc.set_programmable_gain(MICS6814_GAIN)
-    if adc_type == 'ADS1115':
+    if adc_type == "ADS1115":
         adc.set_sample_rate(128)
     else:
         adc.set_sample_rate(1600)
 
-    GPIO.setwarnings(False)
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setup(MICS6814_HEATER_PIN, GPIO.OUT)
-    GPIO.output(MICS6814_HEATER_PIN, 1)
+    _heater = gpiodevice.get_pins_for_platform(PLATFORMS)[0]
+
     atexit.register(cleanup)
 
 
@@ -88,7 +91,10 @@ def set_adc_gain(value):
 
 
 def cleanup():
-    GPIO.output(MICS6814_HEATER_PIN, 0)
+    if _heater is None:
+        return
+    lines, offset = _heater
+    lines.set_value(offset, Value.INACTIVE)
 
 
 def read_all():
@@ -98,9 +104,9 @@ def read_all():
     if not _is_available:
         raise RuntimeError("Gas sensor not connected.")
 
-    ox = adc.get_voltage('in0/gnd')
-    red = adc.get_voltage('in1/gnd')
-    nh3 = adc.get_voltage('in2/gnd')
+    ox = adc.get_voltage("in0/gnd")
+    red = adc.get_voltage("in1/gnd")
+    nh3 = adc.get_voltage("in2/gnd")
 
     try:
         ox = (ox * 56000) / (3.3 - ox)
@@ -121,11 +127,11 @@ def read_all():
 
     if _adc_enabled:
         if _adc_gain == MICS6814_GAIN:
-            analog = adc.get_voltage('ref/gnd')
+            analog = adc.get_voltage("ref/gnd")
         else:
             adc.set_programmable_gain(_adc_gain)
             time.sleep(0.05)
-            analog = adc.get_voltage('ref/gnd')
+            analog = adc.get_voltage("ref/gnd")
             adc.set_programmable_gain(MICS6814_GAIN)
 
     return Mics6814Reading(ox, red, nh3, analog)

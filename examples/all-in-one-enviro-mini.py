@@ -5,7 +5,7 @@ import os
 import sys
 import time
 
-import ST7735
+import st7735
 
 try:
     # Transitional fix for breaking change in LTR559
@@ -22,11 +22,11 @@ from fonts.ttf import RobotoMedium as UserFont
 from PIL import Image, ImageDraw, ImageFont
 
 logging.basicConfig(
-    format='%(asctime)s.%(msecs)03d %(levelname)-8s %(message)s',
+    format="%(asctime)s.%(msecs)03d %(levelname)-8s %(message)s",
     level=logging.INFO,
-    datefmt='%Y-%m-%d %H:%M:%S')
+    datefmt="%Y-%m-%d %H:%M:%S")
 
-logging.info("""all-in-one.py - Displays readings from all of Enviro plus' sensors
+logging.info("""all-in-one.py - Displays readings from all of Enviro plus" sensors
 Press Ctrl+C to exit!
 """)
 
@@ -34,11 +34,11 @@ Press Ctrl+C to exit!
 bme280 = BME280()
 
 # Create ST7735 LCD display class
-st7735 = ST7735.ST7735(
+st7735 = st7735.ST7735(
     port=0,
     cs=1,
-    dc=9,
-    backlight=12,
+    dc="PIN21",         # "GPIO9" on a Raspberry Pi 4
+    backlight="PIN32",  # "GPIO12" on a Raspberry Pi 4
     rotation=270,
     spi_speed_hz=10000000
 )
@@ -50,7 +50,7 @@ WIDTH = st7735.width
 HEIGHT = st7735.height
 
 # Set up canvas and font
-img = Image.new('RGB', (WIDTH, HEIGHT), color=(0, 0, 0))
+img = Image.new("RGB", (WIDTH, HEIGHT), color=(0, 0, 0))
 draw = ImageDraw.Draw(img)
 path = os.path.dirname(os.path.realpath(__file__))
 font_size = 20
@@ -71,7 +71,7 @@ def display_text(variable, data, unit):
     vmax = max(values[variable])
     colours = [(v - vmin + 1) / (vmax - vmin + 1) for v in values[variable]]
     # Format the variable name and value
-    message = "{}: {:.1f} {}".format(variable[:4], data, unit)
+    message = f"{variable[:4]}: {data:.1f} {unit}"
     logging.info(message)
     draw.rectangle((0, 0, WIDTH, HEIGHT), (255, 255, 255))
     for i in range(len(colours)):
@@ -90,9 +90,9 @@ def display_text(variable, data, unit):
 
 # Get the temperature of the CPU for compensation
 def get_cpu_temperature():
-    process = Popen(['vcgencmd', 'measure_temp'], stdout=PIPE, universal_newlines=True)
+    process = Popen(["vcgencmd", "measure_temp"], stdout=PIPE, universal_newlines=True)
     output, _error = process.communicate()
-    return float(output[output.index('=') + 1:output.rindex("'")])
+    return float(output[output.index("=") + 1:output.rindex("'")])
 
 
 # Tuning factor for compensation. Decrease this number to adjust the
@@ -131,7 +131,7 @@ try:
         # One mode for each variable
         if mode == 0:
             # variable = "temperature"
-            unit = "C"
+            unit = "°C"
             cpu_temp = get_cpu_temperature()
             # Smooth out with some averaging to decrease jitter
             cpu_temps = cpu_temps[1:] + [cpu_temp]

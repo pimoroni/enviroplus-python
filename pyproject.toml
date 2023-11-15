@@ -104,6 +104,9 @@ skip = """
 [tool.isort]
 line_length = 200
 
+[tool.black]
+line-length = 200
+
 [tool.check-manifest]
 ignore = [
     '.stickler.yml',

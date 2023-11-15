@@ -21,96 +21,96 @@ class SMBusFakeDeviceNoTimeout(MockSMBus):
         self.regs[0x00:0x01] = 0x0f, 0x80
 
 
-@pytest.fixture(scope='function', autouse=True)
+@pytest.fixture(scope="function", autouse=True)
 def cleanup():
     yield None
-    try:
-        del sys.modules['enviroplus']
-    except KeyError:
-        pass
-    try:
-        del sys.modules['enviroplus.noise']
-    except KeyError:
-        pass
-    try:
-        del sys.modules['enviroplus.gas']
-    except KeyError:
-        pass
+    modules = "enviroplus", "enviroplus.noise", "enviroplus.gas", "ads1015", "i2cdevice"
+    for module in modules:
+        try:
+            del sys.modules[module]
+        except KeyError:
+            pass
 
 
-@pytest.fixture(scope='function', autouse=False)
-def GPIO():
-    """Mock RPi.GPIO module."""
-    GPIO = mock.MagicMock()
-    # Fudge for Python < 37 (possibly earlier)
-    sys.modules['RPi'] = mock.Mock()
-    sys.modules['RPi'].GPIO = GPIO
-    sys.modules['RPi.GPIO'] = GPIO
-    yield GPIO
-    del sys.modules['RPi']
-    del sys.modules['RPi.GPIO']
+@pytest.fixture(scope="function", autouse=False)
+def gpiod():
+    sys.modules["gpiod"] = mock.Mock()
+    sys.modules["gpiod.line"] = mock.Mock()
+    yield sys.modules["gpiod"]
+    del sys.modules["gpiod.line"]
+    del sys.modules["gpiod"]
 
 
-@pytest.fixture(scope='function', autouse=False)
+@pytest.fixture(scope="function", autouse=False)
+def gpiodevice():
+    gpiodevice = mock.Mock()
+    gpiodevice.get_pins_for_platform.return_value = [(mock.Mock(), 0)]
+
+    sys.modules["gpiodevice"] = gpiodevice
+    yield gpiodevice
+    del sys.modules["gpiodevice"]
+
+
+@pytest.fixture(scope="function", autouse=False)
 def spidev():
     """Mock spidev module."""
     spidev = mock.MagicMock()
-    sys.modules['spidev'] = spidev
+    sys.modules["spidev"] = spidev
     yield spidev
-    del sys.modules['spidev']
+    del sys.modules["spidev"]
 
 
-@pytest.fixture(scope='function', autouse=False)
+@pytest.fixture(scope="function", autouse=False)
 def smbus():
-    """Mock smbus module."""
+    """Mock smbus2 module."""
     smbus = mock.MagicMock()
     smbus.SMBus = SMBusFakeDevice
-    sys.modules['smbus'] = smbus
+    sys.modules["smbus2"] = smbus
     yield smbus
-    del sys.modules['smbus']
+    del sys.modules["smbus2"]
 
 
-@pytest.fixture(scope='function', autouse=False)
+@pytest.fixture(scope="function", autouse=False)
 def smbus_notimeout():
-    """Mock smbus module."""
+    """Mock smbus2 module."""
     smbus = mock.MagicMock()
     smbus.SMBus = SMBusFakeDeviceNoTimeout
-    sys.modules['smbus'] = smbus
+    sys.modules["smbus2"] = smbus
     yield smbus
-    del sys.modules['smbus']
+    del sys.modules["smbus2"]
 
 
-@pytest.fixture(scope='function', autouse=False)
+@pytest.fixture(scope="function", autouse=False)
 def mocksmbus():
-    """Mock smbus module."""
+    """Mock smbus2 module."""
     smbus = mock.MagicMock()
-    sys.modules['smbus'] = smbus
+    sys.modules["smbus2"] = smbus
     yield smbus
-    del sys.modules['smbus']
+    del sys.modules["smbus2"]
 
 
-@pytest.fixture(scope='function', autouse=False)
+@pytest.fixture(scope="function", autouse=False)
 def atexit():
     """Mock atexit module."""
     atexit = mock.MagicMock()
-    sys.modules['atexit'] = atexit
+    sys.modules["atexit"] = atexit
     yield atexit
-    del sys.modules['atexit']
+    del sys.modules["atexit"]
 
 
-@pytest.fixture(scope='function', autouse=False)
+@pytest.fixture(scope="function", autouse=False)
 def sounddevice():
     """Mock sounddevice module."""
     sounddevice = mock.MagicMock()
-    sys.modules['sounddevice'] = sounddevice
+    sys.modules["sounddevice"] = sounddevice
     yield sounddevice
-    del sys.modules['sounddevice']
+    del sys.modules["sounddevice"]
 
 
-@pytest.fixture(scope='function', autouse=False)
+@pytest.fixture(scope="function", autouse=False)
 def numpy():
     """Mock numpy module."""
     numpy = mock.MagicMock()
-    sys.modules['numpy'] = numpy
+    sys.modules["numpy"] = numpy
     yield numpy
-    del sys.modules['numpy']
+    del sys.modules["numpy"]
