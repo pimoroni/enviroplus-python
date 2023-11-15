@@ -35,11 +35,11 @@ classifiers = [
     "Topic :: System :: Hardware",
 ]
 dependencies = [
-    "pimoroni-bme280",
-    "pms5003",
-    "ltr559",
-    "st7735",
-    "ads1015 >= 0.0.7",
+    "pimoroni-bme280 >= 1.0.0",
+    "pms5003 >= 1.0.0",
+    "ltr559 >= 1.0.0",
+    "st7735 >= 1.0.0",
+    "ads1015 >= 1.0.0",
     "fonts",
     "font-roboto",
     "astral",
