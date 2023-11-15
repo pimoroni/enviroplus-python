@@ -17,15 +17,15 @@ logging.basicConfig(
     level=logging.INFO,
     datefmt="%Y-%m-%d %H:%M:%S")
 
-logging.info("""luftdaten.py - Reads temperature, pressure, humidity,
-PM2.5, and PM10 from Enviro plus and sends data to Luftdaten,
+logging.info("""sensorcommunity.py - Reads temperature, pressure, humidity,
+PM2.5, and PM10 from Enviro plus and sends data to Sensor.Community,
 the citizen science air quality project.
 
-Note: you'll need to register with Luftdaten at:
-https://meine.luftdaten.info/ and enter your Raspberry Pi
+Note: you'll need to register with Sensor.Community at:
+https://devices.sensor.community/ and enter your Raspberry Pi
 serial number that's displayed on the Enviro plus LCD along
 with the other details before the data appears on the
-Luftdaten map.
+Sensor.Community map.
 
 Press Ctrl+C to exit!
 
@@ -118,7 +118,7 @@ def display_status():
     disp.display(img)
 
 
-def send_to_luftdaten(values, id):
+def send_to_sensorcommunity(values, id):
     pm_values = dict(i for i in values.items() if i[0].startswith("P"))
     temp_values = dict(i for i in values.items() if not i[0].startswith("P"))
 
@@ -132,7 +132,7 @@ def send_to_luftdaten(values, id):
         resp_pm = requests.post(
             "https://api.sensor.community/v1/push-sensor-data/",
             json={
-                "software_version": "enviro-plus 0.0.1",
+                "software_version": "enviro-plus 1.0.0",
                 "sensordatavalues": pm_values_json
             },
             headers={
@@ -144,17 +144,17 @@ def send_to_luftdaten(values, id):
             timeout=5
         )
     except requests.exceptions.ConnectionError as e:
-        logging.warning(f"Sensor.Community (Luftdaten) PM Connection Error: {e}")
+        logging.warning(f"Sensor.Community PM Connection Error: {e}")
     except requests.exceptions.Timeout as e:
-        logging.warning(f"Sensor.Community (Luftdaten) PM Timeout Error: {e}")
+        logging.warning(f"Sensor.Community PM Timeout Error: {e}")
     except requests.exceptions.RequestException as e:
-        logging.warning(f"Sensor.Community (Luftdaten) PM Request Error: {e}")
+        logging.warning(f"Sensor.Community PM Request Error: {e}")
 
     try:
         resp_bmp = requests.post(
             "https://api.sensor.community/v1/push-sensor-data/",
             json={
-                "software_version": "enviro-plus 0.0.1",
+                "software_version": "enviro-plus 1.0.0",
                 "sensordatavalues": temp_values_json
             },
             headers={
@@ -166,17 +166,17 @@ def send_to_luftdaten(values, id):
             timeout=5
         )
     except requests.exceptions.ConnectionError as e:
-        logging.warning(f"Sensor.Community (Luftdaten) Climate Connection Error: {e}")
+        logging.warning(f"Sensor.Community Climate Connection Error: {e}")
     except requests.exceptions.Timeout as e:
-        logging.warning(f"Sensor.Community (Luftdaten) Climate Timeout Error: {e}")
+        logging.warning(f"Sensor.Community Climate Timeout Error: {e}")
     except requests.exceptions.RequestException as e:
-        logging.warning(f"Sensor.Community (Luftdaten) Climate Request Error: {e}")
+        logging.warning(f"Sensor.Community Climate Request Error: {e}")
 
     if resp_pm is not None and resp_bmp is not None:
         if resp_pm.ok and resp_bmp.ok:
             return True
         else:
-            logging.warning(f"Luftdaten Error. PM: {resp_pm.reason}, Climate: {resp_bmp.reason}")
+            logging.warning(f"Sensor.Community Error. PM: {resp_pm.reason}, Climate: {resp_bmp.reason}")
             return False
     else:
         return False
@@ -185,7 +185,7 @@ def send_to_luftdaten(values, id):
 # Compensation factor for temperature
 comp_factor = 2.25
 
-# Raspberry Pi ID to send to Luftdaten
+# Raspberry Pi ID to send to Sensor.Community
 id = "raspi-" + get_serial_number()
 
 # Width and height to calculate text position
@@ -204,7 +204,7 @@ logging.info(f"Wi-Fi: {wifi_status}\n")
 time_since_update = 0
 update_time = time.time()
 
-# Main loop to read data, display, and send to Luftdaten
+# Main loop to read data, display, and send to Sensor.Community
 while True:
     try:
         values = read_values()
@@ -212,10 +212,10 @@ while True:
         if time_since_update > 145:
             logging.info(values)
             update_time = time.time()
-            if send_to_luftdaten(values, id):
-                logging.info("Luftdaten Response: OK")
+            if send_to_sensorcommunity(values, id):
+                logging.info("Sensor.Community Response: OK")
             else:
-                logging.warning("Luftdaten Response: Failed")
+                logging.warning("Sensor.Community Response: Failed")
         display_status()
     except Exception as e:
         logging.warning(f"Main Loop Exception: {e}")
