@@ -1,18 +1,20 @@
 #!/bin/bash
 LIBRARY_NAME=`grep -m 1 name pyproject.toml | awk -F" = " '{print substr($2,2,length($2)-2)}'`
-CONFIG=/boot/config.txt
+CONFIG_FILE=config.txt
+CONFIG_DIR="/boot/firmware"
 DATESTAMP=`date "+%Y-%m-%d-%H-%M-%S"`
 CONFIG_BACKUP=false
 APT_HAS_UPDATED=false
 RESOURCES_TOP_DIR=$HOME/Pimoroni
-VENV_BASH_SNIPPET=$RESOURCES_TOP_DIR/auto_venv.sh
-VENV_DIR=$RESOURCES_TOP_DIR/venv
+VENV_BASH_SNIPPET=$RESOURCES_DIR/auto_venv.sh
+VENV_DIR=$HOME/.virtualenvs/pimoroni
 WD=`pwd`
 USAGE="./install.sh (--unstable)"
 POSITIONAL_ARGS=()
 FORCE=false
 UNSTABLE=false
 PYTHON="python"
+
 
 user_check() {
 	if [ $(id -u) -eq 0 ]; then
@@ -55,19 +57,35 @@ warning() {
 	echo -e "$(tput setaf 1)$1$(tput sgr0)"
 }
 
+find_config() {
+	if [ ! -f "$CONFIG_DIR/$CONFIG_FILE" ]; then
+		CONFIG_DIR="/boot"
+		if [ ! -f "$CONFIG_DIR/$CONFIG_FILE"]; then
+			warning "Could not find $CONFIG_FILE!"
+			exit 1
+		fi
+    else
+        if [ -f "/boot/$CONFIG_FILE" ] && [ ! -L "/boot/$CONFIG_FILE" ]; then
+            warning "Oops! It looks like /boot/$CONFIG_FILE is not a link to $CONFIG_DIR/$CONFIG_FILE"
+            warning "You might want to fix this!"
+        fi
+	fi
+    inform "Using $CONFIG_FILE in $CONFIG_DIR"
+}
+
 venv_bash_snippet() {
 	if [ ! -f $VENV_BASH_SNIPPET ]; then
 		cat << EOF > $VENV_BASH_SNIPPET
-# Add \`source $RESOURCES_TOP_DIR/auto_venv.sh\` to your ~/.bashrc to activate
+# Add `source $RESOURCES_DIR/auto_venv.sh` to your ~/.bashrc to activate
 # the Pimoroni virtual environment automagically!
-PY_ENV_DIR=~/Pimoroni/venv
-if [ ! -f \$PY_ENV_DIR/bin/activate ]; then
-  printf "Creating user Python environment in \$PY_ENV_DIR, please wait...\n"
-  mkdir -p \$PY_ENV_DIR
-  python3 -m venv --system-site-packages --prompt Pimoroni \$PY_ENV_DIR
+VENV_DIR="$VENV_DIR"
+if [ ! -f \$VENV_DIR/bin/activate ]; then
+  printf "Creating user Python environment in \$VENV_DIR, please wait...\n"
+  mkdir -p \$VENV_DIR
+  python3 -m venv --system-site-packages \$VENV_DIR
 fi
 printf " ↓ ↓ ↓ ↓   Hello, we've activated a Python venv for you. To exit, type \"deactivate\".\n"
-source \$PY_ENV_DIR/bin/activate
+source \$VENV_DIR/bin/activate
 EOF
 	fi
 }
@@ -80,7 +98,7 @@ venv_check() {
 			if [ ! -f $VENV_DIR/bin/activate ]; then
 				inform "Creating virtual Python environment in $VENV_DIR, please wait...\n"
 				mkdir -p $VENV_DIR
-				/usr/bin/python3 -m venv $VENV_DIR --system-site-packages --prompt Pimoroni
+				/usr/bin/python3 -m venv $VENV_DIR --system-site-packages
 				venv_bash_snippet
 			else
 				inform "Found existing virtual Python environment in $VENV_DIR\n"
@@ -99,12 +117,12 @@ function do_config_backup {
 	if [ ! $CONFIG_BACKUP == true ]; then
 		CONFIG_BACKUP=true
 		FILENAME="config.preinstall-$LIBRARY_NAME-$DATESTAMP.txt"
-		inform "Backing up $CONFIG to /boot/$FILENAME\n"
-		sudo cp $CONFIG /boot/$FILENAME
+		inform "Backing up $CONFIG_DIR/$CONFIG_FILE to $CONFIG_DIR/$FILENAME\n"
+		sudo cp $CONFIG_DIR/$CONFIG_FILE $CONFIG_DIR/$FILENAME
 		mkdir -p $RESOURCES_TOP_DIR/config-backups/
-		cp $CONFIG $RESOURCES_TOP_DIR/config-backups/$FILENAME
+		cp $CONFIG_DIR/$CONFIG_FILE $RESOURCES_TOP_DIR/config-backups/$FILENAME
 		if [ -f "$UNINSTALLER" ]; then
-			echo "cp $RESOURCES_TOP_DIR/config-backups/$FILENAME $CONFIG" >> $UNINSTALLER
+			echo "cp $RESOURCES_TOP_DIR/config-backups/$FILENAME $CONFIG_DIR/$CONFIG_FILE" >> $UNINSTALLER
 		fi
 	fi
 }
@@ -185,7 +203,7 @@ pip_pkg_install toml
 CONFIG_VARS=`$PYTHON - <<EOF
 import toml
 config = toml.load("pyproject.toml")
-p = dict(config['pimoroni'])
+p = dict(config['tool']['pimoroni'])
 # Convert list config entries into bash arrays
 for k, v in p.items():
     v = "'\n\t'".join(v)
@@ -244,10 +262,12 @@ fi
 
 cd $WD
 
+find_config
+
 for ((i = 0; i < ${#SETUP_CMDS[@]}; i++)); do
 	CMD="${SETUP_CMDS[$i]}"
-	# Attempt to catch anything that touches /boot/config.txt and trigger a backup
-	if [[ "$CMD" == *"raspi-config"* ]] || [[ "$CMD" == *"$CONFIG"* ]] || [[ "$CMD" == *"\$CONFIG"* ]]; then
+	# Attempt to catch anything that touches config.txt and trigger a backup
+	if [[ "$CMD" == *"raspi-config"* ]] || [[ "$CMD" == *"$CONFIG_DIR/$CONFIG_FILE"* ]] || [[ "$CMD" == *"\$CONFIG_DIR/\$CONFIG_FILE"* ]]; then
 		do_config_backup
 	fi
 	eval $CMD
@@ -257,10 +277,10 @@ for ((i = 0; i < ${#CONFIG_TXT[@]}; i++)); do
 	CONFIG_LINE="${CONFIG_TXT[$i]}"
 	if ! [ "$CONFIG_LINE" == "" ]; then
 		do_config_backup
-		inform "Adding $CONFIG_LINE to $CONFIG\n"
-		sudo sed -i "s/^#$CONFIG_LINE/$CONFIG_LINE/" $CONFIG
-		if ! grep -q "^$CONFIG_LINE" $CONFIG; then
-			printf "$CONFIG_LINE\n" | sudo tee --append $CONFIG
+		inform "Adding $CONFIG_LINE to $CONFIG_DIR/$CONFIG_FILE\n"
+		sudo sed -i "s/^#$CONFIG_LINE/$CONFIG_LINE/" $CONFIG_DIR/$CONFIG_FILE
+		if ! grep -q "^$CONFIG_LINE" $CONFIG_DIR/$CONFIG_FILE; then
+			printf "$CONFIG_LINE\n" | sudo tee --append $CONFIG_DIR/$CONFIG_FILE
 		fi
 	fi
 done

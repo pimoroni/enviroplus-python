@@ -122,16 +122,11 @@ ignore = [
     'requirements-dev.txt'
 ]
 
-[pimoroni]
+[tool.pimoroni]
 apt_packages = [
     "python3",
     "python3-pip",
-    "python3-numpy",
-    "python3-smbus",
-    "python3-pil",
     "python3-cffi",
-    "python3-spidev",
-    "python3-rpi.gpio",
     "libportaudio2"
 ]
 configtxt = [
@@ -139,10 +134,10 @@ configtxt = [
     "dtoverlay=adau7002-simple"
 ]
 commands = [
-	"printf \"Setting up i2c and SPI..\n\"",
-	"raspi-config nonint do_spi 0",
-	"raspi-config nonint do_i2c 0",
-	"printf \"Setting up serial for PMS5003..\n\"",
+	"printf \"Setting up i2c and SPI..\\n\"",
+	"sudo raspi-config nonint do_spi 0",
+	"sudo raspi-config nonint do_i2c 0",
+	"printf \"Setting up serial for PMS5003..\\n\"",
 	"sudo raspi-config nonint do_serial_cons 1",
 	"sudo raspi-config nonint do_serial_hw 1"
 ]
