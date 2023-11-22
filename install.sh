@@ -74,9 +74,11 @@ find_config() {
 }
 
 venv_bash_snippet() {
+    inform "Checking for $VENV_BASH_SNIPPET\n"
 	if [ ! -f $VENV_BASH_SNIPPET ]; then
+        inform "Creating $VENV_BASH_SNIPPET\n"
 		cat << EOF > $VENV_BASH_SNIPPET
-# Add `source $VENV_BASH_SNIPPET` to your ~/.bashrc to activate
+# Add "source $VENV_BASH_SNIPPET" to your ~/.bashrc to activate
 # the Pimoroni virtual environment automagically!
 VENV_DIR="$VENV_DIR"
 if [ ! -f \$VENV_DIR/bin/activate ]; then
