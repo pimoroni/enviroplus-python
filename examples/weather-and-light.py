@@ -162,11 +162,6 @@ def draw_background(progress, period, day):
     return composite
 
 
-def text_width(font, text):
-    x1, y1, x2, y2 = font.getbbox(text)
-    return x2 - x1
-
-
 def text_size(font, text):
     x1, y1, x2, y2 = font.getbbox(text)
     return x2 - x1, y2 - y1
@@ -384,7 +379,8 @@ while True:
 
     temp_string = f"{corr_temperature:.0f}°C"
     img = overlay_text(img, (68, 18), temp_string, font_lg, align_right=True)
-    spacing = text_width(font_lg, temp_string) + 1
+    _, text_height = text_size(font_lg, temp_string)
+    spacing = text_height + 1
     if min_temp is not None and max_temp is not None:
         range_string = f"{min_temp:.0f}-{max_temp:.0f}"
     else:
@@ -398,7 +394,8 @@ while True:
     corr_humidity = correct_humidity(humidity, temperature, corr_temperature)
     humidity_string = f"{corr_humidity:.0f}%"
     img = overlay_text(img, (68, 48), humidity_string, font_lg, align_right=True)
-    spacing = text_width(font_lg, humidity_string) + 1
+    _, text_height = text_size(font_lg, humidity_string)
+    spacing = text_height + 1
     humidity_desc = describe_humidity(corr_humidity).upper()
     img = overlay_text(img, (68, 48 + spacing), humidity_desc, font_sm, align_right=True, rectangle=True)
     humidity_icon = Image.open(f"{path}/icons/humidity-{humidity_desc.lower()}.png")
@@ -408,7 +405,8 @@ while True:
     light = ltr559.get_lux()
     light_string = f"{int(light):,}"
     img = overlay_text(img, (WIDTH - margin, 18), light_string, font_lg, align_right=True)
-    spacing = text_width(font_lg, light_string.replace(",", "")) + 1
+    _, text_height = text_size(font_lg, light_string.replace(",", ""))
+    spacing = text_height + 1
     light_desc = describe_light(light).upper()
     img = overlay_text(img, (WIDTH - margin - 1, 18 + spacing), light_desc, font_sm, align_right=True, rectangle=True)
     light_icon = Image.open(f"{path}/icons/bulb-{light_desc.lower()}.png")
@@ -421,7 +419,8 @@ while True:
     pressure_string = f"{int(mean_pressure):,} {trend}"
     img = overlay_text(img, (WIDTH - margin, 48), pressure_string, font_lg, align_right=True)
     pressure_desc = describe_pressure(mean_pressure).upper()
-    spacing = text_width(font_lg, pressure_string.replace(",", "")) + 1
+    _, text_height = text_size(font_lg, pressure_string.replace(",", ""))
+    spacing = text_height + 1
     img = overlay_text(img, (WIDTH - margin - 1, 48 + spacing), pressure_desc, font_sm, align_right=True, rectangle=True)
     pressure_icon = Image.open(f"{path}/icons/weather-{pressure_desc.lower()}.png")
     img.paste(pressure_icon, (80, 48), mask=pressure_icon)
