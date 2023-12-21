@@ -36,8 +36,8 @@ bme280 = BME280()
 st7735 = ST7735.ST7735(
     port=0,
     cs=1,
-    dc=9,
-    backlight=12,
+    dc="9",
+    backlight="12",
     rotation=270,
     spi_speed_hz=10000000
 )
