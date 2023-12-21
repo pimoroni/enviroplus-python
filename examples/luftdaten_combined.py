@@ -1,7 +1,7 @@
 import logging
 import sys
 import requests
-import ST7735
+import st7735
 import time
 import colorsys
 from bme280 import BME280

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import ST7735
+import st7735
 from PIL import Image, ImageDraw, ImageFont
 from fonts.ttf import RobotoMedium as UserFont
 import logging

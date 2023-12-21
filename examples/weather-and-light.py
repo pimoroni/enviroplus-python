@@ -10,7 +10,7 @@ import colorsys
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 from fonts.ttf import RobotoMedium as UserFont
 
-import ST7735
+import st7735
 from bme280 import BME280
 from ltr559 import LTR559
 

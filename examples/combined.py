@@ -3,7 +3,7 @@
 import time
 import colorsys
 import sys
-import ST7735
+import st7735
 try:
     # Transitional fix for breaking change in LTR559
     from ltr559 import LTR559

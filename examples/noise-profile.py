@@ -1,4 +1,4 @@
-import ST7735
+import st7735
 from PIL import Image, ImageDraw
 from enviroplus.noise import Noise
 

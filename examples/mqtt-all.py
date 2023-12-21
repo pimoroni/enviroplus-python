@@ -6,7 +6,7 @@ Example run: python3 mqtt-all.py --broker 192.168.1.164 --topic enviro --usernam
 """
 
 import argparse
-import ST7735
+import st7735
 import time
 import ssl
 from bme280 import BME280
