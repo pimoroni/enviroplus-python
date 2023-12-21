@@ -1,4 +1,4 @@
-import ST7735
+import st7735
 from PIL import Image, ImageDraw
 from enviroplus.noise import Noise
 
@@ -14,11 +14,11 @@ Press Ctrl+C to exit!
 
 noise = Noise()
 
-disp = ST7735.ST7735(
+disp = st7735.ST7735(
     port=0,
     cs=ST7735.BG_SPI_CS_FRONT,
-    dc=9,
-    backlight=12,
+    dc="9",
+    backlight="12",
     rotation=90)
 
 disp.begin()

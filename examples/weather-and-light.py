@@ -10,7 +10,7 @@ import colorsys
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 from fonts.ttf import RobotoMedium as UserFont
 
-import ST7735
+import st7735
 from bme280 import BME280
 from ltr559 import LTR559
 
@@ -291,11 +291,11 @@ def describe_light(light):
 
 
 # Initialise the LCD
-disp = ST7735.ST7735(
+disp = st7735.ST7735(
     port=0,
     cs=1,
-    dc=9,
-    backlight=12,
+    dc="9",
+    backlight="12",
     rotation=270,
     spi_speed_hz=10000000
 )

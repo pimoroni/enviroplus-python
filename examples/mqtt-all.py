@@ -6,7 +6,7 @@ Example run: python3 mqtt-all.py --broker 192.168.1.164 --topic enviro --usernam
 """
 
 import argparse
-import ST7735
+import st7735
 import time
 import ssl
 from bme280 import BME280
@@ -230,8 +230,8 @@ def main():
     bme280 = BME280(i2c_dev=bus)
 
     # Create LCD instance
-    disp = ST7735.ST7735(
-        port=0, cs=1, dc=9, backlight=12, rotation=270, spi_speed_hz=10000000
+    disp = st7735.ST7735(
+        port=0, cs=1, dc="9", backlight="12", rotation=270, spi_speed_hz=10000000
     )
 
     # Initialize display

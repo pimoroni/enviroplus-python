@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import ST7735
+import st7735
 from PIL import Image, ImageDraw, ImageFont
 from fonts.ttf import RobotoMedium as UserFont
 import logging
@@ -17,11 +17,11 @@ Press Ctrl+C to exit!
 """)
 
 # Create LCD class instance.
-disp = ST7735.ST7735(
+disp = st7735.ST7735(
     port=0,
     cs=1,
-    dc=9,
-    backlight=12,
+    dc="9",
+    backlight="12",
     rotation=270,
     spi_speed_hz=10000000
 )

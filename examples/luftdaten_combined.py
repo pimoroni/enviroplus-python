@@ -1,7 +1,7 @@
 import logging
 import sys
 import requests
-import ST7735
+import st7735
 import time
 import colorsys
 from bme280 import BME280
@@ -152,11 +152,11 @@ def check_wifi():
 
 
 # Create ST7735 LCD display class
-st7735 = ST7735.ST7735(
+st7735 = st7735.ST7735(
     port=0,
     cs=1,
-    dc=9,
-    backlight=12,
+    dc="9",
+    backlight="12",
     rotation=270,
     spi_speed_hz=10000000
 )

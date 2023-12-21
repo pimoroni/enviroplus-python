@@ -3,7 +3,7 @@
 import time
 import colorsys
 import sys
-import ST7735
+import st7735
 try:
     # Transitional fix for breaking change in LTR559
     from ltr559 import LTR559
@@ -40,11 +40,11 @@ pms5003 = PMS5003()
 time.sleep(1.0)
 
 # Create ST7735 LCD display class
-st7735 = ST7735.ST7735(
+st7735 = st7735.ST7735(
     port=0,
     cs=1,
-    dc=9,
-    backlight=12,
+    dc="9",
+    backlight="12",
     rotation=270,
     spi_speed_hz=10000000
 )
