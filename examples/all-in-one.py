@@ -38,7 +38,7 @@ bme280 = BME280()
 pms5003 = PMS5003()
 
 # Create ST7735 LCD display class
-st7735 = ST7735.ST7735(
+st7735 = st7735.ST7735(
     port=0,
     cs=1,
     dc="9",

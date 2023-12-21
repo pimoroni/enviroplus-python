@@ -40,7 +40,7 @@ bus = SMBus(1)
 bme280 = BME280(i2c_dev=bus)
 
 # Create LCD instance
-disp = ST7735.ST7735(
+disp = st7735.ST7735(
     port=0,
     cs=1,
     dc="9",

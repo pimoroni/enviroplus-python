@@ -17,7 +17,7 @@ Press Ctrl+C to exit!
 """)
 
 # Create LCD class instance.
-disp = ST7735.ST7735(
+disp = st7735.ST7735(
     port=0,
     cs=1,
     dc="9",

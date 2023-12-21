@@ -14,7 +14,7 @@ Press Ctrl+C to exit!
 
 noise = Noise()
 
-disp = ST7735.ST7735(
+disp = st7735.ST7735(
     port=0,
     cs=ST7735.BG_SPI_CS_FRONT,
     dc="9",

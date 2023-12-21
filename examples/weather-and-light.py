@@ -291,7 +291,7 @@ def describe_light(light):
 
 
 # Initialise the LCD
-disp = ST7735.ST7735(
+disp = st7735.ST7735(
     port=0,
     cs=1,
     dc="9",
