@@ -13,7 +13,7 @@ check_apt = False
 try:
     import apt
     check_apt = True
-except ImportErorr:
+except ImportError:
     print("⚠️  Could not import \"apt\". Unable to verify system dependencies.")
 
 
