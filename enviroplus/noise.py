@@ -1,11 +1,9 @@
-import sounddevice
 import numpy
+import sounddevice
 
 
-class Noise():
-    def __init__(self,
-                 sample_rate=16000,
-                 duration=0.5):
+class Noise:
+    def __init__(self, sample_rate=16000, duration=0.5):
         """Noise measurement.
 
         :param sample_rate: Sample rate in Hz
@@ -39,18 +37,14 @@ class Noise():
         """
         n = self.sample_rate // 2
         if start > n or end > n:
-            raise ValueError("Maxmimum frequency is {}".format(n))
+            raise ValueError(f"Maximum frequency is {n}")
 
         recording = self._record()
         magnitude = numpy.abs(numpy.fft.rfft(recording[:, 0], n=self.sample_rate))
         return numpy.mean(magnitude[start:end])
 
-    def get_noise_profile(self,
-                          noise_floor=100,
-                          low=0.12,
-                          mid=0.36,
-                          high=None):
-        """Returns a noise charateristic profile.
+    def get_noise_profile(self, noise_floor=100, low=0.12, mid=0.36, high=None):
+        """Returns a noise characteristic profile.
 
         Bins all frequencies into 3 weighted groups expressed as a percentage of the total frequency range.
 
@@ -83,9 +77,9 @@ class Noise():
     def _record(self):
         return sounddevice.rec(
             int(self.duration * self.sample_rate),
-            device='adau7002',
+            device="adau7002",
             samplerate=self.sample_rate,
             blocking=True,
             channels=1,
-            dtype='float64'
+            dtype="float64"
         )
