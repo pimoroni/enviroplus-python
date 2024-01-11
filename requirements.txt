@@ -9,7 +9,7 @@ numpy==1.26.1
 paho_mqtt==1.6.1
 Pillow==10.0.1
 pms5003==0.0.5
-pytest==7.4.0
+pytest==7.4.2
 pytz==2023.3
 requests==2.31.0
 setuptools==68.0.0
