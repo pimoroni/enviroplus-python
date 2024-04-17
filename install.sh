@@ -156,7 +156,8 @@ function apt_pkg_install {
 			sudo apt update
 			APT_HAS_UPDATED=true
 		fi
-		sudo apt install -y "$PACKAGES"
+		# shellcheck disable=SC2086
+		sudo apt install -y $PACKAGES
 		check_for_error
 		if [ -f "$UNINSTALLER" ]; then
 			echo "apt uninstall -y $PACKAGES" >> "$UNINSTALLER"
