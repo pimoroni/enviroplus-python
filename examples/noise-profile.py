@@ -1,5 +1,6 @@
-import ST7735
+import st7735
 from PIL import Image, ImageDraw
+
 from enviroplus.noise import Noise
 
 print("""noise-profile.py - Get a simple noise profile.
@@ -12,16 +13,18 @@ Press Ctrl+C to exit!
 
 noise = Noise()
 
-disp = ST7735.ST7735(
+disp = st7735.ST7735(
     port=0,
-    cs=ST7735.BG_SPI_CS_FRONT,
-    dc=9,
-    backlight=12,
-    rotation=90)
+    cs=1,
+    dc="GPIO9",
+    backlight="GPIO12",
+    rotation=270,
+    spi_speed_hz=10000000
+)
 
 disp.begin()
 
-img = Image.new('RGB', (disp.width, disp.height), color=(0, 0, 0))
+img = Image.new("RGB", (disp.width, disp.height), color=(0, 0, 0))
 draw = ImageDraw.Draw(img)
 
 

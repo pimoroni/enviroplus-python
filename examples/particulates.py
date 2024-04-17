@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 
-import time
-from pms5003 import PMS5003, ReadTimeoutError
 import logging
+import time
+
+from pms5003 import PMS5003, ReadTimeoutError
 
 logging.basicConfig(
-    format='%(asctime)s.%(msecs)03d %(levelname)-8s %(message)s',
+    format="%(asctime)s.%(msecs)03d %(levelname)-8s %(message)s",
     level=logging.INFO,
-    datefmt='%Y-%m-%d %H:%M:%S')
+    datefmt="%Y-%m-%d %H:%M:%S")
 
 logging.info("""particulates.py - Print readings from the PMS5003 particulate sensor.
 

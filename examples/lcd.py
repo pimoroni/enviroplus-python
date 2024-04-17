@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 
-import ST7735
-from PIL import Image, ImageDraw, ImageFont
-from fonts.ttf import RobotoMedium as UserFont
 import logging
 
+import st7735
+from fonts.ttf import RobotoMedium as UserFont
+from PIL import Image, ImageDraw, ImageFont
+
 logging.basicConfig(
-    format='%(asctime)s.%(msecs)03d %(levelname)-8s %(message)s',
+    format="%(asctime)s.%(msecs)03d %(levelname)-8s %(message)s",
     level=logging.INFO,
-    datefmt='%Y-%m-%d %H:%M:%S')
+    datefmt="%Y-%m-%d %H:%M:%S")
 
 logging.info("""lcd.py - Hello, World! example on the 0.96" LCD.
 
@@ -17,11 +18,11 @@ Press Ctrl+C to exit!
 """)
 
 # Create LCD class instance.
-disp = ST7735.ST7735(
+disp = st7735.ST7735(
     port=0,
     cs=1,
-    dc=9,
-    backlight=12,
+    dc="GPIO9",
+    backlight="GPIO12",
     rotation=270,
     spi_speed_hz=10000000
 )
@@ -34,7 +35,7 @@ WIDTH = disp.width
 HEIGHT = disp.height
 
 # New canvas to draw on.
-img = Image.new('RGB', (WIDTH, HEIGHT), color=(0, 0, 0))
+img = Image.new("RGB", (WIDTH, HEIGHT), color=(0, 0, 0))
 draw = ImageDraw.Draw(img)
 
 # Text settings.
@@ -44,7 +45,10 @@ text_colour = (255, 255, 255)
 back_colour = (0, 170, 170)
 
 message = "Hello, World!"
-size_x, size_y = draw.textsize(message, font)
+
+x1, y1, x2, y2 = font.getbbox(message)
+size_x = x2 - x1
+size_y = y2 - y1
 
 # Calculate text position
 x = (WIDTH - size_x) / 2

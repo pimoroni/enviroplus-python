@@ -17,7 +17,7 @@ def test_noise_get_amplitudes_at_frequency_ranges(sounddevice, numpy):
         (501, 1000)
     ])
 
-    sounddevice.rec.assert_called_with(0.1 * 16000, device='adau7002', samplerate=16000, blocking=True, channels=1, dtype='float64')
+    sounddevice.rec.assert_called_with(0.1 * 16000, device="adau7002", samplerate=16000, blocking=True, channels=1, dtype="float64")
 
 
 def test_noise_get_noise_profile(sounddevice, numpy):
@@ -32,7 +32,7 @@ def test_noise_get_noise_profile(sounddevice, numpy):
         mid=0.36,
         high=None)
 
-    sounddevice.rec.assert_called_with(0.1 * 16000, device='adau7002', samplerate=16000, blocking=True, channels=1, dtype='float64')
+    sounddevice.rec.assert_called_with(0.1 * 16000, device="adau7002", samplerate=16000, blocking=True, channels=1, dtype="float64")
 
     assert amp_total == 10.0
 

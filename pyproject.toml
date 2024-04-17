@@ -1,0 +1,145 @@
+[build-system]
+requires = ["hatchling", "hatch-fancy-pypi-readme"]
+build-backend = "hatchling.build"
+
+[project]
+name = "enviroplus"
+dynamic = ["version", "readme"]
+description = "Enviro pHAT Plus environmental monitoring add-on for Raspberry Pi"
+license = {file = "LICENSE"}
+requires-python = ">= 3.7"
+authors = [
+    { name = "Philip Howard", email = "phil@pimoroni.com" },
+]
+maintainers = [
+    { name = "Philip Howard", email = "phil@pimoroni.com" },
+]
+keywords = [
+    "Pi",
+    "Raspberry",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Software Development",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: System :: Hardware",
+]
+dependencies = [
+    "gpiod >= 2.1.3",
+    "gpiodevice >= 0.0.3",
+    "pimoroni-bme280 >= 1.0.0",
+    "pms5003 >= 1.0.0",
+    "ltr559 >= 1.0.0",
+    "st7735 >= 1.0.0",
+    "ads1015 >= 1.0.0",
+    "fonts",
+    "font-roboto",
+    "astral",
+    "pytz",
+    "sounddevice",
+    "paho-mqtt"
+]
+
+[project.urls]
+GitHub = "https://www.github.com/pimoroni/enviroplus-python"
+Homepage = "https://www.pimoroni.com"
+
+[tool.hatch.version]
+path = "enviroplus/__init__.py"
+
+[tool.hatch.build]
+include = [
+    "enviroplus",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "*"
+]
+exclude = [
+    ".*",
+    "dist"
+]
+
+[tool.hatch.metadata.hooks.fancy-pypi-readme]
+content-type = "text/markdown"
+fragments = [
+  { path = "README.md" },
+  { text = "\n" },
+  { path = "CHANGELOG.md" }
+]
+
+[tool.ruff]
+exclude = [
+    '.tox',
+    '.egg',
+    '.git',
+    '__pycache__',
+    'build',
+    'dist'
+]
+line-length = 200
+
+[tool.codespell]
+skip = """
+./.tox,\
+./.egg,\
+./.git,\
+./__pycache__,\
+./build,\
+./dist.\
+"""
+
+[tool.isort]
+line_length = 200
+
+[tool.black]
+line-length = 200
+
+[tool.check-manifest]
+ignore = [
+    '.stickler.yml',
+    'boilerplate.md',
+    'check.sh',
+    'install.sh',
+    'uninstall.sh',
+    'Makefile',
+    'tox.ini',
+    'tests/*',
+    'examples/*',
+    '.coveragerc',
+    'requirements-dev.txt'
+]
+
+[tool.pimoroni]
+apt_packages = [
+    "python3",
+    "python3-pip",
+    "python3-cffi",
+    "libportaudio2"
+]
+configtxt = [
+    "dtoverlay=pi3-miniuart-bt",
+    "dtoverlay=adau7002-simple"
+]
+commands = [
+	"printf \"Setting up i2c and SPI..\\n\"",
+	"sudo raspi-config nonint do_spi 0",
+	"sudo raspi-config nonint do_i2c 0",
+	"printf \"Setting up serial for PMS5003..\\n\"",
+	"sudo raspi-config nonint do_serial_cons 1",
+	"sudo raspi-config nonint do_serial_hw 1"
+]

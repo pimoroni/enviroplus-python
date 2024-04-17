@@ -13,8 +13,8 @@ You are best using the "One-line" install method if you want all of the UART ser
 
 **Note** The code in this repository supports both the Enviro+ and Enviro Mini boards. _The Enviro Mini board does not have the Gas sensor or the breakout for the PM sensor._
 
-![Enviro Plus pHAT](./Enviro-Plus-pHAT.jpg)
-![Enviro Mini pHAT](./Enviro-mini-pHAT.jpg)
+![Enviro Plus pHAT](https://raw.githubusercontent.com/pimoroni/enviroplus-python/main/Enviro-Plus-pHAT.jpg)
+![Enviro Mini pHAT](https://raw.githubusercontent.com/pimoroni/enviroplus-python/main/Enviro-mini-pHAT.jpg)
 
 :warning: This library now supports Python 3 only, Python 2 is EOL - https://www.python.org/doc/sunset-python-2/
 

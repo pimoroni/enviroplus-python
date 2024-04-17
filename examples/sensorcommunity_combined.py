@@ -1,20 +1,18 @@
-import logging
-import sys
-import requests
-import ST7735
-import time
 import colorsys
-from bme280 import BME280
-from pms5003 import PMS5003, ReadTimeoutError
+import logging
+import time
 from subprocess import PIPE, Popen, check_output
-from PIL import Image, ImageDraw, ImageFont
+
+import requests
+import st7735
+from bme280 import BME280
 from fonts.ttf import RobotoMedium as UserFont
+from PIL import Image, ImageDraw, ImageFont
+from pms5003 import PMS5003, ReadTimeoutError
+from smbus2 import SMBus
+
 from enviroplus import gas
 
-try:
-    from smbus2 import SMBus
-except ImportError:
-    from smbus import SMBus
 try:
     # Transitional fix for breaking change in LTR559
     from ltr559 import LTR559
@@ -22,18 +20,18 @@ try:
 except ImportError:
     import ltr559
 
-print("""luftdaten_combined.py - This combines the functionality of luftdaten.py and combined.py
+print("""sensorcommunity_combined.py - This combines the functionality of sensorcommunity.py and combined.py
 ================================================================================================
-Luftdaten INFO
+Sensor.Community INFO
 Reads temperature, pressure, humidity,
-PM2.5, and PM10 from Enviro plus and sends data to Luftdaten,
+PM2.5, and PM10 from Enviro plus and sends data to Sensor.Community,
 the citizen science air quality project.
 
-Note: you'll need to register with Luftdaten at:
-https://meine.luftdaten.info/ and enter your Raspberry Pi
+Note: you'll need to register with Sensor.Community at:
+https://devices.sensor.community/ and enter your Raspberry Pi
 serial number that's displayed on the Enviro plus LCD along
 with the other details before the data appears on the
-Luftdaten map.
+Sensor.Community map.
 
 Press Ctrl+C to exit!
 
@@ -47,9 +45,9 @@ Press Ctrl+C to exit!
 """)
 
 logging.basicConfig(
-    format='%(asctime)s.%(msecs)03d %(levelname)-8s %(message)s',
+    format="%(asctime)s.%(msecs)03d %(levelname)-8s %(message)s",
     level=logging.INFO,
-    datefmt='%Y-%m-%d %H:%M:%S')
+    datefmt="%Y-%m-%d %H:%M:%S")
 
 logging.info(""" """)
 bus = SMBus(1)
@@ -119,9 +117,9 @@ values_lcd = {}
 # Read values from BME280 and PMS5003 and return as dict
 def read_values(comp_temp, mod_press, raw_humid, raw_pm25, raw_pm10):
     values = {}
-    values["temperature"] = "{:.2f}".format(comp_temp)
-    values["pressure"] = "{:.2f}".format(mod_press)
-    values["humidity"] = "{:.2f}".format(raw_humid)
+    values["temperature"] = f"{comp_temp:.2f}"
+    values["pressure"] = f"{mod_press:.2f}"
+    values["humidity"] = f"{raw_humid:.2f}"
     values["P2"] = str(raw_pm25)
     values["P1"] = str(raw_pm10)
     return values
@@ -129,34 +127,34 @@ def read_values(comp_temp, mod_press, raw_humid, raw_pm25, raw_pm10):
 
 # Get CPU temperature to use for compensation
 def get_cpu_temperature():
-    process = Popen(['vcgencmd', 'measure_temp'],
+    process = Popen(["vcgencmd", "measure_temp"],
                     stdout=PIPE, universal_newlines=True)
     output, _error = process.communicate()
-    return float(output[output.index('=') + 1:output.rindex("'")])
+    return float(output[output.index("=") + 1:output.rindex("'")])
 
 
 # Get Raspberry Pi serial number to use as ID
 def get_serial_number():
-    with open('/proc/cpuinfo', 'r') as f:
+    with open("/proc/cpuinfo", "r") as f:
         for line in f:
-            if line[0:6] == 'Serial':
+            if line.startswith("Serial"):
                 return line.split(":")[1].strip()
 
 
 # Check for Wi-Fi connection
 def check_wifi():
-    if check_output(['hostname', '-I']):
+    if check_output(["hostname", "-I"]):
         return True
     else:
         return False
 
 
 # Create ST7735 LCD display class
-st7735 = ST7735.ST7735(
+st7735 = st7735.ST7735(
     port=0,
     cs=1,
-    dc=9,
-    backlight=12,
+    dc="GPIO9",
+    backlight="GPIO12",
     rotation=270,
     spi_speed_hz=10000000
 )
@@ -168,7 +166,7 @@ WIDTH = st7735.width
 HEIGHT = st7735.height
 
 # Set up canvas and font
-img = Image.new('RGB', (WIDTH, HEIGHT), color=(0, 0, 0))
+img = Image.new("RGB", (WIDTH, HEIGHT), color=(0, 0, 0))
 draw = ImageDraw.Draw(img)
 font_size_small = 10
 font_size_large = 20
@@ -189,7 +187,7 @@ def save_data(idx, data):
     # Maintain length of list
     values_lcd[variable] = values_lcd[variable][1:] + [data]
     unit = units[idx]
-    message = "{}: {:.1f} {}".format(variable[:4], data, unit)
+    message = f"{variable[:4]}: {data:.1f} {unit}"
     logging.info(message)
 
 
@@ -203,7 +201,7 @@ def display_text(variable, data, unit):
     colours = [(v - vmin + 1) / (vmax - vmin + 1)
                for v in values_lcd[variable]]
     # Format the variable name and value
-    message = "{}: {:.1f} {}".format(variable[:4], data, unit)
+    message = f"{variable[:4]}: {data:.1f} {unit}"
     logging.info(message)
     draw.rectangle((0, 0, WIDTH, HEIGHT), (255, 255, 255))
     for i in range(len(colours)):
@@ -234,7 +232,7 @@ def display_everything():
         unit = units[i]
         x = x_offset + ((WIDTH // column_count) * (i // row_count))
         y = y_offset + ((HEIGHT / row_count) * (i % row_count))
-        message = "{}: {:.1f} {}".format(variable[:4], data_value, unit)
+        message = f"{variable[:4]}: {data_value:.1f} {unit}"
         lim = limits[i]
         rgb = palette[0]
         for j in range(len(lim)):
@@ -244,7 +242,7 @@ def display_everything():
     st7735.display(img)
 
 
-def send_to_luftdaten(values, id):
+def send_to_sensorcommunity(values, id):
     pm_values = dict(i for i in values.items() if i[0].startswith("P"))
     temp_values = dict(i for i in values.items() if not i[0].startswith("P"))
 
@@ -254,9 +252,9 @@ def send_to_luftdaten(values, id):
                         for key, val in temp_values.items()]
 
     resp_1 = requests.post(
-        "https://api.luftdaten.info/v1/push-sensor-data/",
+        "https://api.sensor.community/v1/push-sensor-data/",
         json={
-            "software_version": "enviro-plus 0.0.1",
+            "software_version": "enviro-plus 1.0.0",
             "sensordatavalues": pm_values_json
         },
         headers={
@@ -268,9 +266,9 @@ def send_to_luftdaten(values, id):
     )
 
     resp_2 = requests.post(
-        "https://api.luftdaten.info/v1/push-sensor-data/",
+        "https://api.sensor.community/v1/push-sensor-data/",
         json={
-            "software_version": "enviro-plus 0.0.1",
+            "software_version": "enviro-plus 1.0.0",
             "sensordatavalues": temp_values_json
         },
         headers={
@@ -290,7 +288,7 @@ def send_to_luftdaten(values, id):
 # Compensation factor for temperature
 comp_factor = 1
 
-# Raspberry Pi ID to send to Luftdaten
+# Raspberry Pi ID to send to Sensor.Community
 id = "raspi-" + get_serial_number()
 
 
@@ -311,14 +309,15 @@ font = ImageFont.truetype(UserFont, font_size)
 cpu_temps = [get_cpu_temperature()] * 5
 
 # Display Raspberry Pi serial and Wi-Fi status
-print("Raspberry Pi serial: {}".format(get_serial_number()))
-print("Wi-Fi: {}\n".format("connected" if check_wifi() else "disconnected"))
+print(f"Raspberry Pi serial: {get_serial_number()}")
+wifi_status = "connected" if check_wifi() else "disconnected"
+print(f"Wi-Fi: {wifi_status}\n")
 
 time_since_update = 0
 update_time = time.time()
 cpu_temps_len = float(len(cpu_temps))
 
-# Main loop to read data, display, and send to Luftdaten
+# Main loop to read data, display, and send to Sensor.Community
 while True:
     try:
         curtime = time.time()
@@ -347,9 +346,10 @@ while True:
         if time_since_update > 145:
             values = read_values(comp_temp, raw_press*100,
                                  raw_humid, raw_pm25, raw_pm10)
-            resp = send_to_luftdaten(values, id)
+            resp = send_to_sensorcommunity(values, id)
             update_time = curtime
-            print("Response: {}\n".format("ok" if resp else "failed"))
+            status = "ok" if resp else "failed"
+            print(f"Response: {status}\n")
 
         # Now comes the combined.py functionality:
         # If the proximity crosses the threshold, toggle the mode

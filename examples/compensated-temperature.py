@@ -1,19 +1,15 @@
 #!/usr/bin/env python3
 
-import time
-from bme280 import BME280
-
-try:
-    from smbus2 import SMBus
-except ImportError:
-    from smbus import SMBus
-
 import logging
+import time
+
+from bme280 import BME280
+from smbus2 import SMBus
 
 logging.basicConfig(
-    format='%(asctime)s.%(msecs)03d %(levelname)-8s %(message)s',
+    format="%(asctime)s.%(msecs)03d %(levelname)-8s %(message)s",
     level=logging.INFO,
-    datefmt='%Y-%m-%d %H:%M:%S')
+    datefmt="%Y-%m-%d %H:%M:%S")
 
 logging.info("""compensated-temperature.py - Use the CPU temperature
 to compensate temperature readings from the BME280 sensor.
@@ -49,5 +45,5 @@ while True:
     avg_cpu_temp = sum(cpu_temps) / float(len(cpu_temps))
     raw_temp = bme280.get_temperature()
     comp_temp = raw_temp - ((avg_cpu_temp - raw_temp) / factor)
-    logging.info("Compensated temperature: {:05.2f} *C".format(comp_temp))
+    logging.info(f"Compensated temperature: {comp_temp:05.2f} °C")
     time.sleep(1.0)

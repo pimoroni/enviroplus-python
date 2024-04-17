@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 
-import time
-from enviroplus import gas
 import logging
+import time
+
+from enviroplus import gas
 
 logging.basicConfig(
-    format='%(asctime)s.%(msecs)03d %(levelname)-8s %(message)s',
+    format="%(asctime)s.%(msecs)03d %(levelname)-8s %(message)s",
     level=logging.INFO,
-    datefmt='%Y-%m-%d %H:%M:%S')
+    datefmt="%Y-%m-%d %H:%M:%S")
 
 logging.info("""adc.py - Print readings from the MICS6814 Gas sensor.
 

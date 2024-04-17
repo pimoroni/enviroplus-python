@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 
-import time
 import colorsys
 import sys
-import ST7735
+import time
+
+import st7735
+
 try:
     # Transitional fix for breaking change in LTR559
     from ltr559 import LTR559
@@ -11,20 +13,22 @@ try:
 except ImportError:
     import ltr559
 
-from bme280 import BME280
-from pms5003 import PMS5003, ReadTimeoutError as pmsReadTimeoutError, SerialTimeoutError
-from enviroplus import gas
-from subprocess import PIPE, Popen
-from PIL import Image
-from PIL import ImageDraw
-from PIL import ImageFont
-from fonts.ttf import RobotoMedium as UserFont
 import logging
+from subprocess import PIPE, Popen
+
+from bme280 import BME280
+from fonts.ttf import RobotoMedium as UserFont
+from PIL import Image, ImageDraw, ImageFont
+from pms5003 import PMS5003
+from pms5003 import ReadTimeoutError as pmsReadTimeoutError
+from pms5003 import SerialTimeoutError
+
+from enviroplus import gas
 
 logging.basicConfig(
-    format='%(asctime)s.%(msecs)03d %(levelname)-8s %(message)s',
+    format="%(asctime)s.%(msecs)03d %(levelname)-8s %(message)s",
     level=logging.INFO,
-    datefmt='%Y-%m-%d %H:%M:%S')
+    datefmt="%Y-%m-%d %H:%M:%S")
 
 logging.info("""combined.py - Displays readings from all of Enviro plus' sensors
 
@@ -40,11 +44,11 @@ pms5003 = PMS5003()
 time.sleep(1.0)
 
 # Create ST7735 LCD display class
-st7735 = ST7735.ST7735(
+st7735 = st7735.ST7735(
     port=0,
     cs=1,
-    dc=9,
-    backlight=12,
+    dc="GPIO9",
+    backlight="GPIO12",
     rotation=270,
     spi_speed_hz=10000000
 )
@@ -56,7 +60,7 @@ WIDTH = st7735.width
 HEIGHT = st7735.height
 
 # Set up canvas and font
-img = Image.new('RGB', (WIDTH, HEIGHT), color=(0, 0, 0))
+img = Image.new("RGB", (WIDTH, HEIGHT), color=(0, 0, 0))
 draw = ImageDraw.Draw(img)
 font_size_small = 10
 font_size_large = 20
@@ -136,7 +140,7 @@ def display_text(variable, data, unit):
     vmax = max(values[variable])
     colours = [(v - vmin + 1) / (vmax - vmin + 1) for v in values[variable]]
     # Format the variable name and value
-    message = "{}: {:.1f} {}".format(variable[:4], data, unit)
+    message = f"{variable[:4]}: {data:.1f} {unit}"
     logging.info(message)
     draw.rectangle((0, 0, WIDTH, HEIGHT), (255, 255, 255))
     for i in range(len(colours)):
@@ -159,7 +163,7 @@ def save_data(idx, data):
     # Maintain length of list
     values[variable] = values[variable][1:] + [data]
     unit = units[idx]
-    message = "{}: {:.1f} {}".format(variable[:4], data, unit)
+    message = f"{variable[:4]}: {data:.1f} {unit}"
     logging.info(message)
 
 
@@ -174,7 +178,7 @@ def display_everything():
         unit = units[i]
         x = x_offset + ((WIDTH // column_count) * (i // row_count))
         y = y_offset + ((HEIGHT / row_count) * (i % row_count))
-        message = "{}: {:.1f} {}".format(variable[:4], data_value, unit)
+        message = f"{variable[:4]}: {data_value:.1f} {unit}"
         lim = limits[i]
         rgb = palette[0]
         for j in range(len(lim)):
@@ -186,9 +190,9 @@ def display_everything():
 
 # Get the temperature of the CPU for compensation
 def get_cpu_temperature():
-    process = Popen(['vcgencmd', 'measure_temp'], stdout=PIPE, universal_newlines=True)
+    process = Popen(["vcgencmd", "measure_temp"], stdout=PIPE, universal_newlines=True)
     output, _error = process.communicate()
-    return float(output[output.index('=') + 1:output.rindex("'")])
+    return float(output[output.index("=") + 1:output.rindex("'")])
 
 
 def main():
@@ -219,7 +223,7 @@ def main():
             # One mode for each variable
             if mode == 0:
                 # variable = "temperature"
-                unit = "C"
+                unit = "°C"
                 cpu_temp = get_cpu_temperature()
                 # Smooth out with some averaging to decrease jitter
                 cpu_temps = cpu_temps[1:] + [cpu_temp]

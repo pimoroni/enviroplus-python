@@ -6,11 +6,13 @@ Example run: python3 mqtt-all.py --broker 192.168.1.164 --topic enviro --usernam
 """
 
 import argparse
-import ST7735
-import time
 import ssl
+import time
+
+import st7735
 from bme280 import BME280
 from pms5003 import PMS5003, ReadTimeoutError, SerialTimeoutError
+
 from enviroplus import gas
 
 try:
@@ -21,13 +23,12 @@ try:
 except ImportError:
     import ltr559
 
-from subprocess import PIPE, Popen, check_output
-from PIL import Image, ImageDraw, ImageFont
-from fonts.ttf import RobotoMedium as UserFont
 import json
+from subprocess import PIPE, Popen, check_output
 
 import paho.mqtt.client as mqtt
-import paho.mqtt.publish as publish
+from fonts.ttf import RobotoMedium as UserFont
+from PIL import Image, ImageDraw, ImageFont
 
 try:
     from smbus2 import SMBus
@@ -132,12 +133,12 @@ def display_status(disp, mqtt_broker):
     text_colour = (255, 255, 255)
     back_colour = (0, 170, 170) if check_wifi() else (85, 15, 15)
     device_serial_number = get_serial_number()
-    message = "{}\nWi-Fi: {}\nmqtt-broker: {}".format(
-        device_serial_number, wifi_status, mqtt_broker
-    )
+    message = f"{device_serial_number}\nWi-Fi: {wifi_status}\nmqtt-broker: {mqtt_broker}"
     img = Image.new("RGB", (WIDTH, HEIGHT), color=(0, 0, 0))
     draw = ImageDraw.Draw(img)
-    size_x, size_y = draw.textsize(message, font)
+    x1, y1, x2, y2 = font.getbbox(message)
+    size_x = x2 - x1
+    size_y = y2 - y1
     x = (WIDTH - size_x) / 2
     y = (HEIGHT / 2) - (size_y / 2)
     draw.rectangle((0, 0, 160, 80), back_colour)
@@ -173,7 +174,7 @@ def main():
     parser.add_argument(
         "--tls",
         default=DEFAULT_TLS_MODE,
-        action='store_true',
+        action="store_true",
         help="enable TLS"
     )
     parser.add_argument(
@@ -230,8 +231,13 @@ def main():
     bme280 = BME280(i2c_dev=bus)
 
     # Create LCD instance
-    disp = ST7735.ST7735(
-        port=0, cs=1, dc=9, backlight=12, rotation=270, spi_speed_hz=10000000
+    disp = st7735.ST7735(
+        port=0,
+        cs=1,
+        dc="GPIO9",
+        backlight="GPIO12",
+        rotation=270,
+        spi_speed_hz=10000000
     )
 
     # Initialize display
@@ -248,9 +254,10 @@ def main():
         print("No PMS5003 sensor connected")
 
     # Display Raspberry Pi serial and Wi-Fi status
-    print("RPi serial: {}".format(device_serial_number))
-    print("Wi-Fi: {}\n".format("connected" if check_wifi() else "disconnected"))
-    print("MQTT broker IP: {}".format(args.broker))
+    print(f"RPi serial: {device_serial_number}")
+    wifi_status = "connected" if check_wifi() else "disconnected"
+    print(f"Wi-Fi: {wifi_status}\n")
+    print(f"MQTT broker IP: {args.broker}")
 
     # Set an initial update time
     update_time = time.time()
