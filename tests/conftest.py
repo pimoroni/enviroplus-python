@@ -45,6 +45,7 @@ def gpiod():
 def gpiodevice():
     gpiodevice = mock.Mock()
     gpiodevice.get_pins_for_platform.return_value = [(mock.Mock(), 0)]
+    gpiodevice.get_pin.return_value = (mock.Mock(), 0)
 
     sys.modules["gpiodevice"] = gpiodevice
     yield gpiodevice

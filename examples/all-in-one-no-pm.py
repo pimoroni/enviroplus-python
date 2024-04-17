@@ -38,8 +38,8 @@ bme280 = BME280()
 st7735 = st7735.ST7735(
     port=0,
     cs=1,
-    dc="PIN21",         # "GPIO9" on a Raspberry Pi 4
-    backlight="PIN32",  # "GPIO12" on a Raspberry Pi 4
+    dc="GPIO9",
+    backlight="GPIO12",
     rotation=270,
     spi_speed_hz=10000000
 )

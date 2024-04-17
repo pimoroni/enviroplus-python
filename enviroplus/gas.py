@@ -11,11 +11,7 @@ from gpiod.line import Direction, Value
 MICS6814_GAIN = 6.144
 
 OUTH = gpiod.LineSettings(direction=Direction.OUTPUT, output_value=Value.ACTIVE)
-PLATFORMS = {
-    "Radxa ROCK 5B": {"heater": ("PIN_18", OUTH)},
-    "Raspberry Pi 5": {"heater": ("PIN18", OUTH)},
-    "Raspberry Pi 4": {"heater": ("GPIO24", OUTH)}
-}
+
 
 ads1015.I2C_ADDRESS_DEFAULT = ads1015.I2C_ADDRESS_ALTERNATE
 _is_setup = False
@@ -68,7 +64,7 @@ def setup():
     else:
         adc.set_sample_rate(1600)
 
-    _heater = gpiodevice.get_pins_for_platform(PLATFORMS)[0]
+    _heater = gpiodevice.get_pin("GPIO24")
 
     atexit.register(cleanup)
 
