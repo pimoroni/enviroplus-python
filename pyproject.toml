@@ -141,5 +141,5 @@ commands = [
 	"sudo raspi-config nonint do_i2c 0",
 	"printf \"Setting up serial for PMS5003..\\n\"",
 	"sudo raspi-config nonint do_serial_cons 1",
-	"sudo raspi-config nonint do_serial_hw 1"
+	"sudo raspi-config nonint do_serial_hw 0"
 ]
