@@ -24,6 +24,12 @@ You are best using the "One-line" install method if you want all of the UART ser
 * `cd enviroplus-python`
 * `./install.sh`
 
+**Note** Libraries will be installed in the "pimoroni" virtual environment, you will need to activate it to run examples:
+
+```
+source ~/.virtualenvs/pimoroni/bin/activate
+```
+
 **Note** Raspbian/Raspberry Pi OS Lite users may first need to install git: `sudo apt install git`
 
 ## Or... Install from PyPi and configure manually:
