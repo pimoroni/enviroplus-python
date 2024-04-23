@@ -1,5 +1,12 @@
+1.0.2
+-----
+
+* README.md: Update install instructions
+* Fix installer to enable serial
+* Fix gas sensor heater pin
+
 1.0.1
------------
+-----
 
 * README.md: Fix images
 
