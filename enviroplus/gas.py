@@ -64,7 +64,7 @@ def setup():
     else:
         adc.set_sample_rate(1600)
 
-    _heater = gpiodevice.get_pin("GPIO24")
+    _heater = gpiodevice.get_pin("GPIO24", "EnviroPlus", OUTH)
 
     atexit.register(cleanup)
 
