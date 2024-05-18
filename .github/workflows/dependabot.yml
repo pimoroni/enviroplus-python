@@ -1,0 +1,35 @@
+version: 2
+name: Dependabot scan
+
+on:
+  push:
+    branches:
+    - main
+
+updates:
+
+  # Maintain dependencies for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "saturday"
+      timezone: "Europe/Helsinki"
+    commit-message:
+      # Prefix all commit messages with "[github-actions] "
+      prefix: "[github-actions] "
+      # Include list of updated dependencies in commit message
+      include: "scope"
+
+  # Maintain dependencies for pip
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "saturday"
+      timezone: "Europe/Helsinki"
+    commit-message:
+      # Prefix all commit messages with "[pip] "
+      prefix: "[pip] "
+      # Include list of updated dependencies in commit message
+      include: "scope"
