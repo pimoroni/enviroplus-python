@@ -52,7 +52,7 @@ And if you're using a PMS5003 sensor you will need to:
 
 * Enable serial: `raspi-config nonint do_serial_hw 0`
 * Disable serial terminal: `raspi-config nonint do_serial_cons 1`
-* Add `dtoverlay=pi3-miniuart-bt` to your `/boot/config.txt`
+* Add `dtoverlay=pi3-miniuart-bt` to your `/boot/firmware/config.txt`
 
 ### Bullseye
 
