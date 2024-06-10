@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import st7735
 from PIL import Image, ImageDraw
 
