@@ -136,7 +136,7 @@ def display_status(disp, mqtt_broker):
     message = f"{device_serial_number}\nWi-Fi: {wifi_status}\nmqtt-broker: {mqtt_broker}"
     img = Image.new("RGB", (WIDTH, HEIGHT), color=(0, 0, 0))
     draw = ImageDraw.Draw(img)
-    x1, y1, x2, y2 = font.getbbox(message)
+    x1, y1, x2, y2 = draw.textbbox((0,0), message, font=font)
     size_x = x2 - x1
     size_y = y2 - y1
     x = (WIDTH - size_x) / 2
