@@ -4,4 +4,4 @@ astral
 pytz
 sounddevice
 paho-mqtt
-
+pillow
