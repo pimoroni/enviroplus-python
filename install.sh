@@ -58,11 +58,6 @@ find_config() {
 		if [ ! -f "$CONFIG_DIR/$CONFIG_FILE" ]; then
 			fatal "Could not find $CONFIG_FILE!"
 		fi
-	else
-		if [ -f "/boot/$CONFIG_FILE" ] && [ ! -L "/boot/$CONFIG_FILE" ]; then
-			warning "Oops! It looks like /boot/$CONFIG_FILE is not a link to $CONFIG_DIR/$CONFIG_FILE"
-			warning "You might want to fix this!"
-		fi
 	fi
 	inform "Using $CONFIG_FILE in $CONFIG_DIR"
 }
@@ -168,6 +163,12 @@ function apt_pkg_install {
 function pip_pkg_install {
 	# A null Keyring prevents pip stalling in the background
 	PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring $PYTHON -m pip install --upgrade "$@"
+	check_for_error
+}
+
+function pip_requirements_install {
+	# A null Keyring prevents pip stalling in the background
+	PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring $PYTHON -m pip install -r "$@"
 	check_for_error
 }
 
@@ -335,6 +336,15 @@ if [ -d "examples" ]; then
 		cp -r examples/ "$RESOURCES_DIR"
 		echo "rm -r $RESOURCES_DIR" >> "$UNINSTALLER"
 		success "Done!"
+	fi
+fi
+
+printf "\n"
+
+if [ -f "requirements-examples.txt" ]; then
+	if confirm "Would you like to install example dependencies?"; then
+		inform "Installing dependencies from requirements-examples.txt..."
+		pip_requirements_install requirements-examples.txt
 	fi
 fi
 
