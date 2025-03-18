@@ -1,0 +1,7 @@
+fonts
+font-roboto
+astral
+pytz
+sounddevice
+paho-mqtt
+

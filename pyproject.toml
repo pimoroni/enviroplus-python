@@ -41,13 +41,7 @@ dependencies = [
     "pms5003 >= 1.0.1",
     "ltr559 >= 1.0.0",
     "st7735 >= 1.0.0",
-    "ads1015 >= 1.0.0",
-    "fonts",
-    "font-roboto",
-    "astral",
-    "pytz",
-    "sounddevice",
-    "paho-mqtt"
+    "ads1015 >= 1.0.0"
 ]
 
 [project.urls]
