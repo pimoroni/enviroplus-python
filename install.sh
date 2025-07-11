@@ -162,13 +162,13 @@ function apt_pkg_install {
 
 function pip_pkg_install {
 	# A null Keyring prevents pip stalling in the background
-	PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring $PYTHON -m pip install --upgrade "$@"
+	PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring $PYTHON -m pip install --prefer-binary --upgrade "$@"
 	check_for_error
 }
 
 function pip_requirements_install {
 	# A null Keyring prevents pip stalling in the background
-	PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring $PYTHON -m pip install -r "$@"
+	PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring $PYTHON -m pip install --prefer-binary -r "$@"
 	check_for_error
 }
 
