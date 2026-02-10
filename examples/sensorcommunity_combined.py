@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import colorsys
 import logging
 import time
