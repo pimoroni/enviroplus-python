@@ -6,9 +6,12 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
 jobs:
   test:
-    name: linting & spelling
+    name: Linting & Spelling
     runs-on: ubuntu-latest
     env:
       TERM: xterm-256color
@@ -17,23 +20,20 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Set up Python '3,11'
-        uses: actions/setup-python@v5
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v6
         with:
+          enable-cache: true
           python-version: '3.11'
-
-      - name: Install Dependencies
-        run: |
-          make dev-deps
 
       - name: Run Quality Assurance
         run: |
-          make qa
+          uv run make qa
 
       - name: Run Code Checks
         run: |
-          make check
+          uv run make check
 
-      - name: Run Bash Code Checks
+      - name: Run Pre-Commit
         run: |
-          make shellcheck
+          uv run pre-commit run --all-files
