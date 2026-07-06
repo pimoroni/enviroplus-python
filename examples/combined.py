@@ -19,9 +19,8 @@ from subprocess import PIPE, Popen
 from bme280 import BME280
 from fonts.ttf import RobotoMedium as UserFont
 from PIL import Image, ImageDraw, ImageFont
-from pms5003 import PMS5003
+from pms5003 import PMS5003, SerialTimeoutError
 from pms5003 import ReadTimeoutError as pmsReadTimeoutError
-from pms5003 import SerialTimeoutError
 
 from enviroplus import gas
 
