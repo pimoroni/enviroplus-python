@@ -26,7 +26,7 @@ def test_noise_get_noise_profile(sounddevice, numpy):
     numpy.mean.return_value = 10.0
 
     noise = Noise(sample_rate=16000, duration=0.1)
-    amp_low, amp_mid, amp_high, amp_total = noise.get_noise_profile(
+    _amp_low, _amp_mid, _amp_high, amp_total = noise.get_noise_profile(
         noise_floor=100,
         low=0.12,
         mid=0.36,

@@ -24,7 +24,7 @@ try:
         try:
             readings = pms5003.read()
             logging.info(readings)
-        except ReadTimeoutError:
+        except ReadTimeoutError:  # noqa: PERF203
             pms5003 = PMS5003()
 except KeyboardInterrupt:
     pass

@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 import colorsys
 import os
@@ -191,7 +190,7 @@ def overlay_text(img, position, text, font, align_right=False, rectangle=False):
 
 
 def get_cpu_temperature():
-    with open("/sys/class/thermal/thermal_zone0/temp", "r") as f:
+    with open("/sys/class/thermal/thermal_zone0/temp") as f:
         temp = f.read()
         temp = int(temp) / 1000.0
     return temp
@@ -206,8 +205,8 @@ def correct_humidity(humidity, temperature, corr_temperature):
 def analyse_pressure(pressure, t):
     global time_vals, pressure_vals, trend
     if len(pressure_vals) > num_vals:
-        pressure_vals = pressure_vals[1:] + [pressure]
-        time_vals = time_vals[1:] + [t]
+        pressure_vals = [*pressure_vals[1:], pressure]
+        time_vals = [*time_vals[1:], t]
 
         # Calculate line of best fit
         line = numpy.polyfit(time_vals, pressure_vals, 1, full=True)
@@ -234,9 +233,8 @@ def analyse_pressure(pressure, t):
             elif -0.5 <= change_per_hour <= 0.5:
                 trend = "-"
 
-            if trend != "-":
-                if abs(change_per_hour) > 3:
-                    trend *= 2
+            if trend != "-" and abs(change_per_hour) > 3:
+                trend *= 2
     else:
         pressure_vals.append(pressure)
         time_vals.append(t)
@@ -267,10 +265,7 @@ def describe_pressure(pressure):
 
 def describe_humidity(humidity):
     """Convert relative humidity into good/bad description."""
-    if 40 < humidity < 60:
-        description = "good"
-    else:
-        description = "bad"
+    description = "good" if 40 < humidity < 60 else "bad"
     return description
 
 
@@ -363,7 +358,7 @@ while True:
 
     # Corrected temperature
     cpu_temp = get_cpu_temperature()
-    cpu_temps = cpu_temps[1:] + [cpu_temp]
+    cpu_temps = [*cpu_temps[1:], cpu_temp]
     avg_cpu_temp = sum(cpu_temps) / float(len(cpu_temps))
     corr_temperature = temperature - ((avg_cpu_temp - temperature) / factor)
 
@@ -381,10 +376,7 @@ while True:
     img = overlay_text(img, (68, 18), temp_string, font_lg, align_right=True)
     _, text_height = text_size(font_lg, temp_string)
     spacing = text_height + 1
-    if min_temp is not None and max_temp is not None:
-        range_string = f"{min_temp:.0f}-{max_temp:.0f}"
-    else:
-        range_string = "------"
+    range_string = f"{min_temp:.0f}-{max_temp:.0f}" if min_temp is not None and max_temp is not None else "------"
     img = overlay_text(img, (68, 18 + spacing), range_string, font_sm, align_right=True, rectangle=True)
     temp_icon = Image.open(f"{path}/icons/temperature.png")
     img.paste(temp_icon, (margin, 18), mask=temp_icon)

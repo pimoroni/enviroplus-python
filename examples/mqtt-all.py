@@ -106,7 +106,7 @@ def get_cpu_temperature():
 
 # Get Raspberry Pi serial number to use as ID
 def get_serial_number():
-    with open("/proc/cpuinfo", "r") as f:
+    with open("/proc/cpuinfo") as f:
         for line in f:
             if line[0:6] == "Serial":
                 return line.split(":")[1].strip()
@@ -114,10 +114,7 @@ def get_serial_number():
 
 # Check for Wi-Fi connection
 def check_wifi():
-    if check_output(["hostname", "-I"]):
-        return True
-    else:
-        return False
+    return bool(check_output(["hostname", "-I"]))
 
 
 # Display Raspberry Pi serial and Wi-Fi status on LCD
@@ -277,7 +274,7 @@ def main():
                 print(values)
                 mqtt_client.publish(args.topic, json.dumps(values), retain=True)
                 display_status(disp, args.broker)
-        except Exception as e:
+        except Exception as e:  # noqa: PERF203
             print(e)
 
 

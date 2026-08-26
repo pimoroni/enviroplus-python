@@ -71,7 +71,7 @@ top_pos = 25
 # Displays data and text on the 0.96" LCD
 def display_text(variable, data, unit):
     # Maintain length of list
-    values[variable] = values[variable][1:] + [data]
+    values[variable] = [*values[variable][1:], data]
     # Scale the values for the variable between 0 and 1
     vmin = min(values[variable])
     vmax = max(values[variable])
@@ -96,7 +96,7 @@ def display_text(variable, data, unit):
 
 # Get the temperature of the CPU for compensation
 def get_cpu_temperature():
-    with open("/sys/class/thermal/thermal_zone0/temp", "r") as f:
+    with open("/sys/class/thermal/thermal_zone0/temp") as f:
         temp = f.read()
         temp = int(temp) / 1000.0
     return temp
@@ -147,7 +147,7 @@ try:
             unit = "°C"
             cpu_temp = get_cpu_temperature()
             # Smooth out with some averaging to decrease jitter
-            cpu_temps = cpu_temps[1:] + [cpu_temp]
+            cpu_temps = [*cpu_temps[1:], cpu_temp]
             avg_cpu_temp = sum(cpu_temps) / float(len(cpu_temps))
             raw_temp = bme280.get_temperature()
             data = raw_temp - ((avg_cpu_temp - raw_temp) / factor)
@@ -168,10 +168,7 @@ try:
         if mode == 3:
             # variable = "light"
             unit = "Lux"
-            if proximity < 10:
-                data = ltr559.get_lux()
-            else:
-                data = 1
+            data = ltr559.get_lux() if proximity < 10 else 1
             display_text(variables[mode], data, unit)
 
         if mode == 4:

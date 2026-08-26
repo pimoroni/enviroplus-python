@@ -2,9 +2,10 @@
 These allow the mocking of various Python modules
 that might otherwise have runtime side-effects.
 """
+import contextlib
 import sys
+from unittest import mock
 
-import mock
 import pytest
 from i2cdevice import MockSMBus
 
@@ -26,10 +27,8 @@ def cleanup():
     yield None
     modules = "enviroplus", "enviroplus.noise", "enviroplus.gas", "ads1015", "i2cdevice"
     for module in modules:
-        try:
+        with contextlib.suppress(KeyError):
             del sys.modules[module]
-        except KeyError:
-            pass
 
 
 @pytest.fixture(scope="function", autouse=False)

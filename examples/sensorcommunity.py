@@ -77,7 +77,7 @@ def read_values():
 
 # Get the temperature of the CPU for compensation
 def get_cpu_temperature():
-    with open("/sys/class/thermal/thermal_zone0/temp", "r") as f:
+    with open("/sys/class/thermal/thermal_zone0/temp") as f:
         temp = f.read()
         temp = int(temp) / 1000.0
     return temp
@@ -85,7 +85,7 @@ def get_cpu_temperature():
 
 # Get Raspberry Pi serial number to use as ID
 def get_serial_number():
-    with open("/proc/cpuinfo", "r") as f:
+    with open("/proc/cpuinfo") as f:
         for line in f:
             if line.startswith("Serial"):
                 return line.split(":")[1].strip()
@@ -93,10 +93,7 @@ def get_serial_number():
 
 # Check for Wi-Fi connection
 def check_wifi():
-    if check_output(["hostname", "-I"]):
-        return True
-    else:
-        return False
+    return bool(check_output(["hostname", "-I"]))
 
 
 # Display Raspberry Pi serial and Wi-Fi status on LCD
@@ -217,5 +214,5 @@ while True:
             else:
                 logging.warning("Sensor.Community Response: Failed")
         display_status()
-    except Exception as e:
+    except Exception as e:  # noqa: PERF203
         logging.warning(f"Main Loop Exception: {e}")

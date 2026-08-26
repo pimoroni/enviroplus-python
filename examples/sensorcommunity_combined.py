@@ -137,7 +137,7 @@ def get_cpu_temperature():
 
 # Get Raspberry Pi serial number to use as ID
 def get_serial_number():
-    with open("/proc/cpuinfo", "r") as f:
+    with open("/proc/cpuinfo") as f:
         for line in f:
             if line.startswith("Serial"):
                 return line.split(":")[1].strip()
@@ -145,10 +145,7 @@ def get_serial_number():
 
 # Check for Wi-Fi connection
 def check_wifi():
-    if check_output(["hostname", "-I"]):
-        return True
-    else:
-        return False
+    return bool(check_output(["hostname", "-I"]))
 
 
 # Create ST7735 LCD display class
@@ -187,7 +184,7 @@ top_pos = 25
 def save_data(idx, data):
     variable = variables[idx]
     # Maintain length of list
-    values_lcd[variable] = values_lcd[variable][1:] + [data]
+    values_lcd[variable] = [*values_lcd[variable][1:], data]
     unit = units[idx]
     message = f"{variable[:4]}: {data:.1f} {unit}"
     logging.info(message)
@@ -196,7 +193,7 @@ def save_data(idx, data):
 # Displays data and text on the 0.96" LCD
 def display_text(variable, data, unit):
     # Maintain length of list
-    values_lcd[variable] = values_lcd[variable][1:] + [data]
+    values_lcd[variable] = [*values_lcd[variable][1:], data]
     # Scale the values for the variable between 0 and 1
     vmin = min(values_lcd[variable])
     vmax = max(values_lcd[variable])
@@ -281,10 +278,7 @@ def send_to_sensorcommunity(values, id):
         }
     )
 
-    if resp_1.ok and resp_2.ok:
-        return True
-    else:
-        return False
+    return bool(resp_1.ok and resp_2.ok)
 
 
 # Compensation factor for temperature
@@ -328,7 +322,7 @@ while True:
         # Calculate these things once, not twice
         cpu_temp = get_cpu_temperature()
         # Smooth out with some averaging to decrease jitter
-        cpu_temps = cpu_temps[1:] + [cpu_temp]
+        cpu_temps = [*cpu_temps[1:], cpu_temp]
         avg_cpu_temp = sum(cpu_temps) / cpu_temps_len
         raw_temp = bme280.get_temperature()
         comp_temp = raw_temp - ((avg_cpu_temp - raw_temp) / comp_factor)
@@ -378,10 +372,7 @@ while True:
         if mode == 3:
             # variable = "light"
             unit = "Lux"
-            if proximity < 10:
-                data = ltr559.get_lux()
-            else:
-                data = 1
+            data = ltr559.get_lux() if proximity < 10 else 1
             display_text(variables[mode], data, unit)
 
         if mode == 4:
@@ -427,10 +418,7 @@ while True:
             save_data(1, raw_press)
             display_everything()
             save_data(2, raw_humid)
-            if proximity < 10:
-                raw_data = ltr559.get_lux()
-            else:
-                raw_data = 1
+            raw_data = ltr559.get_lux() if proximity < 10 else 1
             save_data(3, raw_data)
             display_everything()
             gas_data = gas.read_all()
@@ -443,5 +431,5 @@ while True:
             save_data(8, float(raw_pm25))
             save_data(9, float(raw_pm10))
             display_everything()
-    except Exception as e:
+    except Exception as e:  # noqa: PERF203
         print(e)

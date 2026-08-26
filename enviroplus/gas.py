@@ -21,8 +21,8 @@ _adc_gain = 6.148
 _heater = None
 
 
-class Mics6814Reading(object):
-    __slots__ = "oxidising", "reducing", "nh3", "adc"
+class Mics6814Reading:
+    __slots__ = "adc", "nh3", "oxidising", "reducing"
 
     def __init__(self, ox, red, nh3, adc=None):
         self.oxidising = ox
@@ -53,7 +53,7 @@ def setup():
         adc = ads1015.ADS1015(i2c_addr=0x49)
         adc_type = adc.detect_chip_type()
         _is_available = True
-    except IOError:
+    except OSError:
         _is_available = False
         return
 
