@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchling", "hatch-fancy-pypi-readme", "hatch-requirements-txt"]
+requires = ["hatchling", "hatch-fancy-pypi-readme", "hatch-requirements-txt", "uv-dynamic-versioning"]
 build-backend = "hatchling.build"
 
 [project]
@@ -61,12 +61,16 @@ dev = [
     "hatch",
     "hatch-fancy-pypi-readme",
     "hatch-requirements-txt",
+    "uv-dynamic-versioning",
     "tox",
     "pdoc",
 ]
 
 [tool.hatch.version]
-path = "enviroplus/__init__.py"
+source = "uv-dynamic-versioning"
+
+[tool.uv-dynamic-versioning]
+fallback-version = "0.0.0"
 
 [tool.hatch.build]
 include = [
@@ -79,7 +83,8 @@ include = [
 ]
 exclude = [
     ".*",
-    "dist"
+    "dist",
+    "uv.lock"
 ]
 
 [tool.hatch.metadata.hooks.fancy-pypi-readme]
