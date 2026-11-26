@@ -3,5 +3,5 @@ font-roboto
 astral
 pytz
 sounddevice
-paho-mqtt
+paho-mqtt>=2.0
 pillow

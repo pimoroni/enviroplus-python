@@ -46,14 +46,14 @@ DEFAULT_PASSWORD = None
 
 
 # mqtt callbacks
-def on_connect(client, userdata, flags, rc):
-    if rc == 0:
+def on_connect(client, userdata, flags, reason_code, properties):
+    if reason_code == 0:
         print("connected OK")
     else:
-        print("Bad connection Returned code=", rc)
+        print("Bad connection Returned code=", reason_code)
 
 
-def on_publish(client, userdata, mid):
+def on_publish(client, userdata, mid, reason_code, properties):
     print("mid: " + str(mid))
 
 
@@ -211,7 +211,7 @@ def main():
     """
     )
 
-    mqtt_client = mqtt.Client(client_id=device_id)
+    mqtt_client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, client_id=device_id)
     if args.username and args.password:
         mqtt_client.username_pw_set(args.username, args.password)
     mqtt_client.on_connect = on_connect
